@@ -7,7 +7,7 @@
             <van-tabbar-item icon="friends-o" >标签</van-tabbar-item>
             <van-tabbar-item icon="setting-o">标签</van-tabbar-item>
         </van-tabbar>
-        <!-- <test-tab></test-tab> -->
+        <test-tab class="test"></test-tab>
     </div>
 </template>
 
