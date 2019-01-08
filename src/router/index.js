@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import index from '@/views/index'
 import CardList from '@/views/CardList'
 import CardItemDetail from '@/views/CardItemDetail'
+import NewsList from '@/views/NewsList'
 Vue.use(Router)
 
 const router = new Router({
@@ -20,6 +21,13 @@ const router = new Router({
       name: 'CardList', // 默认页面 helloword
       component: CardList,
       meta: {title: '列表页', keepAlive: false}, // 不需要缓存
+      children: []
+    },
+    {
+      path: '/NewsList/:userId',
+      name: 'NewsList', // 默认页面 helloword
+      component: NewsList,
+      meta: {title: '新闻列表', keepAlive: false}, // 不需要缓存
       children: []
     },
     {

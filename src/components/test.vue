@@ -7,9 +7,12 @@
 <script type="text/javascript">
 // eslint-disable-next-line no-unused-vars
 import Vue from 'vue'
+import store from '@/store/index'
+
 export default {
   // 不要忘记了 name 属性
   name: 'RangeSlider',
+  store,
   // 组合其它组件
   extends: {},
   // 组件属性、变量
@@ -25,7 +28,9 @@ export default {
   components: {},
   // 方法
   watch: {},
-  methods: {},
+  methods: {
+    // this.$emit("clickSearch",text);
+  },
   // 生命周期函数
   beforeCreate () { },
   created () { },

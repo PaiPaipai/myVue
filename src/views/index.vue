@@ -43,7 +43,6 @@ export default {
 <style scope>
 body {
   min-height: 80vh;
-  padding-bottom: 50px;
 }
 #app {
   height: 100%;

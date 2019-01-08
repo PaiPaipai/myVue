@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
-const state = {active: 0, test: [], platform: false} // 声明常量
+const state = {active: 0, newsList: [], test: [], platform: false} // 声明常量
 checkApp()
 function checkApp () {
   if (navigator.userAgent.match(/android/i)) {
     // android非微信
-    if (navigator.userAgent.match(/MicroMessenger/i) != 'MicroMessenger') {
+    if (navigator.userAgent.match(/MicroMessenger/i) !== 'MicroMessenger') {
     } else {
       // android微信
       state.platform = true
@@ -14,7 +14,7 @@ function checkApp () {
     // 判断为IOS
   } else if (navigator.userAgent.match(/iPhone|iPod|iPad/i)) {
     // 微信
-    if (navigator.userAgent.match(/MicroMessenger/i) == 'MicroMessenger') {
+    if (navigator.userAgent.match(/MicroMessenger/i) === 'MicroMessenger') {
       state.platform = true
 
       // QQ内置浏览器
@@ -33,6 +33,9 @@ const mutations = {
   },
   setAny: function (state, test) {
     state.test = test
+  },
+  setNewsList: function (state, newsList) {
+    state.newsList = newsList
   }
 } // 定义方法，mutations固定写法
 

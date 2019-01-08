@@ -1,10 +1,9 @@
 <template lang="html">
-  <div class="CardItem">
+  <div class="NewsItem">
     <!-- ... -->
     <ul class="cardItemUl">
-      <li v-for="(item, index) in itemList" :key="index" @click="goCardDetails(item)">
-        <div><img :src="item.imgUrl" alt=""></div>
-        <p>{{item.title}}</p>
+      <li v-for="(item, index) in itemList" class="van-hairline--bottom clearfix " :key="index" @click="goNewsDetails(item)">
+        <p><em class="text-overflow">{{item.title}}</em> <span>{{item.time||'2019-1-7 18:16:54'}}</span></p>
       </li>
     </ul>
   </div>
@@ -15,7 +14,7 @@
 import Vue from 'vue'
 export default {
   // 不要忘记了 name 属性
-  name: 'RangeSlider',
+  name: 'NewsItem',
   // 组合其它组件
   extends: {},
   // 组件属性、变量
@@ -32,7 +31,7 @@ export default {
   // 方法
   watch: {},
   methods: {
-    goCardDetails: function (item) {
+    goNewsDetails: function (item) {
       // path: `/index/${userId}/${'456'}`
       this.$router.replace({ name: 'CardItemDetail', params: { id: item.id, title: item.title } })
     }
@@ -44,21 +43,29 @@ export default {
 </script>
 
 <style scoped lang="scss" rel="stylesheet/scss">
-.CardItem {
+.NewsItem {
   /* ... */
 }
 
 .cardItemUl {
   overflow: hidden;
+  padding: 0 0.2rem 15px 0.2rem;
   li {
-    float: left;
-    width: 50%;
-    text-align: center;
+    width: 100%;
+    padding: 0.2rem 0;
+    // overflow: hidden;
   }
-  img {
-    width: 3.6667rem;
+  span {
+    position: absolute;
+    top: 0.1rem;
+    right: 0;
+  }
+  em {
+    display: block;
+    margin-right: 120px;
   }
   p {
+    position: relative;
     padding: 0.1067rem 0.2133rem;
   }
 }

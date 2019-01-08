@@ -2,3 +2,20 @@
 $baseColor:#333;
 $themeColor:#ff0000;
 $c999:#999;
+
+//超过隐藏
+.text-overflow{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+  
+
+.clearfix:before,.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+.clearfix {
+  zoom: 1;
+}

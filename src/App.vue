@@ -32,7 +32,10 @@ export default {
 }
 </script>
 
-<style>
+<style scope>
+.child-view {
+  margin-bottom: 50px;
+}
 /* .child-view {
   position: absolute;
   top: 0;

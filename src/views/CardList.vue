@@ -1,8 +1,17 @@
 <template lang="html">
   <div class="CardList">
     <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      <!-- 上拉刷新 -->
         <div class="card-item-box">
-          <card-item :itemList="itemList" ></card-item>
+           <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad">
+                <card-item :itemList="itemList" ></card-item>
+            </van-list>
+            <!-- 下拉加载 -->
+          <!-- <card-item :itemList="itemList" ></card-item> -->
         </div>
     </van-pull-refresh>
 
@@ -34,7 +43,10 @@ export default {
       itemList: [
         { imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题', id: 1 },
         { imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题1', id: 3 }
-      ]
+      ],
+      active: 0,
+      loading: false,
+      finished: false
     }
   },
 
@@ -52,8 +64,26 @@ export default {
         this.$toast('刷新成功')
         this.isLoading = false
         this.count++
-        this.itemList.push({ imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题' + this.count, id: 3 })
+        if (this.itemList.length >= 40) { // 父元素的数组大于40 就停止
+          this.finished = true
+        } else {
+          this.itemList.push({ imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题' + this.count, id: 3 })
+        }
       }, 500)
+    },
+    onLoad: function () {
+      // 异步更新数据
+      var _this = this
+      setTimeout(() => {
+        // 加载状态结束
+        _this.loading = false
+        // 数据全部加载完成
+        if (_this.itemList.length >= 40) { // 父元素的数组大于40 就停止
+          _this.finished = true
+        } else {
+          _this.itemList.push({ imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题' + this.count, id: 3 })
+        }
+      }, 1000)
     }
   },
   // 生命周期函数
@@ -73,6 +103,6 @@ export default {
   /* ... */
 }
 .card-item-box {
-  margin: 0.2667rem 0 50px 0;
+  margin: 0.2667rem 0 0 0;
 }
 </style>

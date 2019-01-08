@@ -4,10 +4,10 @@
         <van-tabbar v-model="active">
             <van-tabbar-item icon="home-o" @click="goHome()">首页</van-tabbar-item>
             <van-tabbar-item icon="search"  @click="goCard()" >信用卡</van-tabbar-item>
-            <van-tabbar-item icon="friends-o" >标签</van-tabbar-item>
+            <van-tabbar-item icon="friends-o"  @click="goNews()" >资讯</van-tabbar-item>
             <van-tabbar-item icon="setting-o">标签</van-tabbar-item>
         </van-tabbar>
-        <test-tab class="test"></test-tab>
+        <!-- <test-tab class="test"></test-tab> -->
     </div>
 </template>
 
@@ -49,17 +49,23 @@ export default {
   methods: {
     goHome: function () {
       const userId = this.userId
-      this.$router.replace({ name: 'index', params: { userId: userId } })
+      this.$router.replace({ name: 'index', params: { userId } })
     },
     goCard: function () {
       const userId = this.userId
-      this.$router.replace({ name: 'CardList', params: { userId: userId } })
+      this.$router.replace({ name: 'CardList', params: { userId } })
+    },
+    goNews: function () {
+      const userId = this.userId
+      this.$router.replace({ name: 'NewsList', params: { userId } })
     },
     setActive: function (path) {
       if (path === 'index' || path === '/') {
         store.commit('setActive', 0)
       } else if (path === 'CardList' || path === 'CardItemDetail') {
         store.commit('setActive', 1)
+      } else if (path === 'NewsList' || path === 'NewsDetail') {
+        store.commit('setActive', 2)
       }
       console.log(store.state.active)
     },
