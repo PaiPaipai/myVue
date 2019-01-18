@@ -9,13 +9,15 @@ import '../static/css/border.css'
 import './assets/font/iconfont.css'
 // eslint-disable-next-line no-unused-vars
 import api from './assets/js/api'
+import common from './assets/js/common.js'
+
 
 import {Button, List, Swipe, SwipeItem} from 'vant'
 Vue.config.productionTip = false
 Vue.config.debug = true
 
 /* eslint-disable no-new */
-Vue.use(Button).use(List).use(Swipe).use(SwipeItem)
+Vue.use(Button).use(List).use(Swipe).use(SwipeItem).use(common)
 new Vue({
   el: '#app',
   router,

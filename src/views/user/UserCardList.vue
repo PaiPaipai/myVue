@@ -1,0 +1,166 @@
+<template lang="html">
+    <div class="UserCardList">
+        <!-- ... -->
+        <my-header :title="'信用卡管理'"></my-header>
+        <div class="main">
+            <ul class="cardListUl">
+              <li v-for="(item, index) in userCardList" :style="{background:item.color?item.color:''}"  :key="index" @touchstart="ontouchstart(item,index)" @touchmove="ontouchmove" @touchend="ontouchend">
+                  <div class="liBox">
+                      <i :class="['iconfont',item.icon]" :style="{color:item.color?item.color:''}"></i>
+                  </div>
+                  <h3>{{item.name}}</h3>
+                  <p>{{item.number}}</p>
+                  <i class="iconfont icon-gongshang1"></i>
+              </li>
+            </ul>
+            <van-button :class="['myButton']" @click="clickAdd"><i class="iconfont icon-jiahao"></i> 添加信用卡</van-button>
+        </div>
+        
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+import MyHeader from '@/layout/MyHeader'
+import { Button, Toast, SwipeCell, Dialog } from 'vant';
+import MyText from "@/components/MyText"
+Vue.use(Button).use(Toast).use(SwipeCell).use(Dialog);
+export default {
+  // 不要忘记了 name 属性
+  name: 'UserCardList',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      colorList: [],
+      userCardList: [
+        { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1, },
+        { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
+        { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3, color: '#15538d', },
+        { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
+        { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1 },
+        { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
+        { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3 },
+        { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
+        { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1 },
+        { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
+        { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3 },
+        { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
+      ],
+      timeOutEvent: null
+    }
+  },
+  computed: {},
+  // 使用其它组件
+  components: { MyHeader },
+  // 方法
+  watch: {},
+  methods: {
+    ontouchstart (item, index) {
+      var that = this;
+      this.timeOutEvent = setTimeout(function () {
+        Dialog.confirm({
+          title: '提示',
+          message: '是否删除' + item.name
+        }).then(() => {
+          // on confirm
+          that.userCardList.splice(index, 1)
+          console.log(that.userCardList)
+        }).catch(() => {
+          // on cancel
+
+          console.log(that.userCardList)
+        });
+      }, 500)
+    },
+    ontouchmove () {
+      clearTimeout(this.timeOutEvent);
+    },
+    ontouchend () {
+      clearTimeout(this.timeOutEvent);
+    },
+    // this.$emit("clickSearch",text);
+    clickAdd () {
+      this.routerTo('UserAddCard')
+    },
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () { },
+  mounted () { },
+  activated () {
+    console.log('cardList')
+  }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.UserCardList {
+  /* ... */
+  background: $cf0;
+}
+.main {
+  padding: 0.4rem 0.4rem;
+}
+.cardListUl {
+  li {
+    height: 2.3333rem;
+    border-radius: 0.1333rem;
+    background: $themeColor;
+    padding-top: 0.3333rem;
+    padding-left: 0.3333rem;
+    position: relative;
+    margin-bottom: 0.2667rem;
+    > i {
+      position: absolute;
+      width: 1.6667rem;
+      height: 1.6667rem;
+      color: $white;
+      opacity: 0.5;
+      font-size: 1.6667rem;
+      right: 0.5333rem;
+      top: 0.6667rem;
+    }
+  }
+  .liBox {
+    background: $white;
+    width: 1.2267rem;
+    border-radius: 50%;
+    height: 1.2267rem;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    line-height: 1.2267rem;
+    i {
+      font-size: 0.8rem;
+      color: $themeColor;
+    }
+  }
+  h3 {
+    display: inline-block;
+    font-size: 0.4267rem;
+    color: $white;
+    height: 1.2267rem;
+    vertical-align: middle;
+    line-height: 1.2267rem;
+  }
+  p {
+    line-height: 0.8533rem;
+    color: $white;
+    font-size: $fz28;
+  }
+}
+.myButton {
+  font-size: $fz32;
+  width: 100%;
+  border-radius: 0.1333rem;
+  border: 1px dashed $baseColor;
+}
+</style>

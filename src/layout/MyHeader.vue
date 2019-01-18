@@ -3,7 +3,6 @@
         <van-nav-bar
         :title="title"
         left-text="返回"
-        right-text="按钮"
         left-arrow
         @click-left="onClickLeft"
         @click-right="onClickRight"
@@ -70,7 +69,7 @@ export default {
 <style scoped>
 .MyHeader {
   /* ... */
-  position: fixed;
+  /* position: fixed; */
   top: 0;
   left: 0;
   right: 0;

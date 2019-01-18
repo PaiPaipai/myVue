@@ -1,14 +1,15 @@
 <template lang="html">
     <div class="MyTab">
         <!-- ... -->
-        <van-tabbar v-model="active">
-            <van-tabbar-item icon="home-o" @click="goHome()">首页</van-tabbar-item>
-            <van-tabbar-item icon="search"  @click="goCard()" >信用卡</van-tabbar-item>
-            <van-tabbar-item icon="friends-o"  @click="goNews()" >资讯</van-tabbar-item>
-            <van-tabbar-item icon="setting-o">标签</van-tabbar-item>
+        <van-tabbar :class="['myTabbar']" v-model="active" :z-index=999>
+            <van-tabbar-item  @click="goHome()"><i class="iconfont icon-shouye"></i> 首页</van-tabbar-item>
+            <van-tabbar-item   @click="goNews()" ><i class="iconfont icon-zixun"></i>资讯</van-tabbar-item>
+            <van-tabbar-item   @click="" ><i class="iconfont icon-shangcheng"></i>商城</van-tabbar-item>
+            <van-tabbar-item  @click="goUser()" ><i class="iconfont icon-yonghuzhongxin"></i>用户中心</van-tabbar-item>
         </van-tabbar>
         <!-- <test-tab class="test"></test-tab> -->
     </div>
+    
 </template>
 
 <script type="text/javascript">
@@ -29,13 +30,20 @@ export default {
   data () {
     return {
       //    active: store.state.active
-      userId: 123
     }
   },
   computed: {
     active: {
       get: function () {
         return this.$store.state.active
+      },
+      set: function () {
+
+      }
+    },
+    userId: {
+      get: function () {
+        return this.$store.state.userId
       },
       set: function () {
 
@@ -48,26 +56,34 @@ export default {
   // 方法
   methods: {
     goHome: function () {
-      const userId = this.userId
-      this.$router.replace({ name: 'index', params: { userId } })
+      this.routerTo('index')
     },
     goCard: function () {
-      const userId = this.userId
-      this.$router.replace({ name: 'CardList', params: { userId } })
+      this.routerTo('CardList', { userId: this.userId })
     },
     goNews: function () {
-      const userId = this.userId
-      this.$router.replace({ name: 'NewsList', params: { userId } })
+      this.routerTo('NewsList', { userId: this.userId })
+    },
+    goUser: function () {
+      this.routerTo('UserCenter', { userId: this.userId })
     },
     setActive: function (path) {
       if (path === 'index' || path === '/') {
         store.commit('setActive', 0)
-      } else if (path === 'CardList' || path === 'CardItemDetail') {
-        store.commit('setActive', 1)
-      } else if (path === 'NewsList' || path === 'NewsDetail') {
-        store.commit('setActive', 2)
       }
-      console.log(store.state.active)
+      //  else if (path === 'CardList' || path === 'CardItemDetail') {
+      //   store.commit('setActive', 2)
+      // } 
+      else if (path === 'NewsList' || path === 'NewsDetail') {
+        store.commit('setActive', 1)
+      }
+      else if (path.indexOf('UserCenter') == 0) {
+        store.commit('setActive', 3)
+      } else {
+        store.commit('setActive', -1)
+      }
+      // console.log(path.indexOf('User'))
+      // console.log(store.state.active)
     },
     getHomeMsg: function () {
       this._ajax({ // 在api.js后面合并的axios属性名_ajax一致,名字随意
@@ -102,7 +118,7 @@ export default {
     $route (to, from) {
       this.setActive(to.name)
       if (to.name === 'index') {
-        this.getHomeMsg()
+        // this.getHomeMsg()
       } else if (to.name === 'CardItemDetail') {
 
       }
@@ -114,5 +130,19 @@ export default {
 <style scope  lang="scss">
 .van-tabbar-item__icon {
   font-size: 24px;
+}
+.myTabbar {
+  .iconfont {
+    display: block;
+    min-width: 1em;
+    text-align: center;
+    position: relative;
+    font-size: 22px;
+    text-rendering: auto;
+    margin-bottom: 5px;
+  }
+}
+.van-tabbar-item--active {
+  color: $c26;
 }
 </style>

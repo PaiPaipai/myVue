@@ -1,30 +1,59 @@
 <template>
-  <div id="app">
+  <div id="app"
+       :class="['app']">
+
     <keep-alive>
       <!--缓存部分页面-->
-      <router-view class="child-view"></router-view>
+      <router-view class="child-view"
+                   :style="{'min-height':minHeight+'px'}"
+                   v-if="!$route.meta.keepAlive"></router-view>
+      <!-- 默认都缓存 -->
     </keep-alive>
-    <my-tab></my-tab>
+    <!-- 将不缓存的设置为true -->
+    <router-view class="child-view"
+                 :style="{'min-height':minHeight+'px'}"
+                 v-if="$route.meta.keepAlive"></router-view>
+
+    <my-tab v-show="!detail"></my-tab>
   </div>
 </template>
 
 <script>
 import MyTab from '@/layout/MyTab'
+import store from '@/store/index'
 export default {
   name: 'App',
+  store,
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      transitionName: 'slide-left'
+      transitionName: 'slide-left',
+      minHeight: '',
+    }
+  },
+  computed: {
+    detail: {
+      get: function () {
+        return store.state.detail
+      },
+      set: function () {
+
+      }
     }
   },
   mounted () {
-    console.log('123')
+    console.log('app')
+    this.minHeight = window.outerHeight - 50;
   },
   components: { MyTab },
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+    console.log('路由切换')
+    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+  },
   watch: {
     '$route' (to, from) {
-      // const toDepth = to.path.split('/').length
+      // const toDepth = to.path;
+
       // const fromDepth = from.path.split('/').length
       // this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
     }
@@ -33,9 +62,19 @@ export default {
 </script>
 
 <style scope>
-.child-view {
-  margin-bottom: 50px;
+.app {
+  /* height: 100vh;
+  overflow-y: auto; */
+  /* box-sizing: border-box; */
+  padding-bottom: 50px;
+  overflow-x: hidden;
 }
+
+.child-view {
+  box-sizing: border-box;
+  min-height: 100%;
+}
+
 /* .child-view {
   position: absolute;
   top: 0;

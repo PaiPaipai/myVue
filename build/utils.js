@@ -5,9 +5,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const packageConfig = require('../package.json')
 
 exports.assetsPath = function (_path) {
-  const assetsSubDirectory = process.env.NODE_ENV === 'production'
-    ? config.build.assetsSubDirectory
-    : config.dev.assetsSubDirectory
+  const assetsSubDirectory = process.env.NODE_ENV === 'production' ?
+    config.build.assetsSubDirectory :
+    config.dev.assetsSubDirectory
 
   return path.posix.join(assetsSubDirectory, _path)
 };
@@ -32,10 +32,8 @@ exports.cssLoaders = function (options) {
   //   loader: 'px2rem-loader',
   //   options: {remUnit: 75}}
   // generate loader string to be used with extract text plugin
-  function generateLoaders (loader, loaderOptions) {
-    const loaders = options.usePostCSS
-      ? [cssLoader, postcssLoader]
-      : [cssLoader]
+  function generateLoaders(loader, loaderOptions) {
+    const loaders = options.usePostCSS ? [cssLoader, postcssLoader] : [cssLoader]
 
     if (loader) {
       loaders.push({
@@ -51,16 +49,19 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        fallback: 'vue-style-loader'
+        fallback: 'vue-style-loader',
+        publicPath: '../../',
       })
     } else {
       return ['vue-style-loader'].concat(loaders)
     }
   }
-  function resolveResouce (name) {
+
+  function resolveResouce(name) {
     return path.resolve(__dirname, '../src/assets/styles/' + name)
   }
-  function generateSassResourceLoader () {
+
+  function generateSassResourceLoader() {
     var loaders = [
       cssLoader,
       // 'postcss-loader',
@@ -76,7 +77,8 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        fallback: 'vue-style-loader'
+        fallback: 'vue-style-loader',
+        publicPath: '../../',
       })
     } else {
       return ['vue-style-loader'].concat(loaders)

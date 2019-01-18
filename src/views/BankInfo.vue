@@ -1,5 +1,5 @@
 <template lang="html">
-    <div class="CardItemDetail">
+    <div class="BankInfo">
         <my-header :title="params.title"></my-header>
         <div class="card-item-box">
           {{params.id}}
@@ -14,7 +14,7 @@ import MyHeader from '@/layout/MyHeader'
 
 export default {
   // 不要忘记了 name 属性
-  name: 'RangeSlider',
+  name: 'BankInfo',
   // 组合其它组件
   extends: {},
   // 组件属性、变量
@@ -41,14 +41,14 @@ export default {
   // 生命周期函数
   beforeCreate () { },
   mounted () {
-    console.log('carditemDetail')
+    console.log('BankInfo')
   }
 
 }
 </script>
 
 <style scoped lang="scss">
-.CardItemDetail {
+.BankInfo {
   /* ... */
 }
 .card-item-box {

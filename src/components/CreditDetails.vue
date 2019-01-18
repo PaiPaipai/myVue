@@ -1,0 +1,354 @@
+<template lang="html">
+    <div class="creditDetails">
+        <div class="creditMsgBox">
+          <div class="creditLogo">
+              <img :src="creditItem.imgUrl" alt="">
+          </div>
+          <div class="creditMsg">
+              <h3>{{creditItem.name}}</h3>
+              <p>{{creditItem.special}}</p>
+              <em><van-tag :color="creditItem.color" :text-color="creditItem.color" plain type="success">{{creditItem.tips}}</van-tag></em>
+          </div>
+        </div>
+        <div class="cardBottomBox">
+           <div class="moneyBox">
+             <div class="moneyLeft">
+               <span>金额</span>
+               <van-button plain round @click="changeMoney"><em>{{moneyItem.current}}</em>|万</van-button>  
+               <p>额度范围：{{moneyItem.min}}-{{moneyItem.max}}万</p>
+             </div>
+             <div class="moneyRight">
+                <span>期限</span>
+                <van-button plain round  @click="changeMonth"><i class="iconfont icon-jian"></i><em>{{monthItem.current}}</em><i class="iconfont icon-jia1"></i>|个月</van-button>
+                 <p>期限范围：{{monthItem.min}}-{{monthItem.max}}个月</p>
+             </div>
+           </div>
+           <hr-item :hritem="{title:'贷款计算器'}"></hr-item>
+           <div class="jbBox">
+             <ul class="tqUl">
+               <li><i class="iconfont icon-guibin dj"></i>贷款： {{moneyItem.current}}万元/{{monthItem.current}}个月</li>
+               <li><i class="iconfont icon-guibin rmb"></i>利息：5000元</li>
+               <li><i class="iconfont icon-guibin qx"></i>费用：0元（0%/月）</li>
+               <li><i class="iconfont icon-guibin gz"></i>一次性 0 元（0%）</li>
+             </ul>
+           </div>
+           <hr-item :hritem="{title:'利率说明'}"></hr-item>
+           <div class="jbBox">
+             <ul class="llUl">
+               <li>
+                  <div>贷款期限（月）</div>
+                  <div>12-60</div>
+               </li>
+               <li>
+                 <div>年利率</div>
+                  <div class="ccf9">基准利率上浮30%-40%</div>
+               </li>
+             </ul>
+           </div>
+           <hr-item :hritem="{title:'利率说明',bottom:true}"></hr-item>
+           <div class="sqBox">
+              <p>等额本息</p>
+           </div>
+           <hr-item :hritem="{title:'申请条件',bottom:true}"></hr-item>
+           <div class="sqBox">
+              <p>客户要求:25-56岁。加购履约险，可以放宽至22岁-60岁单签。</p>
+              <p>抵押物要求：鄂A、鄂E、鄂D、鄂F；车龄8年以内，公里数为15万公里以内;当前无抵押状态，仅限9座及以下蓝牌非营运私家车，不接受公司所有车辆及大巴车、卡车、火车等。</p>
+           </div>
+           <hr-item :hritem="{title:'所需材料',bottom:true}"></hr-item>
+           <div class="clBox sqBox">
+              <p>资料要求：房产证、土地证、购房合同、租赁合同、水电天燃气费单、还建协议、私房证明，网购截图，任选其一，需有姓名有地址；身份证、结婚照或离婚证或户口本、车辆登记证、行驶证、驾照。</p>
+           </div>
+            <hr-item  :class="['cardHr']" :hritem="{title:'办理流程',bottom:true}"></hr-item>
+           <div class="lcBox">
+             <icon-item :iconList="navData"></icon-item>
+           </div>
+        </div>
+        <submit-item @clickSubmit="clickSubmit" :submititem="submititem"></submit-item>
+         <!--  -->
+       <van-popup v-model="show" :class="['myPopup',show?'myPopup-up':'']">
+         <van-picker show-toolbar v-show="moneyItem.click"
+          :title="'选择金额'"
+          :columns="columnsMoney"
+          @change="onChange"
+          @cancel="onCancel"
+          @confirm="onConfirm" />
+          <van-picker show-toolbar  v-show="monthItem.click"
+          :title="'选择期限'"
+          :columns="columnsMonth"
+          @change="onChange"
+          @cancel="onCancel"
+          @confirm="onConfirm" />
+        </van-popup> 
+    </div>
+    
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+import swipe from '@/components/swipe'
+import HrItem from '@/components/HrItem'
+import SubmitItem from '@/components/SubmitItem'
+import IconItem from "@/components/IconItem";
+import { Toast, Button, Popup, Picker } from 'vant'
+Vue.use(Toast).use(Button).use(Popup).use(Picker)
+export default {
+  // 不要忘记了 name 属性
+  name: 'CardDetails',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      logo: process.env.BASE_URL + 'icon/jiaotong-logo.png',
+      params: this.$route.params,
+      submititem: { text: '立即申请' },
+      title: '金额',
+      creditItem: {},
+      moneyItem: {
+        click: false,
+        current: 0,
+        picker: null,
+        min: 5,
+        max: 50,
+      },
+      monthItem: {
+        click: false,
+        current: 0,
+        picker: null,
+        min: 12,
+        max: 36,
+      },
+      show: false,
+      columnsMoney: [],
+      columnsMonth: [],
+      navData: [
+        { name: "申请贷款", classes: "iconfont icon-daikuan1" },
+        { classes: "iconfont icon-changjiantou" },
+        { name: "电话初审", classes: "iconfont icon-zuojikong" },
+        { classes: "iconfont icon-changjiantou" },
+        { name: "门店办理", classes: "iconfont icon-gongsi" },
+        { classes: "iconfont icon-changjiantou" },
+        { name: "审批放款", classes: "iconfont icon-shouqian" }
+      ],
+    }
+  },
+  computed: {},
+  // 使用其它组件
+  components: { MyHeader, swipe, HrItem, SubmitItem, IconItem },
+  // 方法
+  methods: {
+    changeMoney: function () {
+      this.show = true;
+      this.moneyItem.click = true;
+      this.monthItem.click = false;
+
+      if (this.moneyItem.picker) {
+        this.restAll('moneyItem', [this.moneyItem.current - 5])
+      }
+
+    },
+    changeMonth: function () {
+      this.show = true;
+      this.moneyItem.click = false;
+      this.monthItem.click = true;
+      if (this.monthItem.picker) {
+        this.restAll('monthItem', [this.monthItem.current - 12])
+      }
+    },
+    onChange (picker, value, index) {
+      if (this.moneyItem.click) {
+        this.moneyItem.picker = picker;
+      } else if (this.monthItem.click) {
+        this.monthItem.picker = picker;
+      }
+
+    },
+    onConfirm (value, index) {
+      this.show = false;
+      if (this.moneyItem.click) {
+        this.moneyItem.current = value.text;
+      } else if (this.monthItem.click) {
+        this.monthItem.current = value.text;
+      }
+    },
+    onCancel (values, index) {
+      // Toast('取消');
+      this.show = false;
+    },
+    clickSubmit: function () {
+      this.routerTo('CreditApply', this.$route.params)
+    },
+    restAll (type, index) {
+      this[type].picker.setIndexes(index);
+      //设置的时候应该是个数组 
+      // console.log(this.picker.getIndexes())
+    },
+    setMoneySelect: function (min, max, arr) {
+      var array = this[arr] = []
+      var min = min;
+      var max = max;
+      for (let index = min; index <= max; index++) {
+        let el = { text: index }
+        array.push(el)
+      }
+      this[arr] = array;
+    }
+  },
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+    console.log('进入详情')
+    this.creditItem = JSON.parse(this.getLocalStorage('CreditItem'));
+    console.log(this.creditItem)
+  },
+  // 生命周期函数
+  beforeCreate () {
+  },
+  mounted () {
+    console.log('CardDetails')
+    this.moneyItem.current = this.moneyItem.min;
+    this.monthItem.current = this.monthItem.min;
+    this.setMoneySelect(this.moneyItem.min, this.moneyItem.max, 'columnsMoney')
+    this.setMoneySelect(this.monthItem.min, this.monthItem.max, 'columnsMonth')
+  }
+
+}
+</script>
+
+<style scoped lang="scss">
+.creditDetails {
+  /* ... */
+}
+.creditMsgBox {
+  background: $white;
+  padding: 0.2667rem;
+  .creditLogo {
+    float: left;
+    width: 3.1333rem;
+    height: 2rem;
+    text-align: center;
+    line-height: 2rem;
+    font-size: 0;
+  }
+  img {
+    max-width: 2.2rem;
+    max-height: 2rem;
+  }
+  h3 {
+    font-size: $fz32;
+    line-height: 0.7067rem;
+  }
+  p {
+    font-size: $fz28;
+    line-height: 0.6533rem;
+    color: $c666;
+  }
+  em {
+    padding-top: 0.1067rem;
+    display: block;
+  }
+  span {
+    margin-right: 0.1333rem;
+  }
+}
+.cardBottomBox {
+  .moneyBox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: $fz34;
+    padding: 0.2933rem 0.4rem;
+    span {
+      line-height: 1em;
+    }
+    /deep/ button {
+      height: 0.5067rem;
+      line-height: 1em;
+      border: 1px solid $baseColor;
+      font-size: 0.4rem;
+      // vertical-align: middle;
+    }
+    em {
+      color: $c00;
+      margin-right: 0.1333rem;
+    }
+    p {
+      line-height: 0.56rem;
+      font-size: 0.3733rem;
+      color: $c666;
+    }
+  }
+  i {
+    font-size: 0.3733rem;
+    margin-right: 0.2rem;
+  }
+  .tqUl {
+    padding-right: 0.4rem;
+    li {
+      padding-left: 0.72rem;
+      line-height: 0.64rem;
+      font-size: 0.3733rem;
+    }
+    .icon-jifen {
+      color: $cef;
+    }
+    .icon-wangguan {
+      color: $c3c;
+    }
+    .icon-guahao1 {
+      color: $c77;
+    }
+    //  <li><i class="iconfont icon-guibin dj"></i>等级：白金卡</li>
+    //          <li><i class="iconfont icon-guibin rmb"></i>币种：人民币</li>
+    //          <li><i class="iconfont icon-guibin qx"></i>免息期限：最短20天，最长56天</li>
+    //          <li><i class="iconfont icon-guibin gz"></i>积分规则：双倍积分礼遇，生日当月享受三倍积分礼遇。</li>
+    .dj {
+      color: $cf7;
+    }
+    .rmb {
+      color: $c48;
+    }
+    .qx {
+      color: $cf1;
+    }
+    .gz {
+      color: $c29;
+    }
+  }
+  .llUl {
+    border: 1px solid $baseColor;
+    border-right: none;
+    border-bottom: none;
+    overflow: hidden;
+    margin: 0.2667rem 0.4rem;
+    background: $white;
+    display: flex;
+    justify-content: space-between;
+    li {
+      width: 100%;
+      border-bottom: 1px solid $baseColor;
+      border-right: 1px solid $baseColor;
+      line-height: 1.04rem;
+      text-indent: 0.3333rem;
+      font-size: $fz28;
+      div:first-child {
+        border-bottom: 1px solid $baseColor;
+      }
+      .ccf9 {
+        color: $cff9;
+      }
+    }
+  }
+  .sqBox {
+    padding: 0 0.4rem;
+    font-size: 0.3467rem;
+    line-height: 0.6933rem;
+    p {
+      display: block;
+      overflow: hidden;
+    }
+  }
+}
+</style>

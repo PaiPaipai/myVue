@@ -1,28 +1,26 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
-const state = {active: 0, newsList: [], test: [], platform: false} // 声明常量
+const state = {
+  active: 0,
+  newsList: [],
+  test: [],
+  platform: false,
+  userId: 123,
+  detail: false,
+  userPic: process.env.BASE_URL + 'img/user.png',
+  codeImg:process.env.BASE_URL + 'img/erweima.png',
+} // 声明常量
 checkApp()
-function checkApp () {
-  if (navigator.userAgent.match(/android/i)) {
-    // android非微信
-    if (navigator.userAgent.match(/MicroMessenger/i) !== 'MicroMessenger') {
-    } else {
-      // android微信
-      state.platform = true
-    }
-    // 判断为IOS
-  } else if (navigator.userAgent.match(/iPhone|iPod|iPad/i)) {
-    // 微信
-    if (navigator.userAgent.match(/MicroMessenger/i) === 'MicroMessenger') {
-      state.platform = true
 
-      // QQ内置浏览器
-    } else if (navigator.userAgent.indexOf(' QQ') > -1) {
-      state.platform = true
-    } else {
-    }
+function checkApp() {
+  console.log('vuex')
+  var ua = window.navigator.userAgent.toLowerCase();
+  if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+    state.platform = true
   } else {
+    // android微信
+    state.platform = false;
   }
 }
 
@@ -36,7 +34,13 @@ const mutations = {
   },
   setNewsList: function (state, newsList) {
     state.newsList = newsList
-  }
+  },
+  setDetail: function (state, detail) {
+    state.detail = detail
+  },
 } // 定义方法，mutations固定写法
 
-export default new Vuex.Store({state, mutations}) // 向外部跑抛出数据，及方法
+export default new Vuex.Store({
+  state,
+  mutations
+}) // 向外部跑抛出数据，及方法
