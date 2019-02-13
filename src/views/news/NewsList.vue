@@ -1,8 +1,20 @@
 <template lang="html">
     <div class="NewsList">
+      
         <!-- ... -->
-        <my-tabs :tabList="tabList" @child="addNews"></my-tabs>
-
+          <van-pull-refresh :class="['van-pull-refresh-me']" v-model="isLoading" @refresh="onRefresh" :disabled="disabled">
+              <van-list
+                v-model="loading"
+                :finished="finished"
+                finished-text="没有更多了"
+                error-text="请求失败，点击重新加载"
+                :offset = 50
+                :immediate-check=false
+                @check="check"
+                @load="onLoad">
+                  <news-item :itemList="newsList"></news-item>
+              </van-list>
+          </van-pull-refresh>
     </div>
 </template>
 
@@ -11,6 +23,10 @@
 import Vue from 'vue'
 import store from '@/store/index'
 import MyTabs from '@/layout/MyTabs'
+import { Tab, Tabs, List, Cell, Toast } from 'vant'
+import NewsItem from '@/components/NewsItem'
+
+Vue.use(Tab).use(Tabs).use(List).use(Cell).use(Toast)
 
 export default {
   // 不要忘记了 name 属性
@@ -23,55 +39,109 @@ export default {
   // 变量
   data () {
     return {
-      tabList: [
-        { name: '标题0', type: 'list', category: 0, content: [] },
-        { name: '标题1', type: 'list', category: 1, content: [] },
-        { name: '标题2', type: 'list', category: 2, content: [] },
-        { name: '标题3', type: 'list', category: 3, content: [] },
-        { name: '标题4', type: 'list', category: 4, content: [] },
-        { name: '标题5', type: 'list', category: 5, content: [] }
-      ]
+      active: 0,
+      loading: false,
+      finished: false,
+      isLoading: false,
+      disabled: false,
+      pageNo: 1,
+      pageSize: 10,
+      total: 0,
+      count: 0,
+      newsList: []
     }
   },
   computed: {},
   // 使用其它组件
-  components: { MyTabs },
+  components: { MyTabs, NewsItem },
   // 方法
   watch: {},
   methods: {
-    addNews: function (category) {
-      this.getNews(category)
+    onRefresh () {
+      var that = this;
+      setTimeout(() => {
+        that.pageNo = 1;
+        that.pageSize = 10;
+        that.newsList = [];
+        var params = {
+          pageNo: that.pageNo,
+          pageSize: that.pageSize,
+        }
+        that.addNews(params)
+        that.finished = false
+        that.loading = false
+        that.isLoading = false
+      }, 1000)
+    },
+    check: function () {
+      console.log('sdf')
+    },
+    onLoad: function () {
+      // 异步更新数据
+      var that = this
+      setTimeout(() => {
+        // 加载状态结束
+
+        // 数据全部加载完成
+        if (that.newsList.length >= that.total) { // 父元素的数组大于40 就停止
+          that.finished = true
+          that.loading = false;
+        } else {
+          var params = {
+            pageNo: that.pageNo,
+            pageSize: that.pageSize,
+          }
+          // that.loading = false;
+          that.addNews(params)
+
+        }
+
+      }, 1000)
+
+    },
+    addNews: function (params) {
+      var that = this;
+      this.getContent(params, that.getNews)
       // this.$emit("clickSearch",text);
     },
-    getNews: function (category) {
-      var obj = {
-        0: [{ title: '新闻标题0', id: 4 }, { title: '新闻标题0', id: 5 }, { title: '新闻标题0', id: 6 }, { title: '新闻标题0', id: 7 }],
-        1: [{ title: '新闻标题1', id: 4 }, { title: '新闻标题1', id: 5 }, { title: '新闻标题1', id: 6 }, { title: '新闻标题1', id: 7 }],
-        2: [{ title: '新闻标题2', id: 4 }, { title: '新闻标题2', id: 5 }, { title: '新闻标题2', id: 6 }, { title: '新闻标题2', id: 7 }],
-        3: [{ title: '新闻标题3', id: 4 }, { title: '新闻标题3', id: 5 }, { title: '新闻标题3', id: 6 }, { title: '新闻标题3', id: 7 }],
-        4: [{ title: '新闻标题4', id: 4 }, { title: '新闻标题4', id: 5 }, { title: '新闻标题4', id: 6 }, { title: '新闻标题4', id: 7 }],
-        5: [{ title: '新闻标题5', id: 4 }, { title: '新闻标题5', id: 5 }, { title: '新闻标题5', id: 6 }, { title: '新闻标题5', id: 7 }]
+    getNews: function (datas) {
+      var that = this;
+      that.total = datas.totalCount
+      that.pageNo++;
+      var array = [];
+      var resultList = datas.resultList;
+      for (let index = 0; index < resultList.length; index++) {
+        var element = resultList[index]
+        array.push(element)
       }
-      var array = this.tabList
-      for (let index = 0; index < array.length; index++) {
-        var element = array[index]
-        if (category === element.category) {
-          array[index].content = element.content.concat(obj[category]) // 一个数组添加另外一个数组
-          store.commit('setNewsList', array)
-          // console.log(this.$store.state.newsList[category].content)
-          return
-        }
+      that.newsList = that.newsList.concat(array)
+      this.loading = false;
+    },
+    handleScroll () {
+      var scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+      var clientHeight = document.documentElement.clientHeight || document.body.clientHeight;
+      var scrollHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+      if (scrollTop > 10) {
+        this.disabled = true;
+      } else if (scrollTop < 10) {
+        this.disabled = false;
       }
-    }
+
+    },
   },
   // 生命周期函数
   beforeCreate () { },
-  created () { },
+  created () {
+    var that = this;
+    that.addNews({ pageNo: this.pageNo, pageSize: this.pageSize })
+  },
   mounted () {
     console.log('12313')
   },
   activated () {
-    store.commit('setNewsList', this.tabList)
+
+
+    window.addEventListener('scroll', this.handleScroll)
   }// 每次进路由会调用这个方法
 
 }
@@ -80,6 +150,9 @@ export default {
 <style  scoped lang="scss">
 .NewsList {
   /* ... */
-  // height: 100%;
+  height: 100%;
+}
+.van-pull-refresh-me {
+  height: 100%;
 }
 </style>

@@ -68,6 +68,10 @@ $cff6:#FF6666;
 $c39:#3984cd;
 $cf1f:#f1f5ff;
 $c4f:#4f92ed;
+$cff8:#ff8b03;
+
+$cffd:#ffd32a;
+
 
 .mb20 {
   margin-bottom: 0.2667rem;
@@ -113,6 +117,7 @@ $brd:0.1333rem;
 
   span {
     color: $c39;
+    font-size: 0.32rem;
   }
 
   i {
@@ -167,6 +172,17 @@ $brd:0.1333rem;
 
 .bd-radius15 {
   box-shadow: 0 0 0.2rem rgba(0, 0, 0, .1);
+}
+
+.noData {
+  text-align: center;
+  font-size: $fz30;
+  padding: 0.4rem 0;
+
+}
+
+.swipe .van-swipe-item {
+  background: none !important;
 }
 
 //超过隐藏

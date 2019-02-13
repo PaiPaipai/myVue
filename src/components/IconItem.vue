@@ -12,7 +12,8 @@
 // eslint-disable-next-line no-unused-vars
 import Vue from 'vue'
 import store from '@/store/index'
-
+import { Toast } from 'vant'
+Vue.use(Toast)
 export default {
   // 不要忘记了 name 属性
   name: 'IconItem',
@@ -30,12 +31,18 @@ export default {
   computed: {
     userId: {
       get: function () {
-        return this.$store.state.userId
+        return store.state.userId
       },
       set: function () {
-
       }
-    }
+    },
+    userData: {
+      get: function () {
+
+      },
+      set: function () {
+      }
+    },
   },
   // 使用其它组件
   components: {},
@@ -44,10 +51,34 @@ export default {
   methods: {
     // this.$emit("clickSearch",text);
     goToPath: function (item, index) {
+      var userData = JSON.parse(this.getLocalStorage('userInfo'))
       if (item.path) {
+        if (store.state.active == 0 && !userData.mobile) {//有链接的 调用 clicktop
+          this.$emit('clickTop', item)
+          return
+        }
+        if (userData.certification == 2) {
+          if (item.path == 'UserMyCard' || item.path == 'UserMyCard' || item.path == 'CollectMoneyDetail' || item.path == 'UserCardList') {
+            Toast('您暂未实名，请先实名!')
+            return
+          }
+        } else if (userData.certification == 1 && item.path == 'UserRealName') {
+          Toast('您已实名!')
+          return
+        }
+        if (item.path == 'UserPassword' && !userData.payPass) {
+          Toast('您还未创建支付密码，请去收钱界面创建!')
+          return
+        }
         this.routerTo(item.path, { userId: this.$store.state.userId })
       } else {
-        this.$emit('clickItem', item, index)
+        if (item.paths) {
+          this.$emit('clickItem', item, index)
+        } else {
+          Toast('敬请期待!')
+        }
+
+        return
       }
     },
     clickItem: function () {
@@ -56,8 +87,12 @@ export default {
   },
   // 生命周期函数
   beforeCreate () { },
-  created () { },
-  mounted () { },
+  created () {
+    console.log('iconitem')
+  },
+  mounted () {
+
+  },
   activated () { }// 每次进路由会调用这个方法
 
 }

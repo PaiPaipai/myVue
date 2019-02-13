@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="UserReal">
-      <my-header :title="'实名注册'"></my-header>
+      <my-header :title="'申请人信息'"></my-header>
       <div class="realTop">
           <hr-item :hritem="{title:'填写申请人信息'}"></hr-item>
           <p>以下信息将直接关系您在平台的所有操作，请如实填写您的相关信息，一旦提交，不予修改</p>
@@ -40,6 +40,9 @@
                                   
         </p>
       </div>
+      <popup-success  :successText="successText" :showPopup="shwoSuccess"  @closeItem="closeItem"  @clickButton="clickButton"></popup-success>
+      <iframe-Item ref="iframe" :iframeShow="iframeShow" @clickClose="clickClose" :iframeSrc="iframeSrc"></iframe-Item>
+
     </div>
 </template>
 
@@ -50,7 +53,10 @@ import MyHeader from '@/layout/MyHeader'
 import InputItem from '@/components/InputItem'
 import ButtonItem from '@/components/ButtonItem'
 import HrItem from '@/components/HrItem'
+import { config } from '../../assets/js/config' // 引入配置的公共接口url
 import store from "@/store/index";
+import PopupSuccess from '@/components/PopupSuccess'
+import IframeItem from '@/components/IframeItem'
 import { Field, CellGroup, Icon, Toast } from 'vant';
 import { setTimeout } from 'timers';
 Vue.use(Field).use(CellGroup).use(Icon).use(Toast)
@@ -64,35 +70,51 @@ export default {
   // 变量
   data () {
     return {
-      realData: [
-        { name: '姓名', model: '', type: 'name', placeholder: '请输入姓名', length: '10', error: true, errorMsg: '请输入正确的姓名', reg: /[\u4e00-\u9fa5]/ },
-        { name: '身份证', model: '', type: 'ident', placeholder: '请输入身份证', length: '18', error: true, errorMsg: '请输入正确的身份证号', reg: /(^\d{15}$)|(^\d{17}([0-9]|X)$)/ },
-        { name: '手机号', model: '', type: 'phone', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: true, errorMsg: '请输入正确的手机号码', reg: /^1[0-9]{10}$/ },
-        // { name: '分行', model: '', type: 'fh', placeholder: '', icon: 'arrow', path: '123', error: false, readonly: true },
-        // { name: '银行账户', model: '', type: 'yhkh', placeholder: '请输入银行卡号', length: '23' },
-        // { name: '短信验证码', model: '', type: 'yzm', placeholder: '请输入短信验证码', error: true, length: '6' },
-      ],
+      realData: [],
       buttonItem: { txt: '提交资料', classes: 'buttonItem' },
+      iframeShow: false,
+      iframeSrc: '',
       agree: false,
+      bankItem: {},
+      menuText: '为全面落实《信用卡暂行管理办法》，在本平台申请信用卡必须实名注册，且不得包装使用虚假信息。',
+      shwoSuccess: false,
+      successText: '',
+
     }
   },
   computed: {
     userId: {
       get: function () {
-        return store.state.userId
+        return this.getLocalStorage('userId')
       },
       set: function () {
 
       }
-    }
+    },
+    userData: {
+      get: function () {
+        return JSON.parse(this.getLocalStorage('userInfo'));
+      },
+      set: function () {
+
+      }
+    },
   },
   // 使用其它组件
-  components: { MyHeader, InputItem, ButtonItem, HrItem },
+  components: { MyHeader, InputItem, ButtonItem, HrItem, PopupSuccess, IframeItem },
   // 方法
   methods: {
+    clickClose () {
+      this.iframeShow = false;
+      this.iframeSrc = '';
+    },
+    closeItem () {
+      this.shwoSuccess = false;
+      this.routerTo('index')
+    },
     keyUpItem: function (item) {
       if (item.reg) {
-        if (!item.reg.test(item.model) && item.model != "") {//验证正则
+        if (!item.reg.test(item.model)) {//验证正则
           item.error = true
         } else {
           item.error = false
@@ -129,25 +151,63 @@ export default {
           Toast('请填写正确的' + element.name + '!')
           return false
         } else {
-          params[element.type] = element.model;
+          params[element.tag] = element.model;
         }
       }
       if (!this.agree) {
         Toast('请勾选用户服务协议！')
+        return
       }
-      var that = this;
-      if (flag) {
-        Toast.success('填写正确！')
+      if (!this.bankItem) {
+        Toast('您还选择银行，请重新选择！')
         setTimeout(function () {
           that.$router.back(-1)
         }, 500)
+        return
+      }
+      var that = this;
+      if (flag) {
+        params.channelNo = that.bankItem.code
+        params = this.clearParams(params);
+        console.log(params)
+        this.applyCreditCard(params, that.realCallBack);
       }
       console.log(params)
+    },
+    realCallBack (params) {
+      var that = this;
+      if (this.getLocalStorage('gd')) {
+        this.successText = '尊敬的' + params.name + '用户，您在光大银行的白金信用卡的办理申请已成功提交，请注意保持电话畅通接听银行审核电话，耐心等待银行审核通过。查询详情请联系汉融邦客服。'
+        this.shwoSuccess = true;
+      } else {
+        // this.iframeShow = true;
+        // this.iframeSrc = this.bankItem.href;
+        setTimeout(function () {
+          window.location.href = that.bankItem.href
+        }, 1000)
+      }
+
     }
+  },
+  deactivated: function () {
+    console.log('销毁')
+    this.removeLocalStorage('gd')
+    this.agree = false;
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     console.log('进入实名认证')
-    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+    this.iframeShow = false;
+    this.iframeSrc = '';
+    this.bankItem = JSON.parse(this.getLocalStorage('bankItem'));
+    this.realData = [
+      { name: '姓名', model: this.userData.certification == 1 ? this.userData.name : '', tag: 'name', type: 'name', placeholder: '请输入姓名', length: '10', error: false, errorMsg: '请输入正确的姓名' },
+      { name: '身份证', model: this.userData.certification == 1 ? this.userData.identityNo : '', tag: 'identityNo', type: 'ident', placeholder: '请输入身份证', length: '18', error: false, errorMsg: '请输入正确的身份证号', reg: config.reg.ident },
+      { name: '手机号', model: this.userData.mobile ? this.userData.mobile : '', tag: 'mobile', type: 'phone', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: false, errorMsg: '请输入正确的手机号码', reg: config.reg.phone },
+      // { name: '分行', model: '', type: 'fh', placeholder: '', icon: 'arrow', path: '123', error: false, readonly: true },
+      // { name: '银行账户', model: '', type: 'yhkh', placeholder: '请输入银行卡号', length: '23' },
+      // { name: '短信验证码', model: '', type: 'yzm', placeholder: '请输入短信验证码', error: true, length: '6' },
+    ]
+
   },
   // 生命周期函数
   beforeCreate () { },
@@ -172,7 +232,8 @@ export default {
 }
 .realTop {
   padding: 0 0.7733rem;
-  background: linear-gradient(top, $ce8, $cf0);
+  background: -webkit-linear-gradient(to bottom, $ce8, $cf0);
+  background: linear-gradient(to bottom, $ce8, $cf0);
   font-size: $fz28;
   p {
     line-height: 0.64rem;

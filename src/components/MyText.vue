@@ -3,12 +3,12 @@
         <!-- ... -->
         <h3>让金融更有温度，让分享创造价值</h3>
         <p>全国统一客服热线：027-87307688</p>
-        <p>商务合作：027-87307688</p>
-        <p>Copyright @2017-2018 Zonban.kAll Rights Reserved</p>
+        <p>商务合作邮箱：hanrongbang@126.com</p>
+        <!-- <p>Copyright @2017-2018 Zonban.kAll Rights Reserved</p> -->
         <p>
             <img src="../../static/img/erweima.png" alt="">
         </p>
-        <p>长按识别二维码下载APP：汉融邦</p>
+        <p>长按识别二维码关注 汉融邦 公众号</p>
     </div>
 </template>
 
@@ -61,6 +61,10 @@ export default {
   p {
     font-size: $fz26;
     line-height: 0.64rem;
+  }
+  img {
+    width: 3.3333rem;
+    height: 3.3333rem;
   }
 }
 </style>

@@ -73,14 +73,15 @@ export default {
     return {
       disabled: false,
       navData: [
-        [{ name: "上班族", classes: "iconfont icon-shangbanzu", select: false, id: 1, },
-        { name: "个体户", classes: "iconfont icon-getihu", select: false, id: 2, },
-        { name: "企业主", classes: "iconfont icon-qiyezhu", select: false, id: 3, },
-        { name: "自由职业者", classes: "iconfont icon-ziyouzhiyezhe", select: false, id: 4, }],
-        [{ name: "小额贷款", classes: "iconfont icon-xiaoedaikuan", select: false, id: 5, },
-        { name: "信用贷款", classes: "iconfont icon-xinyongdaikuan", select: false, id: 6, },
-        { name: "车抵贷", classes: "iconfont icon-chedi", select: false, id: 7, },
-        { name: "房抵贷", classes: "iconfont icon-fangdi", select: false, id: 8, }]
+        [{ name: "上班族", classes: "iconfont icon-shangbanzu", paths: '1', select: false, id: 1, },
+        { name: "个体户", classes: "iconfont icon-getihu", paths: '1', select: false, id: 2, },
+        { name: "企业主", classes: "iconfont icon-qiyezhu", paths: '1', select: false, id: 3, },
+        { name: "自由职业者", classes: "iconfont icon-ziyouzhiyezhe", paths: '1', select: false, id: 4, }],
+
+        [{ name: "小额贷款", classes: "iconfont icon-xiaoedaikuan", paths: '1', select: false, id: 5, },//2
+        { name: "信用贷款", classes: "iconfont icon-xinyongdaikuan", paths: '1', select: false, id: 6, }, //0
+        { name: "车抵贷", classes: "iconfont icon-chedi", paths: '1', select: false, id: 7, },//1
+        { name: "房抵贷", classes: "iconfont icon-fangdi", paths: '1', select: false, id: 8, }]//3
       ],
       color: {
         chedai: "#54BCA9"
@@ -90,20 +91,64 @@ export default {
       ],
       selectTotal: [],
       creditTotal: [
-        { name: "平安车抵贷", imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png', minMoney: 5, maxMoney: 30, tips: '车抵贷', color: "#54BCA9", special: '不装GPS、不押车、不压钥匙', total: 123, classes: "", path: 'CreditItemDetail', type: 7, id: 1, },
-        { name: "拍拍贷", imgUrl: process.env.BASE_URL + 'icon/credit/dk-paipaidai.png ', minMoney: 6, maxMoney: 30, tips: '小额贷款', color: "#EE594E", special: '可享8次免费接机', total: 456, classes: "", path: 'CreditItemDetail', type: 5, id: 2, },
-        { name: "宜人贷", imgUrl: process.env.BASE_URL + 'icon/credit/dk-yirendai.png', minMoney: 7, maxMoney: 30, tips: '小额贷款', color: "#EE594E", special: '可享8次免费接机1', total: 789, classes: "", path: 'CreditItemDetail', type: 5, id: 3, },
-        { name: "飞贷", imgUrl: process.env.BASE_URL + 'icon/credit/dk-feidai.png', minMoney: 8, maxMoney: 30, tips: '小额贷款', color: "#EE594E", special: '一周放款', total: 111, classes: "", path: 'CreditItemDetail', type: 5, id: 4 },
-        { name: "平安新一贷", imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png', minMoney: 9, maxMoney: 30, tips: '信用贷款', color: "#48A5ED", special: '可享8次免费接机3', total: 222, classes: "", path: 'CreditItemDetail', type: 6, id: 5, },
-        { name: "兴业金融", imgUrl: process.env.BASE_URL + 'icon/credit/dk-xingyexiaofei.png', minMoney: 0, maxMoney: 30, tips: '信用贷款', color: "#48A5ED", special: '可享8次免费接机4', total: 333, classes: "", path: 'CreditItemDetail', type: 6, id: 6, },
-        { name: "宅速通", imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png', minMoney: 5, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 123, classes: "", path: 'CreditItemDetail', type: 8, id: 7, },
-        { name: "平安银行房抵押", imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png ', minMoney: 6, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 456, classes: "", path: 'CreditItemDetail', type: 8, id: 8, },
-        { name: "华夏银行房抵押", imgUrl: process.env.BASE_URL + 'icon/credit/dk-huaxia.png', minMoney: 7, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 789, classes: "", path: 'CreditItemDetail', type: 8, id: 9, },
-        { name: "光大银行房抵押", imgUrl: process.env.BASE_URL + 'icon/credit/dk-guangda.png', minMoney: 8, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 111, classes: "", path: 'CreditItemDetail', type: 8, id: 10, },
-        { name: "苏宁银行", imgUrl: process.env.BASE_URL + 'icon/credit/dk-suning.png', minMoney: 9, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 222, classes: "", path: 'CreditItemDetail', type: 8, id: 11, },
-        { name: "邦信资金", imgUrl: process.env.BASE_URL + 'icon/credit/dk-bangxin.png', minMoney: 0, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 333, classes: "", path: 'CreditItemDetail', type: 8, id: 12, },
-        { name: "卓尔资金", imgUrl: process.env.BASE_URL + 'icon/credit/dk-zhuoer.png', minMoney: 9, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 222, classes: "", path: 'CreditItemDetail', type: 8, id: 13, },
-        { name: "信托资金", imgUrl: process.env.BASE_URL + 'icon/credit/dk-xintuo.png', minMoney: 0, maxMoney: 30, tips: '房抵贷', color: "#F7AC53", special: '一周放款', total: 333, classes: "", path: 'CreditItemDetail', type: 8, id: 14, },
+        {
+          name: "平安银行车抵贷", pinyin: 'pacdd', imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png', minMoney: 5, maxMoney: 50, minrate: 0.55, maxrate: 0.83, minmonth: 36, maxmonth: 36, monthType: '月', fs: '等额本息', tips: '车抵贷', color: "#54BCA9", special: '不装GPS、不押车、不压钥匙', total: 123, classes: "", path: 'CreditItemDetail', type: 7, id: 1,
+          tj: '<p>(1)客户要求:25-56岁。加购履约险，可以放宽至22岁-60岁单签。</p><p>(2)抵押物要求:鄂A、鄂E、鄂D、鄂F；车龄8年以内，公里数为15万公里以内；当前无抵押状态，仅限9座及以下蓝牌非营运私家车，不接受公司所有车辆及大巴车、卡车、货车等。</p>',
+          cl: '身份证，婚姻证明，居住证明，财力证明（寿险保单，流水等），行驶证，驾照，车辆登记证'
+        },
+        { name: "拍拍贷", pinyin: 'ppd', href: '', imgUrl: process.env.BASE_URL + 'icon/credit/dk-paipaidai.png ', minMoney: 1, maxMoney: 20, minrate: 0.83, maxrate: 0.83, minmonth: 1, maxmonth: 20, monthType: '月', fs: '等额本息', tips: '小额贷款', color: "#EE594E", special: '一分钟申请可快至1小时到账', total: 456, classes: "", path: 'CreditItemDetail', type: 5, id: 2, },
+        { name: "宜人贷", pinyin: 'yrd', imgUrl: process.env.BASE_URL + 'icon/credit/dk-yirendai.png', minMoney: 2, maxMoney: 20, minrate: 0.78, maxrate: 0.78, minmonth: 12, maxmonth: 36, monthType: '月', fs: '等额本息', tips: '小额贷款', color: "#EE594E", special: '可快至2小时到账', total: 789, classes: "", path: 'CreditItemDetail', type: 5, id: 3, },
+        { name: "飞贷", pinyin: 'fd', href: 'http://t.cn/EyyVNCO', imgUrl: process.env.BASE_URL + 'icon/credit/dk-feidai.png', minMoney: 3, maxMoney: 20, minrate: 0.88, maxrate: 0.88, minmonth: 1, maxmonth: 24, monthType: '月', fs: '随借随还', tips: '小额贷款', color: "#EE594E", special: '最快放宽3分钟', total: 111, classes: "", path: 'CreditItemDetail', type: 5, id: 4 },
+        {
+          name: "平安银行新一贷", pinyin: 'paxyd', imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png', minMoney: 5, maxMoney: 50, minrate: 0.6, maxrate: 0.85, minmonth: 12, maxmonth: 36, monthType: '月', fs: '等额本息', tips: '信用贷款', color: "#48A5ED", special: '纯信用贷款，最快一天放款', total: 222, classes: "", path: 'CreditItemDetail', type: 6, id: 5,
+          tj: '<p>【类型1：房贷放大新一贷】</p><p>*按揭满半年可贷月供*20倍（武汉户口）</p><p>*按揭满一年或结清一年内可贷月供*45倍</p><p>*按揭满三年可贷月供*70倍，满5年放大100倍</p><p>【类型2：公积金新一贷】</p><p>*个人缴存基数40倍</p><p>*基数8000以上放大60倍</p><p>要求：武汉公积金缴费满2年，缴交基数4000元</p><p>【类型3：寿险保单放大新一贷】</p><p>*满2年缴费满3次，可贷年保费20倍</p><p>*满3年缴费满4次，可贷年保费30倍</p><p>*满5年缴费满6次，可贷年保费40倍</p><p>可3张保单叠加(平安、中国人寿、新华保险、泰康、太平洋、人民保险PICC、友邦、太平、生命、阳光)</p>   <p> 新增6家寿险公司：【中美大都会人寿、中英人寿、民生人寿、天安人寿、工银安盛人寿、中德安联人寿，华夏，中邮】</p>',
+          cl: '身份证，保单，或按揭合同'
+        },
+        {
+          name: "兴业消费金融", pinyin: 'xyxf', imgUrl: process.env.BASE_URL + 'icon/credit/dk-xingyexiaofei.png', minMoney: 5, maxMoney: 40, minrate: 0.9, maxrate: 0.9, minmonth: 12, maxmonth: 24, monthType: '月', fs: '等额本息', tips: '信用贷款', color: "#48A5ED", special: '有公积金、社保、房、车、保单、经营流水可申请', total: 333, classes: "", path: 'CreditItemDetail', type: 6, id: 6,
+          tj: '<p> *有公积金，社保或打卡工资可以贷</p><p> *有按揭房，抵押房，全款房可以贷</p><p> *有按揭车可以贷</p><p>*有保单可以贷</p><p>*有经营流水可以贷</p><p>只要满足以上任意条件即可</p>'
+          , cl: '身份证，保单，或按揭合同'
+        },
+        {
+          name: "平安银行宅速通", pinyin: 'zst', imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png', minMoney: 50, maxMoney: 1000, minrate: 0.5, maxrate: 0.7, minmonth: 60, maxmonth: 60, monthType: '月', fs: '先本后息，等额本金', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 123, classes: "", path: 'CreditItemDetail', type: 8, id: 7,
+          tj: '<p> （1）客户要求:借款人的年龄25-65周岁；借款人（抵押人）年龄+贷款年限≤70年；单套建筑面积≥25㎡；房龄不超过28年；仅接受本人及直系亲属（子女需满18岁）名下房产。</p><p> （2）抵押物要求：房产性质为住宅（不含独栋别墅）</p>'
+          , cl: '身份证、婚姻状况证明、抵押物产权证、营业执照、近6月银行流水、贷款用途材料。'
+        },
+        {
+          name: "平安银行房抵押", pinyin: 'pafdy', imgUrl: process.env.BASE_URL + 'icon/credit/dk-pinganyinhang.png ', minMoney: 50, maxMoney: 1000, minrate: 0.3, maxrate: 0.3, minmonth: 120, maxmonth: 420, monthType: '月', fs: '等额本息，提前还款没有违约金', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 456, classes: "", path: 'CreditItemDetail', type: 8, id: 8,
+          tj: '<p>（1）客户要求：年龄23-60岁。两年内逾期次数连续3个月累计6次以内。无重大逾期，无当前逾期，无官司纠纷。</p><p>（2）抵押物要求：4环以内,包括盘空城、江夏区域的商品住宅，房龄25年以内；上班族（最长10年 最高100万）无需经营；经营户要有营业执照和经营场地。</p>'
+          , cl: '夫妻双方身份证、户口本 结婚证、房产证 详版征信报告、半年流水、收入证明、房屋产调、打卡工资证明或经营资料证明。'
+        },
+        {
+          name: "华夏银行房抵押", pinyin: 'hxfdy', imgUrl: process.env.BASE_URL + 'icon/credit/dk-huaxia.png', minMoney: 30, maxMoney: 3000, minrate: 7.5, maxrate: 7.5, minmonth: 12, maxmonth: 12, monthType: '月', fs: '每月付息，到期还本', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 789, classes: "", path: 'CreditItemDetail', type: 8, id: 9,
+          tj: '<p>（1）客户要求：年龄23—65岁。征信两年内逾期次数连4累10以内。无重大逾期，无官司纠纷。</p><p>（2）抵押物要求：全武汉除新洲、汉南、蔡甸以外的商品住宅（30年以内）、商铺、写字楼可入。经营户必须要有真实经营和营业执照。</p>'
+          , cl: '夫妻双方身份证、户口本、结婚证、房产证、详版征信报告、半年流水、收入证明、房屋产调、 打卡工资证明或经营资料证明。'
+        },
+        {
+          name: "光大银行房抵押", pinyin: 'gdfdy', imgUrl: process.env.BASE_URL + 'icon/credit/dk-guangda.png', minMoney: 30, maxMoney: 1000, minrate: 7, maxrate: 7, minmonth: 12, maxmonth: 240, monthType: '月', fs: '等额本息，等额本金', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 111, classes: "", path: 'CreditItemDetail', type: 8, id: 10,
+          tj: '<p>（1）客户要求：年龄23—65岁，两年内逾期次数连3累10次以内。无重大逾期，无官司纠纷</p><p>（2）抵押物要求：全武汉除新洲汉南以外的商品住宅（30年以内）、商铺、写字楼可做（5成）、经营户必须要求有经营地址和营业执照。</p>'
+          , cl: '夫妻双方身份证、户口本、结婚证、房产证、详版征信报告、半年流水、收入'
+        },
+        {
+          name: "苏宁银行房抵押", pinyin: 'sn', imgUrl: process.env.BASE_URL + 'icon/credit/dk-suning.png', minMoney: 30, maxMoney: 500, minrate: 6.5, maxrate: 6.5, minmonth: 12, maxmonth: 60, monthType: '月', fs: '等额本息', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 222, classes: "", path: 'CreditItemDetail', type: 8, id: 11,
+          tj: '<p>（1）客户要求：年龄18—60岁，无需经营，无需流水，可配资到8成。征信两年内逾期次数连3累10次以内，当前逾期需要结清。</p><p>（2）抵押物要求：土地性质为出让，范围:除新洲，汉南，长江新城外的全武汉所有出让住宅，70年产权房龄<30年，产权清晰无纠纷(商品房，福利房，动迁房，房改房，经济适用房，限价房等可交易房产)</p>'
+          , cl: '夫妻双方身份证、户口本、结婚证、房产证、详版征信报告、收入证明、房屋产调、 打卡工资证明。'
+        },
+        {
+          name: "邦信资金", pinyin: 'bx', imgUrl: process.env.BASE_URL + 'icon/credit/dk-bangxin.png', minMoney: 30, maxMoney: 500, minrate: 7, maxrate: 7, minmonth: 12, maxmonth: 60, monthType: '月', fs: '等额本息', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 333, classes: "", path: 'CreditItemDetail', type: 8, id: 12,
+          tj: '<p>（1）客户要求：年龄18—60岁，无需经营，无需流水。征信两年内逾期次数连3累10次以内，当前逾期需要结清。</p><p>（2）抵押物要求：土地性质为出让，范围:除新洲，汉南，长江新城外的全武汉所有出让住宅，70年产权房龄<30年，产权清晰无纠纷(商品房，福利房，动迁房，房改房，经济适用房，限价房等可交易房产)。</p>'
+          , cl: '夫妻双方身份证、户口本、结婚证、房产证、详版征信报告、收入证明、房屋产调、 打卡工资证明。'
+        },
+        {
+          name: "卓尔资金", pinyin: 'ze', imgUrl: process.env.BASE_URL + 'icon/credit/dk-zhuoer.png', minMoney: 30, maxMoney: 1000, minrate: 1.1, maxrate: 1.1, minmonth: 12, maxmonth: 12, monthType: '月', fs: '先息后本', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 222, classes: "", path: 'CreditItemDetail', type: 8, id: 13,
+          tj: '<p>（1）客户要求：年龄18—65岁，征信一年以内连4累8。</p><p>（2）抵押物要求：全武汉商品住宅，除新洲、汉南区域都可以贷款，房龄30年以内</p>'
+          , cl: '身份证、婚姻状况证明、抵押物产权证、营业执照、近6月银行流水、贷款用途材料。'
+        },
+        {
+          name: "信托资金", pinyin: 'xt', imgUrl: process.env.BASE_URL + 'icon/credit/dk-xintuo.png', minMoney: 50, maxMoney: 1000, minrate: 1.1, maxrate: 1.1, minmonth: 12, maxmonth: 12, monthType: '月', fs: '先息后本', tips: '房抵贷', color: "#F7AC53", special: '一周可放款', total: 333, classes: "", path: 'CreditItemDetail', type: 8, id: 14,
+          tj: '<p>（1）客户要求：年龄22—65岁，不要经营，不要流水。征信单笔连3累10以内，当前逾期提供结清证明，无诉讼无法制纠纷。</p><p>（2）抵押物要求：三环内以及周边主城区住宅和别墅，房龄小于30年。</p>'
+          , cl: '夫妻双方身份证、户口本、结婚证、房产证、详版征信报告、收入证明、房屋产调、 打卡工资证明。'
+        },
 
       ],
       selected: {

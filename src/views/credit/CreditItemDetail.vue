@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="CreditItemDetail">
-        <my-header :title="params.title"></my-header>
+        <my-header :title="CreditItem.name"></my-header>
         <div class="swipeBox">
           <swipe :imgList="imgList"
               :swipeClass="'topSwiper'"></swipe>
@@ -27,13 +27,19 @@ export default {
   // 变量
   data () {
     return {
-      params: this.$route.params,
       imgList: [
         { imgUrl: process.env.BASE_URL + 'img/1.jpg' },
       ],
     }
   },
-  computed: {},
+  computed: {
+    CreditItem: {
+      get: function () {
+        return JSON.parse(this.getLocalStorage('CreditItem'))
+      },
+      set: function () { }
+    }
+  },
   // 使用其它组件
   components: { MyHeader, swipe, CreditDetails },
   // 方法
@@ -44,12 +50,14 @@ export default {
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     // console.log('进入详情')
-    Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+
+
   },
   // 生命周期函数
   beforeCreate () { },
   mounted () {
     console.log('carditemDetail')
+    var that = this;
   }
 
 }

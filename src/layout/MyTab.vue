@@ -4,7 +4,7 @@
         <van-tabbar :class="['myTabbar']" v-model="active" :z-index=999>
             <van-tabbar-item  @click="goHome()"><i class="iconfont icon-shouye"></i> 首页</van-tabbar-item>
             <van-tabbar-item   @click="goNews()" ><i class="iconfont icon-zixun"></i>资讯</van-tabbar-item>
-            <van-tabbar-item   @click="" ><i class="iconfont icon-shangcheng"></i>商城</van-tabbar-item>
+            <van-tabbar-item   @click="goMall()" ><i class="iconfont icon-shangcheng"></i>商城</van-tabbar-item>
             <van-tabbar-item  @click="goUser()" ><i class="iconfont icon-yonghuzhongxin"></i>用户中心</van-tabbar-item>
         </van-tabbar>
         <!-- <test-tab class="test"></test-tab> -->
@@ -20,7 +20,7 @@ import TestTab from '@/layout/TestTab'
 Vue.use(Tabbar).use(TabbarItem)
 export default {
   // 不要忘记了 name 属性
-  name: 'RangeSlider',
+  name: 'MyTab',
   // 组合其它组件
   extends: {},
   // 组件属性、变量
@@ -59,13 +59,16 @@ export default {
       this.routerTo('index')
     },
     goCard: function () {
-      this.routerTo('CardList', { userId: this.userId })
+      this.routerTo('CardList')
     },
     goNews: function () {
-      this.routerTo('NewsList', { userId: this.userId })
+      this.routerTo('NewsList')
+    },
+    goMall: function () {
+      this.routerTo('Mall')
     },
     goUser: function () {
-      this.routerTo('UserCenter', { userId: this.userId })
+      this.routerTo('UserCenter')
     },
     setActive: function (path) {
       if (path === 'index' || path === '/') {
@@ -79,24 +82,14 @@ export default {
       }
       else if (path.indexOf('UserCenter') == 0) {
         store.commit('setActive', 3)
+      } else if (path.indexOf('Mall') == 0) {
+        store.commit('setActive', 2)
       } else {
         store.commit('setActive', -1)
       }
       // console.log(path.indexOf('User'))
       // console.log(store.state.active)
     },
-    getHomeMsg: function () {
-      this._ajax({ // 在api.js后面合并的axios属性名_ajax一致,名字随意
-        url: this._api, // 基地址加上后面不同的url地址
-        // method: 'GET',
-        // timeout: 6000,
-        params: {}
-      }).then((res) => {
-        console.log(res)
-      }).catch((err) => {
-        console.log(err)
-      })
-    }
   },
   // 生命周期函数
   beforeCreate () {
@@ -108,7 +101,7 @@ export default {
     store.commit('setAny', test)
   },
   mounted () {
-    // debugger
+    //  // debugger
     var name = this.$route.name
     this.setActive(name)
   },
@@ -118,7 +111,6 @@ export default {
     $route (to, from) {
       this.setActive(to.name)
       if (to.name === 'index') {
-        // this.getHomeMsg()
       } else if (to.name === 'CardItemDetail') {
 
       }

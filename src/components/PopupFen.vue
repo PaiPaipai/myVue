@@ -4,8 +4,8 @@
          <search-item :searchData="searchData" @clickSearch="clickSearch"></search-item>
          <div class="fenUlBox">
            <ul class="fenUl">
-              <li @click="clickFen(item)" v-for="(item, index) in fenList" :key="index"><span>{{item.name}}</span> <i class="iconfont icon-jiantou"></i></li>
-           </ul>  
+              <li @click="clickFen(item)" v-for="(item, index) in fenList" :key="index"><span>{{item.subBankName}}</span> <i class="iconfont icon-jiantou"></i></li>
+           </ul>
          </div>
           <button class="closeButton" @click="clickButton">关闭</button>
           
@@ -15,10 +15,12 @@
 <script type="text/javascript">
 // eslint-disable-next-line no-unused-vars
 import Vue from 'vue'
+import store from "@/store/index";
 import SearchItem from "@/components/SearchItem"
 export default {
   // 不要忘记了 name 属性
   name: 'PopupFen',
+  store,
   // 组合其它组件
   extends: {},
   // 组件属性、变量
@@ -26,33 +28,7 @@ export default {
   // 变量
   data () {
     return {
-      fenList: [
-        { name: '中国武汉分行1', id: 1 },
-        { name: '中国武汉分行2', id: 2 },
-        { name: '中国武汉分行3', id: 3 },
-        { name: '中国武汉分行4', id: 4 },
-        { name: '中国武汉分行5', id: 5 },
-        { name: '中国武汉分行1', id: 1 },
-        { name: '中国武汉分行2', id: 2 },
-        { name: '中国武汉分行3', id: 3 },
-        { name: '中国武汉分行4', id: 4 },
-        { name: '中国武汉分行5', id: 5 },
-        { name: '中国武汉分行1', id: 1 },
-        { name: '中国武汉分行2', id: 2 },
-        { name: '中国武汉分行3', id: 3 },
-        { name: '中国武汉分行4', id: 4 },
-        { name: '中国武汉分行5', id: 5 },
-        { name: '中国武汉分行1', id: 1 },
-        { name: '中国武汉分行2', id: 2 },
-        { name: '中国武汉分行3', id: 3 },
-        { name: '中国武汉分行4', id: 4 },
-        { name: '中国武汉分行5', id: 5 },
-        { name: '中国武汉分行1', id: 1 },
-        { name: '中国武汉分行2', id: 2 },
-        { name: '中国武汉分行3', id: 3 },
-        { name: '中国武汉分行4', id: 4 },
-        { name: '中国武汉分行5', id: 5 },
-      ]
+
     }
   },
   computed: {
@@ -61,6 +37,12 @@ export default {
         return this.searchData
       },
       set: function () { }
+    },
+    fenList: {
+      get: function () {
+        return store.state.subBankList
+      },
+      set: function () { },
     }
   },
   // 使用其它组件
@@ -96,7 +78,7 @@ export default {
   width: 100%;
   bottom: 1.1333rem;
   background: $white;
-  z-index: 99999;
+  z-index: 1000;
   transition: 0.3s all;
   bottom: 0;
 }

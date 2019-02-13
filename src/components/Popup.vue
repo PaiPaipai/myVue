@@ -7,7 +7,7 @@
             </div>
             <div class="popupBottom">
                 <p>{{menuText}}</p>
-                <h3><i class="iconfont icon-zhishi"></i>查看报告示例</h3>
+                <h3  @click="clickShili"><i class="iconfont icon-zhishi"></i>查看报告示例</h3>
                 <div class="btn_box">
                   <van-button type="danger" @click="clickButton">查询</van-button>
                 </div>
@@ -55,6 +55,9 @@ export default {
   methods: {
     clickButton: function () {
       this.$emit("clickButton");
+    },
+    clickShili: function () {
+      this.$emit("clickShili");
     },
     clickOverlay: function () {
       this.show = false

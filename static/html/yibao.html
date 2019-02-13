@@ -1,0 +1,19 @@
+<html>
+
+<head>
+  <script>
+    window.onload = function () {
+      body.innerHTML = window.sessionStorage.getItem('iframeSrc')
+      if (body.innerHTML) {
+        document.all.payForm.submit();
+      }
+
+    }
+
+  </script>
+</head>
+
+<body id="body">
+</body>
+
+</html>

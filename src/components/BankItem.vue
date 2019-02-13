@@ -18,13 +18,15 @@
 <script type="text/javascript">
 // eslint-disable-next-line no-unused-vars
 import Vue from 'vue'
-import { Dialog } from 'vant';
-Vue.use(Dialog)
+import store from "@/store/index";
+import { Dialog, Toast } from 'vant';
+Vue.use(Dialog).use(Toast)
 export default {
   // 不要忘记了 name 属性
   name: 'BankItem',
   // 组合其它组件
   extends: {},
+  store,
   // 组件属性、变量
   props: ['itemList'],
   // 变量
@@ -33,7 +35,15 @@ export default {
       itemListClone: this.itemList
     }
   },
-  computed: {},
+  computed: {
+    userData: {
+      get: function () {
+        return store.state.userInfo || store.state.userData
+      },
+      set: function () { },
+
+    },
+  },
   // 使用其它组件
   components: {},
   // 方法
@@ -42,20 +52,29 @@ export default {
     goCardDetails: function (item) {
       // path: `/index/${userId}/${'456'}`
       // this.routerTo(item.path, { id: item.id, title: item.name })
-      Dialog.confirm({
-        title: '标题',
-        message: '弹窗内容'
-      }).then(() => {
-        // on confirm
-      }).catch(() => {
-        // on cancel
-      });
+      this.setLocalStorage('bankItem', JSON.stringify(item))
+      this.routerTo('UserReal')
+      // if (this.userData.certification == 1) {
+      //   Toast('已实名')
+      // } else {
+      //   Dialog.confirm({
+      //     title: '提示',
+      //     message: '您还未填写资料，请先填写资料！',
+      //     confirmButtonText: '去填写',
+      //   }).then(() => {
+      //     // on confirm
+      //     this.routerTo('UserReal')
+      //   }).catch(() => {
+      //     // on cancel
+      //   });
+      // }
+
     }
   },
   // 生命周期函数
   beforeCreate () { },
   mounted () {
-    console.log('bankitem')
+
   }
 }
 </script>

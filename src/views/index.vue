@@ -11,18 +11,22 @@
                         left-icon
                         :speed="25" />
       </div>
-      <hr-item :hritem="{title:'财富优选'}"></hr-item>
+      <hr-item :hritem="{title:'金融服务'}"></hr-item>
       <div class="centerNav bd-radius15">
-        <icon-item :iconList="navData[0]"></icon-item>
-        <icon-item :iconList="navData[1]"></icon-item>
+        <icon-item :iconList="navData[0]"
+                   @clickTop="clickTop"></icon-item>
+        <icon-item :iconList="navData[1]"
+                   @clickTop="clickTop"></icon-item>
       </div>
       <div class="centerHandle ">
         <!-- <handle-item :handleList="handleData"></handle-item> -->
         <swipe :imgList="imgList"
                :swipeClass="'centerSwiper'"></swipe>
-        <hr-item :hritem="{title:'信用查询'}"></hr-item>
-        <handle-item :handleList="handleData[0]"></handle-item>
-        <handle-item :handleList="handleData[1]"></handle-item>
+        <hr-item :hritem="{title:'资金服务'}"></hr-item>
+        <handle-item :handleList="handleData[0]"
+                     @handle="handle"></handle-item>
+        <handle-item :handleList="handleData[1]"
+                     @handle="handle"></handle-item>
       </div>
       <div class="menuList">
         <hr-item :hritem="{title:'大数据信用查询'}"></hr-item>
@@ -32,7 +36,8 @@
                      :iconList="menuData"></icon-item>
         </div>
       </div>
-      <div class="checkMyhistory"><span class="text-underline">查看我的历史查询</span></div>
+      <div class="checkMyhistory"><span @click="showHistory"
+              class="text-underline">查看我的历史查询</span></div>
     </div>
     <div class="text-box">
       <my-text></my-text>
@@ -40,7 +45,19 @@
     <popup :showPopup="showPopup"
            :menuText="menuText"
            @clickButton="clickButton"
-           @closeItem="closeItem"></popup>
+           @clickShili="clickShili"
+           @closeItem="closeItem">
+    </popup>
+    <popup-history :searchData="searchData"
+                   @clickSearch="clickSearch"
+                   @clickFen="clickFen">
+    </popup-history>
+
+    <popup-Login @closeItem="closeItem"
+                 @confirm="confirm"
+                 :showLogin="showLogin">
+    </popup-Login>
+
   </div>
 </template>
 
@@ -54,39 +71,40 @@ import HrItem from "@/components/HrItem";
 import MyText from "@/components/MyText"
 import Popup from "@/components/Popup"
 import store from "@/store/index";
-import { NoticeBar } from "vant";
+import PopupHistory from '@/components/PopupHistory'
+import PopupLogin from '@/components/PopupLogin'
+import { NoticeBar, Toast } from "vant";
 
-Vue.use(NoticeBar);
+Vue.use(NoticeBar).use(Toast);
 export default {
   name: "MyIndex",
   data () {
     return {
-      text:
-        "足协杯战线连续第2年上演广州德比战，上赛季半决赛上恒大以两回合5-3的总比分淘汰富力。",
+      text: "",
       imgList: [
         { imgUrl: process.env.BASE_URL + "img/1.jpg" },
         { imgUrl: process.env.BASE_URL + "img/2.jpg" },
         { imgUrl: process.env.BASE_URL + "img/3.jpg" }
       ],
       navData: [
-        [{ name: "信用卡", classes: "iconfont icon-xinyongqia", path: 'CardList' },
-        { name: "贷款", classes: "iconfont icon-daikuan", path: 'CreditList' },
+        [{ name: "办信用卡", classes: "iconfont icon-xinyongqia", path: 'CardList' },
+        { name: "贷款申请", classes: "iconfont icon-daikuan", path: 'CreditList' },
         { name: "保险", classes: "iconfont icon-baoxian1" },
         { name: "理财", classes: "iconfont icon-licai" }],
-        [{ name: "我要分润", classes: "iconfont icon-wodefenrun", path: 'MoneyAll' },
-        { name: "我要升级", classes: "iconfont icon-woyaoshengji1", path: 'LevelUp' },
-        { name: "查询进度", classes: "iconfont icon-chaxunjindu" },
+        [{ name: "我的分润", classes: "iconfont icon-wodefenrun", path: 'MoneyAll' },
+        { name: "我要升级", classes: "iconfont icon-shengji1", path: 'LevelUp' },
+        { name: "区域代理", classes: "iconfont icon-quyudaili" },
         { name: "用户中心", classes: "iconfont icon-yonghuzhongxindianjipx_", path: 'UserCenter' }]
       ],
       handleData: [[
-        { name: "过桥垫资", tips: "(1.5‰/天)", classes: "goGjj", iclass: 'iconfont icon-dianzi ' },
-        { name: "买卖赎楼", tips: "(赎楼)", classes: "goSb", iclass: ' iconfont icon-maimaishulou' },
+        { name: "过桥垫资", tips: "(1.5‰/天)", classes: "goGjj", iclass: 'iconfont icon-dianzi ', path: '' },
+        { name: "买卖赎楼", tips: "(赎楼)", classes: "goSb", iclass: ' iconfont icon-maimaishulou', path: '' },
       ], [
-        { name: "大额存款", tips: "(银行摆账、验资)", classes: "goPhone", iclass: " iconfont icon-daecunkuan" },
-        { name: "曾兑汇票", tips: "(汇票)", classes: "goCard iconfont", iclass: " icon-huipiao" },
+        { name: "大额存款/短借", tips: "(银行存款/工程验资/企业摆账)", classes: "goPhone", iclass: " iconfont icon-daecunkuan", path: '' },
+        { name: "承兑汇票", tips: "(汇票)", classes: "goCard", iclass: " icon-huipiao", path: '' },
       ]],
       menuData: [
-        { name: "房产评估", classes: "iconfont icon-fangchanpinggu", text: '包含单价、楼栋均价、楼盘均价、可贷款金额等信息', paths: 'dashuju' },
+        { name: "房产评估", classes: "iconfont icon-fangchanpinggu", text: '包含单价、楼栋均价、楼盘均价、可贷款金额等信息', paths: 'houseApply', shiliPath: 'houseData' },
         { name: "大数据信用", classes: "iconfont icon-dashujuxinyong", text: '包含信用评估报告、黑灰名单、司法记录、被查询记录等信息', paths: 'dashuju' },
         { name: "个人司法", classes: "justicePg", text: '包含开庭记录、案件流程、裁判文书、被执行、曝光台等信息', paths: 'dashuju' },
         { name: "个人工商", classes: "businessPg", text: '包含董监高、法人信息、被执行人、行政处罚等信息', paths: 'dashuju' },
@@ -97,93 +115,116 @@ export default {
       menuSelect: null,
       hrData: ['大数据查询'],
       showPopup: false,
-      baseUrl: process.env.BASE_URL
+      showLogin: false,
+      searchData: {
+        placeholder: '输入姓名、手机号或企业名称',
+        model: '',
+        khh: '',
+        classes: 'fenUnActive',
+        showHistory: false,
+      },
     };
   },
-  components: { MyHeader, swipe, IconItem, HandleItem, HrItem, MyText, Popup },
+  computed: {
+  },
+  components: { MyHeader, swipe, IconItem, HandleItem, HrItem, MyText, Popup, PopupHistory, PopupLogin },
   methods: {
+    handle (item) {
+      if (item.path) {
+        this.routerTo(item.path)
+      } else {
+        Toast('敬请期待!')
+      }
+    },
+    showHistory () {
+      this.searchData.classes = 'fenActive';
+    },
+    clickFh () {
+      this.searchData.classes = 'fenActive';
+    },
+    clickFen (item) {
+      this.searchData.classes = 'fenUnActive';
+      if (item) {
+        console.log(item)
+      }
+
+    },
+    clickSearch (value) {
+      console.log(value)
+    },
     clickButton: function () {
+      this.showPopup = false;
       this.routerTo(this.menuSelect.paths)
     },
-    clickItem: function (item, index) {
+    clickShili: function () {
+      this.showPopup = false;
+      this.routerTo(this.menuSelect.shiliPath)
+    },
+    clickTop () {
+      var that = this;
+      this.userData = JSON.parse(this.getLocalStorage('userInfo'))
+      if (store.state.active == 0 && !this.userData.mobile) {
+        this.showLogin = true;
+        return
+      }
+    },
+    clickItem: function (item) {
+      var that = this;
+      this.userData = JSON.parse(this.getLocalStorage('userInfo'))
+      if (store.state.active == 0 && !this.userData.mobile) {
+        this.showLogin = true;
+        return
+      }
+      if (item.text) {
+        Toast('敬请期待!')
+        return
+      }
       this.showPopup = true;
       this.menuText = item.text;
       this.menuSelect = item;
     },
     closeItem: function () {
       this.showPopup = false;
+      this.showLogin = false;
     },
-    start: function (params) {
-      const code = this.getUrlParam('code')
-      // const local = window.location.href;
-      var local = window.location.href
-        .replace(/[/]/g, "%2f")
-        .replace(/[:]/g, "%3a")
-        .replace(/[#]/g, "%23")
-        .replace(/[&]/g, "%26")
-        .replace(/[=]/g, "%3d");
-      const REDIRECT_URI = 'http://47.107.80.60/h5/index.html';
-
-      if (code == '' || code == null) {
-        window.location.href = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${this.API.APPID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
-      } else {
-        this.getOpenId(code)
-      }
+    confirm () {
+      this.showLogin = false;
     },
-    getOpenId: function (code) {
-      const APPID = 'wx70278d7dc8f6b6cb';
-      const APPSECRET = '8d4c520a921cc391fd01ef82218227b0';
-      const codeUrl = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${this.API.APPID}&redirect_uri=${REDIRECT_URI}&response_type=code&scope=SCOPE&state=STATE#wechat_redirect`
-      const url = `https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=wx70278d7dc8f6b6cb&secret=8d4c520a921cc391fd01ef82218227b0`
-      this._ajax({ // 在api.js后面合并的axios属性名_ajax一致,名字随意
-        url: url, // 基地址加上后面不同的url地址
-        method: 'GET',
-        // timeout: 6000,
-        params: code
-      }).then((res) => {
-        console.log(res)
-        if (res.access_token) {
-
-        }
-      }).catch((err) => {
-        console.log(err)
-      })
+    getNoticed (text) {
+      this.text = text;
     },
-    test: function () {
-      const url = 'http://47.107.80.60/abapp/interface/testInterface/test'
-      this._ajax({ // 在api.js后面合并的axios属性名_ajax一致,名字随意
-        url: url, // 基地址加上后面不同的url地址
-        method: 'POST',
-        // timeout: 6000,
-      }).then((res) => {
-        console.log(res)
-
-      }).catch((err) => {
-        console.log(err)
-      })
-    }
   },
   // 生命周期函数
   created () {
-    this.test()
-    if (store.state.platform) {
-      this.start()
-    }
-    console.log(process.env)
+    var that = this;
+    that.getNoticeModelListByPage(that.getNoticed);
+    console.log("index");
+  },
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+    console.log('123')
+    // if (!that.getLocalStorage('wxShare')) {
+    //   that.$store.commit('setPath', that.$router.currentRoute)
+    //   var url = location.href.split('#')[0];
+    //   that.wxShare(url, that)
+    // }
   },
   beforeCreate () { },
   mounted () {
-    // debugger 
-    console.log("index");
+    var that = this;
+    // if (!that.getLocalStorage('wxShare')) {
+    //   that.$store.commit('setPath', that.$router.currentRoute)
+    //   var url = location.href.split('#')[0];
+    //   that.wxShare(url, that)
+    // }
   },
   store
 };
 </script>
 
 <style lang="scss">
-body {
-  -webkit-overflow-scrolling: touch;
-}
+// body {
+//   -webkit-overflow-scrolling: touch;
+// }
 .MyIndex {
   width: 100%;
   overflow: hidden;
@@ -232,10 +273,10 @@ body {
   .icon-wodefenrun {
     color: $cf5;
   }
-  .icon-woyaoshengji1 {
+  .icon-shengji1 {
     color: $cd8;
   }
-  .icon-chaxunjindu {
+  .icon-quyudaili {
     color: $c31;
   }
   .icon-yonghuzhongxindianjipx_ {

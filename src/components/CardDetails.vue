@@ -2,7 +2,7 @@
     <div class="CardDetails">
         <div class="cardMsgBox">
           <h3>光大银行白金卡</h3>
-          <p>可计积分交易享受双倍积分礼遇</p>
+          <p>三天审批、可同时办理两张卡、不共额度，最高30万纯信用</p>
           <em><van-tag plain color="#096ddd" text-color="#096ddd" type="success">白金卡</van-tag><van-tag color="#096ddd" text-color="#096ddd" plain type="success">人民币</van-tag></em>
         </div>
         <div class="cardBottomBox">
@@ -25,8 +25,13 @@
            </div>
            <hr-item :class="['cardHr']" :hritem="{title:'申请条件',bottom:true}"></hr-item>
            <div class="sqBox">
-              <p>客户要求:25-56岁。加购履约险，可以放宽至22岁-60岁单签。</p>
-              <p>抵押物要求：鄂A、鄂E、鄂D、鄂F；车龄8年以内，公里数为15万公里以内;当前无抵押状态，仅限9座及以下蓝牌非营运私家车，不接受公司所有车辆及大巴车、卡车、火车等。</p>
+              <p>客户要求:25-60岁，个体或公司法人，要求营业执照满半年。上班员工必须是公司员工，个体员工不能办理</p>
+              <p>资料要求(满足任意一项条件即可办理)：</p>
+              <p>*房产（大于70㎡或价值60万以上）</p>
+              <p>*车产（发票裸车价超过15万以上购买3个月-5年内的一手车，或商业保险单价值15万以上或车损15万以上）</p>
+              <p>*他行信用卡（他行额度3万以上，且使用一年以上或他行信用卡额度5万以上，且使用半年以上）</p>
+              <p>*公积金流水（要求连续缴费半年以上，且共缴金额1000元以上）</p>
+              <p>*社保流水（要求连续缴纳半年以上且个人社会保险扣费缴款400元以上）</p>
            </div>
            <hr-item  :class="['cardHr']" :hritem="{title:'所需材料',bottom:true}"></hr-item>
            <div class="clBox sqBox">
@@ -39,7 +44,6 @@
         </div>
         <submit-item @clickSubmit="clickSubmit" :submititem="submititem"></submit-item>
         <popup-real :menuText="menuText" :showPopup="showPopup"  @closeItem="closeItem"  @clickButton="clickButton"></popup-real>
-        <popup-success :menuText="menuText" :successText="successText" :showPopup="shwoSuccess"  @closeItem="closeItem"  @clickButton="clickButton"></popup-success>
     </div>
     
 </template>
@@ -73,31 +77,26 @@ export default {
       shwoSuccess: false,
       successText: '尊敬的XXX用户，您在光大银行的白金信用卡的办理申请已成功提交，请注意保持电话畅通接听银行审核电话，耐心等待银行审核通过。查询详情请联系汉融邦客服。',
       navData: [
-        { name: "申请办卡", classes: "iconfont icon-xinyongqia" },
-        { classes: "iconfont icon-changjiantou" },
-        { name: "资料填写", classes: "iconfont icon-zixun" },
-        { classes: "iconfont icon-changjiantou" },
-        { name: "查看进度", classes: "iconfont icon-chaxunjindu" },
-        { classes: "iconfont icon-changjiantou" },
-        { name: "申请完成", classes: "iconfont icon-dui2" }
+        { name: "申请办卡", classes: "iconfont icon-xinyongqia", paths: '1' },
+        { classes: "iconfont icon-changjiantou", paths: '1' },
+        { name: "资料填写", classes: "iconfont icon-zixun", paths: '1' },
+        { classes: "iconfont icon-changjiantou", paths: '1' },
+        { name: "查看进度", classes: "iconfont icon-chaxunjindu", paths: '1' },
+        { classes: "iconfont icon-changjiantou", paths: '1' },
+        { name: "申请完成", classes: "iconfont icon-dui2", paths: '1' }
       ],
 
     }
   },
-  computed: {},
+  computed: {
+  },
   // 使用其它组件
   components: { MyHeader, swipe, HrItem, SubmitItem, PopupReal, PopupSuccess, IconItem },
   // 方法
   methods: {
     clickButton () {
-      if (!this.$store.state.userId) {
-        this.showPopup = false;
-        this.routerTo('UserReal')
-      } else {
-        this.shwoSuccess = false;
-      }
 
-
+      this.routerTo('UserReal')
     },
     closeItem () {
       if (!this.$store.state.userId) {
@@ -108,12 +107,8 @@ export default {
     },
     clickSubmit: function () {
       // Toast('提交申请')
-      if (!this.$store.state.userId) {
-        this.showPopup = true;
-      } else {
-        this.shwoSuccess = true;
-      }
-
+      this.setLocalStorage('gd', 'ture')
+      this.routerTo('UserReal')
     }
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载

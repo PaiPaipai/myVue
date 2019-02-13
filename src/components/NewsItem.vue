@@ -3,7 +3,13 @@
     <!-- ... -->
     <ul class="cardItemUl">
       <li v-for="(item, index) in itemList" class="van-hairline--bottom clearfix " :key="index" @click="goNewsDetails(item)">
-        <p><em class="text-overflow">{{item.title}}</em> <span>{{item.time||'2019-1-7 18:16:54'}}</span></p>
+        <div class="titleBox">
+          <h3>{{item.title}}</h3>
+          <p><span>{{item.createTime}}</span><em>{{item.readCount}}阅读</em></p>
+        </div>
+        <div class="imgBox">
+          <img :src="item.image"/>
+        </div>
       </li>
     </ul>
   </div>
@@ -33,8 +39,18 @@ export default {
   methods: {
     goNewsDetails: function (item) {
       // path: `/index/${userId}/${'456'}`
-      this.$router.replace({ name: 'CardItemDetail', params: { id: item.id, title: item.title } })
+      var that = this;
+      item.readCount += 1;
+      this.setLocalStorage('NewsDetails', JSON.stringify(item))
+      this.updateReadCount({ contentId: item.id }, that.updateReadCountCb)
+
+
+    },
+    updateReadCountCb () {
+      this.routerTo('NewsDetails')
+
     }
+
   },
   // 生命周期函数
   beforeCreate () { },
@@ -55,18 +71,33 @@ export default {
     padding: 0.2rem 0;
     // overflow: hidden;
   }
-  span {
-    position: absolute;
-    top: 0.1rem;
-    right: 0;
+  .titleBox {
+    display: inline-block;
+    width: 65%;
+    h3 {
+      line-height: 0.76rem;
+      font-size: 0.4267rem;
+      font-weight: bold;
+      height: 1.52rem;
+      display: block;
+      @include text-ovh(2);
+    }
+    p {
+      line-height: 0.4267rem;
+    }
+    em {
+      float: right;
+    }
   }
-  em {
-    display: block;
-    margin-right: 120px;
-  }
-  p {
-    position: relative;
-    padding: 0.1067rem 0.2133rem;
+  .imgBox {
+    display: inline-block;
+    width: 30%;
+    height: 1.7333rem;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: auto;
+    }
   }
 }
 </style>

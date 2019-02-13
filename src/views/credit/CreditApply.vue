@@ -1,26 +1,26 @@
 <template lang="html">
     <div class="CreditApply">
-      <my-header :title="params.title"></my-header>
+      <my-header :title="creditItem.name"></my-header>
       <div>
             <van-cell-group :class="['myGroup']">
               <div class="cellBox"  v-show="item.itemShow" v-for="(item, index) in ApplyData" :key="index">
          
                 <van-field v-if="!item.types"
                     v-model="item.model"
-                   
                     @keyup="keyUpItem(item)"
                     :label="item.name"
                     :readonly=item.readonly
                     :placeholder="item.placeholder"
                     :error-message="item.error && item.model != '' ?item.errorMsg:''"
                     :icon="item.icon"
+                    :required="item.required"
                     @click="clickSelect(item,index)"
                     @click-icon="clickSelect(item,index)"
                     :maxLength="item.length"
                   >
                   </van-field>
                   <div class="checkBox" v-if="item.types == 'checkbox'">
-                      <div class="checkBoxLeft">
+                      <div :class="['checkBoxLeft',item.required?'checkBoxLeft--required':'']" >
                         {{item.name}}
                       </div>
                       <div class="checkBoxRight">
@@ -31,11 +31,11 @@
                       </div>
                   </div>
                   <div class="checkBox camereBox"  @click="clickSelect(item,index)" v-if="item.types == 'camere'">
-                      <div class="checkBoxLeft">
+                      <div :class="['checkBoxLeft',item.required?'checkBoxLeft--required':'']">
                         {{item.name}} <i @click="popupImg(item)" class="iconfont icon-changjianwenti"></i>
                       </div>
                       <div class="checkBoxRight">
-                          <van-uploader :class="'camereItem'" :after-read="onRead" accept="image/gif, image/jpeg, image/png, image/jpg" multiple>
+                          <van-uploader :class="'camereItem'" :after-read="onRead" accept="image/gif,image/jpg,image/jpeg,image/png" :multiple="false">
                             <div v-if="!item.model">
                               <img class="carmereImg" :src="carmereImg" alt="">
                               <span>{{item.placeholder}}</span>
@@ -47,8 +47,6 @@
                       </div>
                   </div>
               </div>
-             
-              
           </van-cell-group>
       </div>
        
@@ -64,6 +62,11 @@
           @confirm="onConfirm" />
       </van-popup>
        <popup-img :imgUrl="imgUrl" :showPopup="showPopup" @closeItem="closeItem"></popup-img> 
+       <popup-success  :successText="successText" :showPopup="shwoSuccess"  @closeItem="closeItem"  @clickButton="clickButton"></popup-success>
+       <iframe-Item ref="iframe" :iframeShow="iframeShow" @clickClose="clickClose" :iframeSrc="iframeSrc"></iframe-Item>
+
+       <canvas style="display:none" id="canvas"></canvas>
+       <canvas style="display:none" id="tCanvas"></canvas>
     </div>
 </template>
 
@@ -75,6 +78,9 @@ import InputItem from '@/components/InputItem'
 import ButtonItem from '@/components/ButtonItem'
 import PopupImg from '@/components/PopupImg'
 import store from '@/store/index'
+import IframeItem from '@/components/IframeItem'
+import PopupSuccess from '@/components/PopupSuccess'
+import { config } from '../../assets/js/config' // 引入配置的公共接口url
 import { Field, CellGroup, Icon, Toast, Popup, Picker, Uploader } from 'vant';
 Vue.use(Field).use(CellGroup).use(Icon).use(Toast).use(Popup).use(Picker).use(Uploader)
 export default {
@@ -87,133 +93,12 @@ export default {
   // 变量
   data () {
     return {
+      iframeShow: false,
+      iframeSrc: '',//iframe
       show: false,
       params: {},
+      creditItem: {},
       ApplyData: [
-        {
-          name: '贷款金额需求', model: '', type: '567', placeholder: '选择金额',
-          columns: [
-            { id: 1, text: '1万以内' },
-            { id: 2, text: '5万以内' },
-            { id: 3, text: '10万以内' },
-            { id: 4, text: '20万以内' },
-            { id: 5, text: '100万以内' }],
-          icon: 'arrow',
-          error: false, readonly: true, itemShow: false        },
-        {
-          name: '贷款金额需求', model: '', type: '8', placeholder: '选择金额',
-          columns: [
-            { id: 1, text: '10-100万' },
-            { id: 2, text: '100-200万' },
-            { id: 3, text: '200-500万' },
-            { id: 4, text: '500万以上' }],
-          icon: 'arrow',
-          error: false, readonly: true, itemShow: false        },
-        {
-          name: '预计还款期限', model: '', type: '56', placeholder: '选择期限',
-          columns: [
-            { id: 1, text: '6个月' },
-            { id: 2, text: '12个月' },
-            { id: 3, text: '24个月' },
-            { id: 4, text: '36个月' },
-            { id: 5, text: '48个月' }],
-          icon: 'arrow', path: '123', error: false, readonly: true        },
-        {
-          name: '预计还款期限', model: '', type: '7', placeholder: '选择期限',
-          columns: [
-            { id: 1, text: '1-6个月' },
-            { id: 2, text: '12个月' },
-            { id: 3, text: '24个月' },
-            { id: 4, text: '36个月' }],
-          icon: 'arrow', path: '123', error: false, readonly: true        },
-        {
-          name: '预计还款期限', model: '', type: '8', placeholder: '选择期限',
-          columns: [
-            { id: 1, text: '先息后本1年' },
-            { id: 2, text: '等额本息5年' },
-            { id: 3, text: '等额本息10年' },
-            { id: 4, text: '等额本息20年' },
-            { id: 5, text: '等额本息30年' }],
-          icon: 'arrow', path: '123', error: false, readonly: true        },
-        { name: '真实姓名', model: '', type: '5678', placeholder: '请输入姓名', length: '10', error: true, errorMsg: '请输入正确的姓名', reg: /[\u4e00-\u9fa5]/ },
-        { name: '身份证号', model: '', type: '5678', placeholder: '请输入身份证', length: '18', error: true, errorMsg: '请输入正确的身份证号', reg: /(^\d{15}$)|(^\d{17}([0-9]|X)$)/ },
-        { name: '手机号码', model: '', type: '5678', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: true, errorMsg: '请输入正确的手机号码', reg: /^1[0-9]{10}$/ },
-        {
-          name: '职业身份', model: '', type: '5678', placeholder: '选择职业身份',
-          columns: [
-            { id: 1, text: '上班族' },
-            { id: 2, text: '个体户' },
-            { id: 3, text: '企业主' },
-            { id: 4, text: '无固定职业' }],
-          icon: 'arrow', path: '234', error: false, readonly: true        },
-        {
-          name: '所在城市', model: '', type: '5678', placeholder: '选择所在城市',
-          columns: [
-            { id: 1, text: '武汉市' },
-            { id: 2, text: '随州市' }
-          ],
-          icon: 'arrow', path: '123', error: false, readonly: true        },
-        {
-          name: '信用卡', model: '', types: 'checkbox',
-          checkList: [{ name: '有', agree: false }, { name: '无', agree: false }], type: '56',        },
-        {
-          name: '本地公积金', model: '', types: 'checkbox',
-          checkList: [{ name: '有', agree: false }, { name: '无', agree: false }], type: '56',        },
-        {
-          name: '婚姻状况', model: '', types: 'checkbox',
-          checkList: [{ name: '已婚', agree: false }, { name: '未婚', agree: false }, { name: '其他', agree: false }],
-          type: '7',        },
-        {
-          name: '营业执照', model: '', types: 'checkbox', checkList: [{ name: '有', agree: false }, { name: '无', agree: false }],
-          type: '8',        },
-        {
-          name: '名下房产状态', model: '', type: '8', placeholder: '选择房产状态',
-          columns: [
-            { id: 1, text: '红本在手' },
-            { id: 2, text: '抵押在银行' },
-            { id: 3, text: '抵押在机构' },
-            { id: 4, text: '抵押在私人' }],
-          icon: 'arrow', path: '234', error: false, readonly: true        },
-        {
-          name: '名下房产类型', model: '', type: '8', placeholder: '选择房产类型',
-          columns: [
-            { id: 1, text: '自购商品房' },
-            { id: 2, text: '还建房/福利房/经济适用房' },
-            { id: 3, text: '商住两用房' },
-            { id: 4, text: '商户写字楼' },
-            { id: 5, text: '私房' }],
-          icon: 'arrow', path: '234', error: false, readonly: true        },
-        {
-          name: '名下房产类型', model: '', type: '567', placeholder: '选择房产类型',
-          columns: [
-            { id: 1, text: '自购商品房' },
-            { id: 2, text: '亲属房/租房' },
-            { id: 3, text: '还建房/福利房' },
-            { id: 4, text: '私房' }],
-          icon: 'arrow', path: '234', error: false, readonly: true        },
-        {
-          name: '名下车辆类型', model: '', type: '567', placeholder: '选择车辆类型',
-          columns: [
-            { id: 1, text: '全款车' },
-            { id: 2, text: '按揭车' },
-            { id: 3, text: '单位名下车' }],
-          icon: 'arrow', path: '123', error: false, readonly: true        },
-        {
-          name: '寿险保单', model: '', types: 'checkbox',
-          checkList: [{ name: '有', agree: false }, { name: '无', agree: false }], type: '56',
-        },
-        {
-          name: '车辆行驶证', model: '', type: '7', placeholder: '上传车辆行驶证', types: 'camere', imgUrl: process.env.BASE_URL + 'img/xsz.jpg'
-        },
-        {
-          name: '上传房产证', placeholder: '上传房产证', model: '', type: '8', placeholder: '点击上传房产证', types: 'camere', imgUrl: process.env.BASE_URL + 'img/fcz.jpg'
-        },
-        {
-          name: '上传土地证', placeholder: '上传土地证', model: '', type: '8', placeholder: '点击上传土地证', types: 'camere', imgUrl: process.env.BASE_URL + 'img/tdz.jpg'
-        },
-
-        // { name: '银行账户', model: '', type: 'yhkh', placeholder: '请输入银行卡号', length: '23' },
-        // { name: '短信验证码', model: '', type: 'yzm', placeholder: '请输入短信验证码', error: true, length: '6' },
       ],
       columns: [],
       test: [1, 2, 3, 4, 5, 6, 7],
@@ -222,25 +107,46 @@ export default {
       buttonItem: { txt: '提交申请', classes: 'buttonItem' },
       carmereImg: process.env.BASE_URL + 'img/camere.png',
       imgUrl: '',
+      clickSelectData: {
+        province: '',
+        city: '',
+      },
       showPopup: false,
+      shwoSuccess: false,
+      successText: '',
+
     }
   },
   computed: {
     userId: {
       get: function () {
-        return store.state.userId
+        return this.getLocalStorage('userId')
       },
       set: function () {
-
       }
-    }
+    },
+    userData: {
+      get: function () {
+        return JSON.parse(this.getLocalStorage('userInfo'))
+      },
+      set: function () {
+      }
+    },
   },
   // 使用其它组件
-  components: { MyHeader, InputItem, ButtonItem, PopupImg },
+  components: { MyHeader, InputItem, ButtonItem, PopupImg, PopupSuccess, IframeItem },
   // 方法
   methods: {
+    clickClose () {
+      this.iframeShow = false;
+      this.iframeSrc = '';
+    },
     closeItem: function () {
       this.showPopup = false
+      if (this.shwoSuccess) {
+        this.shwoSuccess = false;
+        this.routerTo('index')
+      }
     },
     popupImg (item) {
       console.log(item)
@@ -249,16 +155,51 @@ export default {
     },
     onRead (file) {
       console.log(file)
-      this.ApplyData[this.currentIndex].model = file.content;
+      var that = this;
+      var baseStr = file.content;
+      var data = that.compress(baseStr, compressCallBack); //图片处理开始
+      function compressCallBack (ysStr) {//图片处理之后的回调
+        that.uploadImg(ysStr.split(',')[1], fileCallBack)
+      }
+      function fileCallBack (file) {//图片上传之后的回调
+        that.ApplyData[that.currentIndex].model = file;
+      }
+      function isString (str) {
+        return (typeof str == 'string') && str.constructor == String;
+      }
     },
     clickSelect (item, index) {
       console.log(item)
+      var that = this;
+      var beforeItem = that.ApplyData[index - 1];
       if (item.icon == 'arrow') {
-        this.show = true;
-        this.title = item.placeholder
-        this.columns = item.columns;
+        that.title = item.placeholder
+        that.columns = item.columns;
+        that.title = item.placeholder;
+        if (item.tag == 'province') {//选择省
+          that.show = true;
+          if (!that.getLocalStorage('proviceList')) {
+            that.getAreaCodeByType({ type: 1, name: 'provinceName', code: 'provinceCode' }, that.proviceCallback)
+          } else {
+            that.columns = JSON.parse(that.getLocalStorage('proviceList'))
+          }
+        } else if (item.tag == 'city') {//选择市
+          if (!beforeItem.model) {
+            Toast('请先选择' + beforeItem.name)
+            return
+          } else {
+            that.getAreaCodeByType({ type: 2, name: 'cityName', provinceCode: beforeItem.code, code: 'cityCode' }, that.proviceCallback)
+
+          }
+        } else {
+          this.show = true;
+        }
       }
       this.currentIndex = index;
+    },
+    proviceCallback (list) {
+      this.show = true;
+      this.columns = list;
     },
     onChange (picker, values) {
 
@@ -269,17 +210,39 @@ export default {
     onConfirm (value, index) {
       this.show = false;
       this.ApplyData[this.currentIndex].model = value.text;
+      if (this.ApplyData[this.currentIndex].tag == 'province') {
+        if (value.id != this.clickSelectData.province) {
+          this.ApplyData[this.currentIndex + 1].model = '';
+          this.ApplyData[this.currentIndex + 1].code = '';
+        }
+        this.ApplyData[this.currentIndex].code = value.id
+        this.clickSelectData.province = value.id
+      } else if (this.ApplyData[this.currentIndex].tag == 'city') {
+        this.ApplyData[this.currentIndex].code = value.id
+        this.clickSelectData.city = value.id
+      }
     },
     agreeClick (item, indexs) {
+      var sum = 0;
       item.checkList.forEach(function (currentValue, index) {
         if (indexs == index && currentValue.agree) {
           currentValue.agree = false;
+
         } else if (indexs == index && !currentValue.agree) {
           currentValue.agree = true
+          sum += 1;
+
         } else {
           currentValue.agree = false;
+
         }
+
       })
+      if (sum) {
+        item.model = indexs
+      } else {
+        item.mode = ''
+      }
     },
     sendMsg: function (params) {
       console.log(params)
@@ -295,23 +258,70 @@ export default {
     },
     clickButton: function () {
       console.log(this.applyData)
-      var dataArr = this.applyData;
-      // var params = {
-      //   userId: this.userId
-      // }
+      var dataArr = this.ApplyData;
+      var that = this;
+      var params = {
+        userId: this.userId,
+      }
       var flag = true
-      // for (let index = 0; index < dataArr.length; index++) {
-      //   const element = dataArr[index];
-      //   if (element.error) {
-      //     flag = false;
-      //     Toast('请填写正确的' + element.name + '!')
-      //     return false
-      //   } else {
-      //     params[element.type] = element.model;
-      //   }
-      // }
+      for (let index = 0; index < dataArr.length; index++) {
+        const element = dataArr[index];
+        if (element.itemShow) {
+          if (element.required && element.model === '') {
+            Toast(element.name + '为必填项！')
+            return false
+          }
+          if (element.error) {
+            flag = false;
+            Toast('请填写正确的' + element.name + '!')
+            return false
+          } else {
+            params[element.tag] = element.model;
+          }
+
+        }
+      }
+      switch (this.creditItem.type) {
+        case 5:
+          params.borrowType = 2 // 小额贷
+
+          break;
+        case 6:
+          params.borrowType = 0 //信用贷
+
+          break;
+        case 7:
+          params.borrowType = 1 // 车抵
+          break;
+        case 8:
+          params.borrowType = 3 // 房抵贷
+          break;
+        default:
+          break;
+      }
+      params.borrowName = this.creditItem.pinyin;
+      if (params.borrowType == 2 || params.borrowType == 0) {
+
+      }
       if (flag) {
-        Toast('填写正确！')
+        params = this.clearParams(params);
+        this.applyBorrowInfo(params, applyBorrowBack)
+      }
+
+      function applyBorrowBack (res, params) {
+        if (res.code == 0) {
+          if (that.creditItem.pinyin == 'fd') {
+            window.location.href = that.creditItem.href;
+            return
+          } else if (that.creditItem.pinyin == 'ppd') {
+            window.location.href = res.data;
+            return
+          }
+          that.successText = '尊敬的' + params.userName + '用户，你的' + that.creditItem.name + '办理申请已经成功提交，请注意保持电话畅通，耐心等待工作人员会在1-5个工作日内电话联系。查询详情请联系汉融邦客服。'
+          that.shwoSuccess = true;
+        } else {
+          Toast(res.message)
+        }
       }
       // console.log(params)
 
@@ -326,13 +336,148 @@ export default {
   beforeCreate () { },
   mounted () {
     console.log('creditApply')
-    var CreditItem = JSON.parse(this.getLocalStorage('CreditItem'));
-    Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+    var that = this;
+    this.creditItem = JSON.parse(that.getLocalStorage('CreditItem'));
+    this.ApplyData = [
+      {
+        name: '贷款金额需求', tag: 'amount', model: '', type: '567', placeholder: '选择金额',
+        columns: [
+          { id: 1, text: '1万以内' },
+          { id: 2, text: '5万以内' },
+          { id: 3, text: '10万以内' },
+          { id: 4, text: '20万以内' },
+          { id: 5, text: '100万以内' }],
+        icon: 'arrow',
+        error: false, readonly: true, itemShow: false      },
+      {
+        name: '贷款金额需求', tag: 'amount', model: '', type: '8', placeholder: '选择金额',
+        columns: [
+          { id: 1, text: '10-100万' },
+          { id: 2, text: '100-200万' },
+          { id: 3, text: '200-500万' },
+          { id: 4, text: '500万以上' }],
+        icon: 'arrow',
+        error: false, readonly: true      },
+      {
+        name: '预计还款期限', tag: 'deadLine', model: '', type: '56', placeholder: '选择期限',
+        columns: [
+          { id: 1, text: '6个月' },
+          { id: 2, text: '12个月' },
+          { id: 3, text: '24个月' },
+          { id: 4, text: '36个月' },
+          { id: 5, text: '48个月' }],
+        icon: 'arrow', path: '123', error: false, readonly: true      },
+      {
+        name: '预计还款期限', tag: 'deadLine', model: '', type: '7', placeholder: '选择期限',
+        columns: [
+          { id: 1, text: '1-6个月' },
+          { id: 2, text: '12个月' },
+          { id: 3, text: '24个月' },
+          { id: 4, text: '36个月' }],
+        icon: 'arrow', path: '123', error: false, readonly: true      },
+      {
+        name: '预计还款期限', tag: 'deadLine', model: '', type: '8', placeholder: '选择期限',
+        columns: [
+          { id: 1, text: '先息后本1年' },
+          { id: 2, text: '等额本息5年' },
+          { id: 3, text: '等额本息10年' },
+          { id: 4, text: '等额本息20年' },
+          { id: 5, text: '等额本息30年' }],
+        icon: 'arrow', path: '123', error: false, readonly: true      },
+      { name: '真实姓名', model: this.userData.name || '', tag: 'userName', required: true, type: '5678', placeholder: '请输入姓名', length: '10', error: false, errorMsg: '请输入正确的姓名' },
+      { name: '身份证号', model: this.userData.identityNo || '', tag: 'identityNo', required: true, type: '5678', placeholder: '请输入身份证', length: '18', error: false, errorMsg: '请输入正确的身份证号', reg: config.reg.ident },
+      { name: '手机号码', model: this.userData.mobile || '', tag: 'mobile', required: true, type: '5678', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: false, errorMsg: '请输入正确的手机号码', reg: config.reg.phone },
+      {
+        name: '职业身份', model: '', tag: 'professional', required: true, type: '5678', placeholder: '选择职业身份',
+        columns: [
+          { id: 1, text: '上班族' },
+          { id: 2, text: '个体户' },
+          { id: 3, text: '企业主' },
+          { id: 4, text: '无固定职业' }],
+        icon: 'arrow', path: '234', error: false, readonly: true      },
+      {
+        name: '省份', model: '', code: '', tag: 'province', type: '5678', placeholder: '选择所在省份',
+        columns: [
+        ],
+        icon: 'arrow', path: '123', error: false, readonly: true      },
+      {
+        name: '城市', model: '', code: '', tag: 'city', type: '5678', placeholder: '选择所在城市',
+        columns: [
+        ],
+        icon: 'arrow', path: '123', error: false, readonly: true      },
+      {
+        name: '信用卡', model: '', tag: 'isCreditcard', types: 'checkbox',
+        checkList: [{ name: '无', agree: false, }, { name: '有', agree: false }], type: '56',      },
+      {
+        name: '本地公积金', model: '', tag: 'isAccumulationFund', types: 'checkbox',
+        checkList: [{ name: '无', agree: false }, { name: '有', agree: false }], type: '56',      },
+      {
+        name: '婚姻状况', model: '', tag: 'isMarriage', types: 'checkbox',
+        checkList: [{ name: '已婚', agree: false }, { name: '未婚', agree: false }, { name: '其他', agree: false }],
+        type: '7',      },
+      {
+        name: '营业执照', model: '', tag: 'isCreditcard', types: 'checkbox',
+        checkList: [{ name: '无', agree: false }, { name: '有', agree: false }],
+        type: '8',      },
+      {
+        name: '车辆类型', model: '', tag: 'isCar', required: true, types: 'checkbox',
+        checkList: [{ name: '无', agree: false }, { name: '有', agree: false }],
+        type: '56',      },
+      {
+        name: '房产类型', model: '', tag: 'houseType', required: true, types: 'checkbox',
+        checkList: [{ name: '无', agree: false }, { name: '有', agree: false }],
+        type: '56',      },
+      {
+        name: '名下房产状态', tag: 'houseStatus', model: '', required: true, type: '8', placeholder: '选择房产状态',
+        columns: [
+          { id: 1, text: '红本在手' },
+          { id: 2, text: '抵押在银行' },
+          { id: 3, text: '抵押在机构' },
+          { id: 4, text: '抵押在私人' }],
+        icon: 'arrow', path: '234', error: false, readonly: true      },
+      {
+        name: '名下房产类型', tag: 'houseType', model: '', type: '8', required: true, placeholder: '选择房产类型',
+        columns: [
+          { id: 1, text: '自购商品房' },
+          { id: 2, text: '还建房/福利房/经济适用房' },
+          { id: 3, text: '商住两用房' },
+          { id: 4, text: '商户写字楼' },
+          { id: 5, text: '私房' }],
+        icon: 'arrow', path: '234', error: false, readonly: true      },
+      {
+        name: '名下房产类型', tag: 'houseType', model: '', type: '7', placeholder: '选择房产类型',
+        columns: [
+          { id: 1, text: '自购商品房' },
+          { id: 2, text: '亲属房/租房' },
+          { id: 3, text: '还建房/福利房' },
+          { id: 4, text: '私房' }],
+        icon: 'arrow', path: '234', error: false, readonly: true      },
+      {
+        name: '名下车辆类型', model: '', tag: 'carType', required: true, type: '7', placeholder: '选择车辆类型',
+        columns: [
+          { id: 1, text: '全款车' },
+          { id: 2, text: '按揭车' },
+          { id: 3, text: '单位名下车' }],
+        icon: 'arrow', path: '123', error: false, readonly: true      },
+      {
+        name: '寿险保单', model: '', tag: 'isInsurancePolicy', types: 'checkbox',
+        checkList: [{ name: '无', agree: false }, { name: '有', agree: false }], type: '56',
+      },
+      {
+        name: '车辆行驶证', model: '', tag: 'carLicense', required: true, type: '7', placeholder: '上传车辆行驶证', types: 'camere', imgUrl: process.env.BASE_URL + 'img/xsz.jpg'
+      },
+      {
+        name: '上传房产证', placeholder: '上传房产证', tag: 'houseLicense', model: '', type: '8', placeholder: '点击上传房产证', types: 'camere', imgUrl: process.env.BASE_URL + 'img/fcz.jpg'
+      },
+      {
+        name: '上传土地证', placeholder: '上传土地证', tag: 'areaLicense', model: '', type: '8', placeholder: '点击上传土地证', types: 'camere', imgUrl: process.env.BASE_URL + 'img/tdz.jpg'
+      }
+    ]
     this.ApplyData.forEach(function (item, index) {
-      if (item.type.indexOf(CreditItem.type) > -1) {
+      if (item.type.indexOf(that.creditItem.type) > -1) {
         item.itemShow = true;
       } else {
-
+        item.itemShow = false;
       }
     })
     console.log(this.ApplyData)
@@ -350,6 +495,12 @@ export default {
     padding: 0 1.6rem;
     background: $c12;
     color: $white;
+  }
+  /deep/ .van-field__control {
+    line-height: 100%;
+    display: block;
+    height: 100%;
+    margin-top: 0.0667rem;
   }
 }
 
@@ -382,6 +533,7 @@ export default {
     max-width: 90px;
     flex: 1;
     font-size: 14px;
+    position: relative;
   }
   .checkBoxRight {
     flex: 1;
@@ -395,15 +547,23 @@ export default {
     }
   }
 }
+.checkBoxLeft--required::before {
+  content: "*";
+  position: absolute;
+  left: -7px;
+  font-size: 14px;
+  color: #f44;
+}
 .camereBox {
   display: block;
 
   .checkBoxLeft {
     width: 100%;
-    overflow: hidden;
     max-width: 100%;
     margin-bottom: 0.2667rem;
+    position: relative;
   }
+
   i {
     float: right;
     color: $themeColor;
@@ -412,6 +572,7 @@ export default {
     height: 5.5333rem;
     background: $cf1f;
     width: 100%;
+
     text-align: center;
     border: 1px solid $c4f;
     border-radius: 0.2rem;
@@ -423,8 +584,8 @@ export default {
       display: block;
     }
     img.modelImg {
-      width: 100%;
-      height: 100%;
+      // max-width: 100%;
+      height: 5.5333rem;
     }
     span {
       margin-top: 0.5333rem;

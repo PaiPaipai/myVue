@@ -49,6 +49,7 @@ export default {
   methods: {
     onClickLeft () {
       this.$router.back(-1)
+
     },
     onClickRight () {
       Toast('按钮')

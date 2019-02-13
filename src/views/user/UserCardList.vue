@@ -8,9 +8,9 @@
                   <div class="liBox">
                       <i :class="['iconfont',item.icon]" :style="{color:item.color?item.color:''}"></i>
                   </div>
-                  <h3>{{item.name}}</h3>
-                  <p>{{item.number}}</p>
-                  <i class="iconfont icon-gongshang1"></i>
+                  <h3>{{item.bankName}}</h3>
+                  <p>{{item.account}}</p>
+                  <i :class="['iconfont',item.icon]"></i>
               </li>
             </ul>
             <van-button :class="['myButton']" @click="clickAdd"><i class="iconfont icon-jiahao"></i> 添加信用卡</van-button>
@@ -39,24 +39,31 @@ export default {
   data () {
     return {
       colorList: [],
-      userCardList: [
-        { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1, },
-        { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
-        { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3, color: '#15538d', },
-        { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
-        { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1 },
-        { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
-        { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3 },
-        { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
-        { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1 },
-        { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
-        { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3 },
-        { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
-      ],
+      // userCardList: [
+      //   // { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1, },
+      //   // { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
+      //   // { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3, color: '#15538d', },
+      //   // { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
+      //   // { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1 },
+      //   // { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
+      //   // { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3 },
+      //   // { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
+      //   // { name: '工商银行信用卡', number: '1234 1234 1234 1234 123', icon: 'icon-gongshang1', id: 1 },
+      //   // { name: '工商银行信用卡1', number: '1234 1234 1234 1234 123', icon: 'icon-xingye', id: 2 },
+      //   // { name: '工商银行信用卡2', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 3 },
+      //   // { name: '工商银行信用卡3', number: '1234 1234 1234 1234 123', icon: 'icon-guangda1', id: 4 },
+      // ],
       timeOutEvent: null
     }
   },
-  computed: {},
+  computed: {
+    userCardList: {
+      get: function () {
+        return store.state.userCardList;
+      },
+      set: function () { },
+    }
+  },
   // 使用其它组件
   components: { MyHeader },
   // 方法
@@ -67,11 +74,11 @@ export default {
       this.timeOutEvent = setTimeout(function () {
         Dialog.confirm({
           title: '提示',
-          message: '是否删除' + item.name
+          message: '是否删除' + item.bankName
         }).then(() => {
           // on confirm
-          that.userCardList.splice(index, 1)
-          console.log(that.userCardList)
+
+          that.delUserCredit(item.account)
         }).catch(() => {
           // on cancel
 
@@ -95,6 +102,8 @@ export default {
   created () { },
   mounted () { },
   activated () {
+    var that = this;
+    this.checkLogin('userCardList', 'setUserCardList', that.findAllUserCredits)
     console.log('cardList')
   }// 每次进路由会调用这个方法
 

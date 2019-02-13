@@ -7,12 +7,14 @@
             v-model="money"
             clearable
             :maxLength="5"
-            :readonly=true
+            :type="'number'"
+            :readonly=false
             label="充值金额"
-            placeholder="建议转入金额10元以上"
-            @touchstart.native.stop="show = true"
+            :placeholder="placeholder"
+             @touchstart.native.stop=""
             @click-icon="$toast('question')">
             <span slot="button">元</span></van-field>
+            <!-- @touchstart.native.stop="show = true" -->
         </van-cell-group>
       </div>
       <div class="lineDiv"></div>
@@ -20,7 +22,7 @@
         <hr-item :class="'pl30'" :hritem="{title:'选择支付方式'}"></hr-item>
         <ul class="ulList">
           <li :class="[currentIndex==index?'active':'']" @click="changeCard(item,index)" v-for="(item, index) in cardList" :key="index">
-            <h3><i class="iconfont icon-xinyongqia"></i><span>{{item.name}}({{item.num}})</span><i class="iconfont icon-dui1"></i></h3>
+            <h3><i class="iconfont icon-xinyongqia"></i><span>{{item.bankName}}({{item.account}})</span><i class="iconfont icon-dui1"></i></h3>
           </li>
         </ul>
       </div>
@@ -30,7 +32,7 @@
       </div>
        <div class="lineDiv"></div>
        <div class="changePass">
-          <hr-item :class="'pl30'" :hritem="{title:'选择通道',bottom:true,classes:'iconfont icon-changjianwenti'}" @clicki="clicki"></hr-item>
+          <hr-item :class="'pl30'" :hritem="{title:'选择通道',bottom:true, classes:'zcxe',txt:'支持银行及限额'}" @clicki="clicki"></hr-item>
          <ul class="passUl">
            <li>
              <span>通道名称</span>
@@ -42,21 +44,24 @@
               <span>{{item.name}} <em v-show="item.tui">推荐</em></span>
               <span>{{item.day}}</span>
               <span>{{item.lilv}}</span>
-              <span>{{item.money}}</span>
+              <span>{{item.minmoney}}-{{item.maxmoney}}</span>
             </li>
          </ul>
        </div>
       <submit-item @clickSubmit="clickSubmit" :submititem="submititem" ></submit-item>
-      <van-number-keyboard
-        title="建议转入金额10元以上"
-        :show="show"
-        theme="custom"
-        close-button-text="完成"
-        @blur="show = false"
-        @input="onInput"
-        @delete="onDelete"
-      />
+
+      <pass-word
+      :value="second?value2:value"
+      :show="show"
+      @onClose="onClose"
+      @onBlur="onBlur"
+      @onInput="onInput"
+      @onDelete="onDelete"
+      :placeholder="placeholder"
+      ></pass-word>
+      
       <popup-img :showPopup="popupShow" @closeItem="closeItem" :imgUrl="popupImage"></popup-img>
+      <iframe-Item ref="iframe" :iframeShow="iframeShow" @clickClose="clickClose" :iframeSrc="iframeSrc"></iframe-Item>
     </div>
     
 </template>
@@ -66,52 +71,109 @@
 import Vue from 'vue'
 import MyHeader from '@/layout/MyHeader'
 import swipe from '@/components/swipe'
+import store from '@/store/index'
 import HrItem from '@/components/HrItem'
 import SubmitItem from '@/components/SubmitItem'
 import PopupImg from '@/components/PopupImg'
-import { Toast, Field, CellGroup, NumberKeyboard } from 'vant'
-Vue.use(Toast).use(Field).use(CellGroup).use(NumberKeyboard)
+import IframeItem from '@/components/IframeItem'
+import PassWord from '@/components/PassWord'
+import { Toast, Field, CellGroup } from 'vant'
+Vue.use(Toast).use(Field).use(CellGroup)
 export default {
   // 不要忘记了 name 属性
   name: 'CollectMoneyDetail',
   // 组合其它组件
   extends: {},
+  store,
   // 组件属性、变量
   props: [],
   // 变量
   data () {
     return {
-      params: this.$route.params,
+      // 密码为 6 位数字
       currentIndex: 0,
       passIndex: 0,
+      placeholder: '建议转入金额200元以上',
       popupImage: process.env.BASE_URL + 'img/xiane.png',
-      cardList: [
-        { name: '民生银行信用卡', num: '1234' },
-        { name: '民生银行信用卡1', num: '1234' },
-        { name: '民生银行信用卡2', num: '1234' },
-        { name: '民生银行信用卡3', num: '1234' },
-      ],
-      // <span>天下付</span>
-      //         <span>D+0</span>
-      //         <span>费率</span>
-      //         <span>200-500000</span>
-      passList: [
-        { name: '天下付', day: 'D+0', lilv: '0.55%', money: '200-50000', tui: true },
-        { name: '易沣', day: 'D+0', lilv: '0.55%+0.5元', money: '100-20000' }
-      ],
+      passList: [],
+      selectPass: {},
+      selectCard: {},
+      value: '',
       show: false,
+      value2: '',
+      second: false,
       popupShow: false,
+      iframeShow: false,
+      smsCode: '',
+      type: '1',
+      spbillno: '',
+      iframeBase: process.env.BASE_URL + 'html/yibao.html?v=123',
       money: '',
-      submititem: { text: '立即收钱' },
+      userData: {},
+      submititem: { text: '立即收钱', second: '充值明细', icon: 'iconfont icon-chongzhimingxi' },
     }
   },
-  computed: {},
+  computed: {
+    iframeSrc: {
+      get: function () {
+        return this.iframeBase
+      },
+      set: function () {
+
+      }
+    },
+    cardList: {
+      get: function () {
+        return store.state.userCardList;
+      },
+      set: function () { },
+    },
+    passparams: {
+      get: function () {
+        return {
+          userId: this.userData.id,
+          payPass: this.value2,
+        }
+      },
+      set: function () { },
+    },
+    tianparams: {
+      get: function () {
+        return {
+          type: this.type,
+          userId: this.userData.id,
+          payPass: this.value,
+          money: this.money,
+          creditNo: this.cardList[this.currentIndex].account,
+          spbillno: this.spbillno,
+        }
+      },
+      set: function () {
+
+      },
+    },
+    yiparams: {
+      get: function () {
+        return {
+          userId: this.userData.id,
+          payPass: this.value,
+          account: this.cardList[this.currentIndex].account,
+          bankCode: this.cardList[this.currentIndex].bankCode,
+          amount: this.money,
+          type: 'QTYPE_A'
+        }
+      },
+      set: function () { },
+    }
+  },
   // 使用其它组件
-  components: { MyHeader, swipe, HrItem, SubmitItem, PopupImg },
+  components: { MyHeader, swipe, HrItem, SubmitItem, PopupImg, IframeItem, PassWord },
   // 方法
   methods: {
     clickPass (item, index) {
       this.passIndex = index;
+      this.selectPass = item;
+      this.placeholder = `建议转入金额${item.minmoney}元以上`
     },
     addCard () {
       this.routerTo('UserAddCard')
@@ -120,33 +182,156 @@ export default {
       // Toast('question')
       this.popupShow = true;
     },
+    kong (e) {
+      e.stopPropagation();
+    },
+    clickClose () {
+      this.iframeShow = false;
+      this.setLocalStorage('iframeSrc', '')
+    },
     closeItem () {
       this.popupShow = false;
+
     },
     changeCard (item, index) {
       this.currentIndex = index;
     },
+    onBlur () {
+      this.show = false;
+      this.second = false;
+      this.value = '';
+      this.value2 = '';
+    },
     onInput (value) {
-      // Toast(value);
-      if (this.money.length > 4) {
-        return
+
+      if (this.second) {
+        if (this.value2.length >= 6) {
+          return
+        }
+        this.value2 += value + ''
+      } else {
+        if (this.value.length >= 6) {
+          return
+        }
+        this.value += value + ''
       }
-      this.money += value + ''
+
+    },
+    onClose (value) {//设置密码
+      var that = this;
+      if (value.length < 6) {
+        Toast('请输入6位数密码')
+        return
+      } else {
+        if (this.second) {
+          console.log('value:' + this.value)
+          console.log('value2:' + this.value2)
+          if (this.value2 != this.value) {
+            Toast('两次密码不一致，请重新输入')
+          } else {
+            this.second = false;
+            this.show = false;
+            this.addPayPass(this.passparams, passCallBack)
+          }
+
+        } else {
+          if (this.userData.payPass) {
+            if (this.passIndex == 0) {
+              this.reChargeByTianFuBao(this.tianparams, tianCallBack)
+            } else if (this.passIndex == 1) {
+              this.reCharge(this.yiparams, yiCallBack)
+            }
+            this.show = false;
+            this.value = ''
+          } else {
+            this.second = true;
+            this.show = true;
+            this.placeholder = '请再次输入6位数支付密码'
+          }
+        }
+      }
+      function passCallBack () {
+        // that.iframeShow = true;
+        that.userData = JSON.parse(that.getLocalStorage('userInfo'));
+        if (that.passIndex == 0) {
+          that.reChargeByTianFuBao(that.tianparams, tianCallBack)
+        } else if (that.passIndex == 1) {
+          that.reCharge(that.yiparams, yiCallBack)
+        }
+        that.value = '';
+        that.value2 = '';
+      }
+      function tianCallBack (datas) {
+        console.log(datas)
+        that.spbillno = datas;
+        that.type = 2;
+        that.setLocalStorage('tianparams', JSON.stringify(that.tianparams))
+        that.$router.replace('RechargeDetails')
+      }
+      function yiCallBack (datas) {
+        that.show = false;
+        that.value = '';
+        // that.setLocalStorage('iframeSrc', datas)
+        let dwSafari
+        dwSafari = window
+        // .open();
+        // dwSafari.document.open();
+        let dataObj = datas
+        let html = dataObj.replace(/[^\u0000-\u00FF]/g, function ($0) { return escape($0).replace(/(%u)(\w{4})/gi, "&#x$2;") });
+        dwSafari.document.write(dataObj)
+        dwSafari.document.forms[0].submit()
+        dwSafari.document.close()
+
+        // that.iframeBase = process.env.BASE_URL + 'html/yibao.html?v=' + new Date().getTime();
+        // that.iframeShow = true;
+      }
+
     },
     onDelete () {
-      this.money = this.money.slice(0, this.money.length - 1)
+      this.value = this.value.slice(0, this.value.length - 1)
     },
     clickSubmit: function () {
-      Toast('提交申请')
+      if (!this.cardList.length) {
+        Toast('请先添加信用卡!')
+        return
+      }
+      var min = this.selectPass.minmoney;
+      var max = this.selectPass.maxmoney
+      if (this.money < min || this.money > max) {
+        Toast('请输入正确的充值金额' + min + '-' + max)
+      } else {
+        if (this.userData.payPass) {
+          this.show = true;
+          this.placeholder = '请输入6位数支付密码'
+        } else {
+          this.show = true;
+          this.placeholder = '请设置6位数支付密码'
+        }
+      }
     }
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
-    console.log('进入详情')
+
   },
   // 生命周期函数
   beforeCreate () { },
   mounted () {
-    console.log('CollectMoneyDetail')
+    console.log('进入详情')
+    var that = this;
+    store.commit('setDetail', true)
+    this.userData = JSON.parse(this.getLocalStorage('userInfo'));
+    this.findUserShareRateList({ userId: this.userData.id }, setList)
+    function setList (datas) {
+      that.passList = [
+        { name: '天下付', day: 'D+0', lilv: datas.rate + '%', minmoney: 200, maxmoney: 50000, tui: true },
+        { name: '易沣', day: 'D+0', lilv: datas.rate + '%+0.5元', minmoney: 100, maxmoney: 20000 }
+      ]
+      that.selectPass = that.passList[0];
+      that.$nextTick(function () { })
+    }
+
+    this.checkLogin('userData', 'setUserData')
+    this.checkLogin('userCardList', 'setUserCardList', that.findAllUserCredits)
   }
 
 }
@@ -155,6 +340,7 @@ export default {
 <style scoped lang="scss">
 .CollectMoneyDetail {
   /* ... */
+  margin-bottom: 50px;
 }
 .boxshandow {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -226,6 +412,7 @@ export default {
     color: $ce5;
   }
 }
+
 .pl30 {
   padding: 0 0.4rem;
 }

@@ -3,7 +3,7 @@
       <my-header class="myHeader" :title="'账户信息'"></my-header>
       <div class="accoutBox">
           <div class="userPic">
-            <img :src="userPic">
+            <img :src="userData.wxPhoto">
           </div>
           <input-item class="userList" :itemList="realData"></input-item> 
       </div>
@@ -29,16 +29,7 @@ export default {
   // 变量
   data () {
     return {
-      realData: [
-        { name: '姓名', model: '百事可乐', center: true, type: 'name', },
-        { name: '手机号码', model: '1355555555', center: true, type: 'phone', },
-        { name: '注册日期', model: '2019-1-12', center: true, type: 'startTime', },
-        { name: '身份证号', model: '420116199211261434', center: true, type: 'startTime', },
-        { name: '实名状态', model: '未实名', center: true, type: 'startTime', },
-        { name: '会员等级', model: '普通用户', center: true, type: 'startTime', },
-
-
-      ],
+      realData: null,
       buttonItem: { txt: '下一步', classes: 'buttonItem' },
     }
   },
@@ -50,6 +41,12 @@ export default {
       set: function () {
 
       }
+    },
+    userData: {
+      get: function () {
+        return store.state.userInfo
+      },
+      set: function () { }
     }
   },
   // 使用其它组件
@@ -59,6 +56,20 @@ export default {
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     console.log('进入账户信息')
+    var that = this;
+    if (!that.getLocalStorage('userData')) {
+      this.checkLogin('userData', 'setUserData', that.getMyInfo)
+    }
+
+    that.realData = [
+      { name: '姓名', model: this.userData.name, readonly: true, center: true, type: 'name', },
+      { name: '手机号码', model: this.userData.mobile, readonly: true, center: true, type: 'phone', },
+      { name: '注册日期', model: this.userData.createTime, readonly: true, center: true, type: 'startTime', },
+      { name: '身份证号', model: this.userData.identityNo, readonly: true, center: true, type: 'startTime', },
+      { name: '实名状态', model: this.userData.certificationName, readonly: true, center: true, type: 'startTime', },
+      { name: '会员等级', model: this.userData.levelName, readonly: true, center: true, type: 'startTime', },
+    ]
+
     // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
   },
   // 生命周期函数
@@ -74,6 +85,7 @@ export default {
 .UserAccount {
   /* ... */
   background: $c74;
+  padding-bottom: 50px;
 }
 .inputBox {
   padding-top: 1.1733rem;

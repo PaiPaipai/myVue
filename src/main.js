@@ -10,17 +10,25 @@ import './assets/font/iconfont.css'
 // eslint-disable-next-line no-unused-vars
 import api from './assets/js/api'
 import common from './assets/js/common.js'
+import ajax from './assets/js/ajax.js'
 
-
-import {Button, List, Swipe, SwipeItem} from 'vant'
+import {
+  Button,
+  List,
+  Swipe,
+  SwipeItem,
+  Toast
+} from 'vant'
 Vue.config.productionTip = false
 Vue.config.debug = true
-
+// console.log(store)
 /* eslint-disable no-new */
-Vue.use(Button).use(List).use(Swipe).use(SwipeItem).use(common)
+Vue.use(Button).use(List).use(Swipe).use(SwipeItem).use(Toast).use(common).use(ajax)
 new Vue({
   el: '#app',
   router,
-  components: {App},
+  components: {
+    App
+  },
   template: '<App/>'
 })

@@ -12,12 +12,13 @@
               <span>常见问题</span>
             </li>
             <li @click="goKefu()">
-              <i class="iconfont icon-kefu1"></i>
-              <span>联系客服</span>
+              <i :class="[submititem.icon?submititem.icon:'iconfont icon-kefu1']"></i>
+              <span>{{submititem.second?submititem.second:'联系客服'}}</span>
             </li>
           </ul>
         </van-submit-bar>
         <popup-img :imgUrl="imgUrl" :showPopup="showPopup" @closeItem="closeItem"></popup-img>
+
     </div>
 </template>
 
@@ -27,8 +28,8 @@ import Vue from 'vue'
 import store from '@/store/index'
 import PopupImg from '@/components/PopupImg'
 
-import { SubmitBar, Popup } from 'vant';
-Vue.use(SubmitBar).use(Popup);
+import { SubmitBar, Popup, Toast } from 'vant';
+Vue.use(SubmitBar).use(Popup).use(Toast);
 export default {
   // 不要忘记了 name 属性
   name: 'SubmitItem',
@@ -60,7 +61,12 @@ export default {
       this.routerTo('UserQuestion')
     },
     goKefu: function () {
-      this.showPopup = true
+      if (this.submititem.second == '充值明细') {
+        this.routerTo('UserMoneyDetail')
+      } else {
+        this.showPopup = true
+      }
+
     },
     // 
   },

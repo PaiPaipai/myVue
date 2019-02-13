@@ -5,10 +5,10 @@
           <div class="userPicBox ">
               <dl class="clearfix">
                 <dt>
-                   <img :src="userPic">
+                   <img :src="userData.wxPhoto">
                 </dt>
                 <dd>
-                  <h3>张三</h3>
+                  <h3>{{userData.name || userData.nickName||''}}</h3>
                   <van-button :class="[userSetting.classes]" plain round type="primary"><i class="iconfont icon-dengji"></i>{{userSetting.txt}}</van-button>
                 </dd>
               </dl>
@@ -26,11 +26,11 @@
           <div class="myMoneyBox mb20">
              <div @click="goShouru">
                <h3>我的收入：</h3>
-               <h4><span class="spanMoney">&yen;0.00</span>元</h4>
+               <h4><span class="spanMoney">&yen;{{userData.money||0}}</span>元</h4>
              </div>
              <div @click="goTeam">
                <h3>我的团队：</h3>
-               <h4><span class="spanPeople">0</span>人</h4>
+               <h4><span class="spanPeople">{{userData.invitedNum||0}}</span>人</h4>
              </div>
           </div>
           <div class="appBox myMoneyBox mb20">
@@ -84,7 +84,6 @@ export default {
     return {
       showPopup: false,
       imgUrl: process.env.BASE_URL + 'img/kefu.png',
-      userSetting: { classes: 'userSetting', txt: '普通用户' },
       upgrade: [
         { name: '普通用户', classes: 'pt' },
         { name: '渠道经理', classes: 'jd' },
@@ -93,21 +92,36 @@ export default {
       ],
       menuData: [
         { name: "实名认证", classes: "iconfont icon-shimingrenzheng", path: 'UserRealName' },
-        { name: "信用卡管理", classes: "iconfont icon-banqiazhongxin", path: 'UserCardList' },
+        { name: "信用卡还款", classes: "iconfont icon-banqiazhongxin", path: 'UserCardList' },
         { name: "我的结算卡", classes: "iconfont icon-wodejiesuanqia", path: 'UserMyCard' },
-        { name: "收钱", classes: " iconfont icon-shouqian", path: 'CollectMoneyDetail' },
+        { name: "收钱", classes: " iconfont icon-shouqian1", path: 'CollectMoneyDetail' },
       ],
       kefuData: [
         { name: "密码管理", classes: "iconfont icon-mimaguanli", path: 'UserPassword' },
         { name: "常见问题", classes: "iconfont icon-changjianwenti1", path: 'UserQuestion' },
-        { name: "在线客服", classes: "iconfont icon-kefu1" },
+        { name: "在线客服", classes: "iconfont icon-kefu1", paths: '1' },
       ]
     }
   },
   computed: {
     userPic: {
       get: function () {
-        return store.state.userPic
+        return store.state.userData.wxPhoto || store.state.userInfo.wxPhoto || store.state.userPic
+      },
+      set: function () {
+
+      }
+    },
+    userData: {
+      get: function () {
+        return store.state.userInfo || store.state.userData
+      },
+      set: function () { },
+
+    },
+    userSetting: {
+      get: function () {
+        return { classes: 'userSetting', txt: store.state.userInfo.levelName || store.state.userData.levelName || '' }
       },
       set: function () {
 
@@ -143,7 +157,9 @@ export default {
     },
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
-
+    console.log('242')
+    var that = this;
+    that.getMyInfo(that)
   },
   // 生命周期函数
   beforeCreate () { },
@@ -158,7 +174,7 @@ export default {
 .UserCenter {
   /* ... */
   background: $cf0;
-  padding-bottom: 0.2rem;
+  // margin-bottom: 0.2rem;
 }
 .userPicBox {
   padding: 0.92rem 0;
@@ -352,7 +368,7 @@ export default {
   /deep/ .icon-wodejiesuanqia {
     color: $c8e;
   }
-  /deep/ .icon-shouqian {
+  /deep/ .icon-shouqian1 {
     color: $ced;
   }
   /deep/ .icon-mimaguanli {

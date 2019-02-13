@@ -1,7 +1,7 @@
 <template lang="html">
     <div class="HrItem">
         <!-- ... -->
-        <h3 :class="[hritem.bottom?'h3border':'']">{{hritem.title}}<i @click="clicki" :class="hritem.classes"></i></h3>
+        <h3 :class="[hritem.bottom?'h3border':'']">{{hritem.title}} <i @click="clicki" :class="hritem.classes">{{hritem.txt}}</i></h3>
     </div>
 </template>
 
@@ -52,12 +52,16 @@ export default {
     font-size: $fz34;
     line-height: 0.96rem;
     // border-bottom: 1px solid $ccc;
-    // text-indent: 0.4rem;
+    text-indent: 0.3333rem;
     padding-right: 0.4rem;
     // margin-bottom: 0.5333rem;
     overflow: hidden;
     i {
       float: right;
+    }
+    .zcxe {
+      font-size: 0.32rem;
+      color: #1296db;
     }
   }
   .h3border {

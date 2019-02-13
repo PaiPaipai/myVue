@@ -2,8 +2,8 @@
     <div class="HandleItem">
         <!-- ... -->
         <div :class="['nav-item']" v-for="(item, index) in handleList" :key="index">
-          <div :class="['flexBox',item.classes]">
-            <h3>{{item.name}}</h3>
+          <div :class="['flexBox',item.classes]" @click="handle(item)">
+            <div class="h3">{{item.name}}</div>
             <p>{{item.tips}}</p>
             <i :class="['flexi',item.iclass]"></i>
           </div>
@@ -26,7 +26,7 @@ export default {
   // 组件属性、变量
   props: ["handleList"],
   // 变量
-  data() {
+  data () {
     return {};
   },
   computed: {},
@@ -35,13 +35,16 @@ export default {
   // 方法
   watch: {},
   methods: {
+    handle (item) {
+      this.$emit("handle", item);
+    },
     // this.$emit("clickSearch",text);
   },
   // 生命周期函数
-  beforeCreate() {},
-  created() {},
-  mounted() {},
-  activated() {} // 每次进路由会调用这个方法
+  beforeCreate () { },
+  created () { },
+  mounted () { },
+  activated () { } // 每次进路由会调用这个方法
 };
 </script>
 
@@ -54,30 +57,29 @@ export default {
 }
 .nav-item {
   width: 100%;
-  flex:50%;
+  flex: 50%;
   .flexBox {
     margin-right: 0.12rem;
     border-radius: $brd;
-    padding:0.3733rem 0;
+    padding: 0.3733rem 0;
     text-align: center;
     position: relative;
   }
-  h3 {
-    font-size:$fz32;
+  .h3 {
+    font-size: 0.5067rem;
     // line-height: 0.6rem;
     // font-weight: 600;
     position: relative;
     z-index: 2;
-
   }
   p {
-    font-size:$fz24;
+    font-size: $fz24;
     color: $c666;
     line-height: 0.48rem;
     position: relative;
     z-index: 2;
   }
-  .flexi{
+  .flexi {
     position: absolute;
     right: 0.1333rem;
     bottom: 0.1333rem;

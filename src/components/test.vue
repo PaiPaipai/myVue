@@ -24,10 +24,13 @@ export default {
     }
   },
   computed: {},
+  //每次进缓存的路由调用
+  activated: {},
   // 使用其它组件
   components: {},
   // 方法
   watch: {},
+  //每次进没有缓存的路由调用
   methods: {
     // this.$emit("clickSearch",text);
   },

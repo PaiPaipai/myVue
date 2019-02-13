@@ -28,7 +28,6 @@ export default {
     }
   },
   computed: {
-
   },
   // 使用其它组件
   components: { MyText, MoneyDetail },
@@ -49,7 +48,10 @@ export default {
   // 生命周期函数
   beforeCreate () { },
   created () { },
-  mounted () { },
+  mounted () {
+    console.log('moneyDetails')
+    console.log(this.moneyData)
+  },
   activated () {
     console.log('moneyDetails')
   }// 每次进路由会调用这个方法

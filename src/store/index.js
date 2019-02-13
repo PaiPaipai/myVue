@@ -6,10 +6,29 @@ const state = {
   newsList: [],
   test: [],
   platform: false,
-  userId: 123,
+  path: '', //将路由的连接缓存起来
+  userId: '',
+  loginStatus: false,
+  wxData: {
+    // 123456789
+    openId: '123456789',
+    nickName: '思密达',
+    wxPhoto: "http://thirdwx.qlogo.cn/mmopen/g3MonUZtNHkdmzicIlibx6iaFqAc56vxLSUfpb6n5WKSYVY0ChQKkiaJSgQ1dZuTOgvLLrhJbERQQ4eMsv84eavHiaiceqxibJxCfHe/46",
+    invitationId: '9',
+    token: '12243587',
+  },
+  userData: {},
+  userInfo: {},
+  userTeam: {},
+  userMoney: {},
+  proviceList: [],
+  userCardList: {},
+  addCardList: {},
+  userRealNameData: {},
   detail: false,
+  subBankList: [],
   userPic: process.env.BASE_URL + 'img/user.png',
-  codeImg:process.env.BASE_URL + 'img/erweima.png',
+  codeImg: process.env.BASE_URL + 'img/erweima.png',
 } // 声明常量
 checkApp()
 
@@ -22,6 +41,7 @@ function checkApp() {
     // android微信
     state.platform = false;
   }
+
 }
 
 // const getters = {getActive: function () { return state.active }}
@@ -32,12 +52,55 @@ const mutations = {
   setAny: function (state, test) {
     state.test = test
   },
+  setUserId: function (state, userId) {
+    state.userId = userId
+  },
   setNewsList: function (state, newsList) {
     state.newsList = newsList
   },
   setDetail: function (state, detail) {
     state.detail = detail
   },
+  setPath: function (state, path) {
+    state.path = path
+  },
+  setUserData: function (state, userData) {
+    state.userData = userData
+  },
+  setUserInfo: function (state, userInfo) {
+    state.userInfo = userInfo
+  },
+  setUserTeam: function (state, userTeam) {
+    state.userTeam = userTeam
+  },
+  setUserMoney: function (state, userMoney) {
+    state.userMoney = userMoney
+  },
+  setUserCardList: function (state, userCardList) {
+    state.userCardList = userCardList
+  },
+  setAddCardList: function (state, addCardList) {
+    state.addCardList = addCardList
+  },
+  setSubBankList: function (state, subBankList) {
+    state.subBankList = subBankList
+  },
+  setUserRealNameData: function (state, userRealNameData) {
+    state.userRealNameData = userRealNameData
+  },
+  setWxData: function (state, wxData) {
+    state.userRealNamewxDataData = wxData
+  },
+  setProviceList: function (state, proviceList) {
+    state.proviceList = proviceList
+  },
+  setLoginStatus: function (state, loginStatus) {
+    state.loginStatus = loginStatus;
+  }
+
+
+
+
 } // 定义方法，mutations固定写法
 
 export default new Vuex.Store({

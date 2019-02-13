@@ -14,7 +14,7 @@
             </div>
             <ul class="moneyUl">
               <li v-for="(item, index) in currentItem.list" :key="index">
-                <span>{{item.name}}</span><span>{{item.phone}}</span><span>{{item.level.name}}</span>
+                <span>{{item.name}}</span><span>{{item.phone}}</span><span :style="{'color':item.level?item.level.color:''}">{{item.level?item.level.name:''}}</span>
               </li>
             </ul>
         </div>
@@ -41,7 +41,7 @@ export default {
   data () {
     return {
       currentIndex: 0,
-      currentItem: {},
+      // currentItem: {},
     }
   },
   computed: {
@@ -56,7 +56,13 @@ export default {
         return this.moneyData.moneyDetails
       },
       set: function () { }
-    }
+    },
+    currentItem: {
+      get: function () {
+        return this.moneyDetails.top ? this.moneyDetails[this.moneyDetails.top[this.currentIndex].tag] : {}
+      },
+      set: function () { }
+    },
   },
   // 使用其它组件
   components: { MyHeader },
@@ -82,8 +88,8 @@ export default {
   created () { },
   mounted () {
     console.log('23')
-    this.currentItem = this.moneyDetails[this.moneyDetails.top[0].tag] //设置默认值
-    this.currentIndex = 0;
+    // this.currentItem = this.moneyDetails[this.moneyDetails.top[0].tag] //设置默认值
+    // this.currentIndex = 0;
     console.log(this.moneyDataClone)
   },
   activated () {
@@ -155,7 +161,8 @@ export default {
       color: $themeColor;
     }
     span {
-      width: 100%;
+      width: auto;
+      flex-grow: 1;
     }
     .moneyUl {
       // border-bottom: 1px solid $c999;
@@ -168,6 +175,9 @@ export default {
         span {
           border-right: 1px solid $c999;
           border-bottom: 1px solid $c999;
+        }
+        span:nth-child(2) {
+          width: 45%;
         }
         span:nth-child(3n) {
           border-right: none;

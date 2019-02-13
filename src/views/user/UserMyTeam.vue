@@ -36,17 +36,21 @@
             </div>
             <div class="tabBottom">
               <ul class="contentUl">
-                <li v-for="(item, index) in cloumns" :key="index">
-                  <div class="imgBox"><img :src="item.imgUrl" alt=""></div>
+                <li v-for="(item, index) in (cloumns || teamData.bottom[0])" :key="index">
+                  <div class="imgBox"><img :src="item.wxPhoto || item.imgUrl" alt=""></div>
                   <div class="textBox">
-                    <h3>{{item.name}} <button><i class="iconfont icon-dianhua"></i>拨打电话</button></h3>
-                    <p>{{item.time}} 加入</p>
+                    <h3>{{item.name || item.nickName}} <button v-show="item.mobile" @click="callPhone(item.mobile)"><i class="iconfont icon-dianhua"></i>拨打电话</button></h3>
+                    <p>{{item.dateCreated}} 加入</p>
                   </div>
                   <div class="typeBox">
                     <img :src="item.type" alt="">
                   </div>
                 </li>
               </ul>
+              <div class="noData" v-show=" !teamData.bottom[currentIndex].length" >
+                暂无数据
+              </div>
+              
             </div>
         </div>
         <div class="text-box">
@@ -63,6 +67,8 @@ import store from '@/store/index'
 import MyHeader from '@/layout/MyHeader'
 import SearchItem from '@/components/SearchItem'
 import MyText from "@/components/MyText"
+import { Toast } from 'vant';
+Vue.use('Toast')
 export default {
   // 不要忘记了 name 属性
   name: 'UserMyTeam',
@@ -78,79 +84,102 @@ export default {
       lineLeft: 0,
       lineStart: 0,
       liw: 0,
-      cloumns: [],
-      teamTop: {
-        top: [{ name: '客户总数', total: 0 }],
-        today: [{ name: '团队人数', total: 0 }, { name: '今日新增', total: 0 }],
-        detail: [{ name: '门店经理', total: 0 }, { name: '团队经理', total: 0 }, { name: '渠道经理', total: 0 }, { name: '普通用户', total: 0 }],
-      },
-      teamData: {
-        top: [
-          { id: 1, name: '门店经理' }, { id: 2, name: '团队经理' }, { id: 3, name: '渠道经理' }, { id: 4, name: '普通用户' },
-        ],
-        bottom: [
-          [
-            { name: '李哈哈', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈1', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-            { name: '李哈哈2', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈3', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-          ],
-          [
-            { name: '李哈哈', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-
-          ],
-          [
-            { name: '李哈哈', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈1', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-          ],
-          [
-            { name: '李哈哈', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈1', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-            { name: '李哈哈2', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈3', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-            { name: '李哈哈', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈1', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-            { name: '李哈哈2', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/wrz.png' },
-            { name: '李哈哈3', imgUrl: store.state.userPic, time: '2019-1-17 16:53:02', phone: '15727050672', type: process.env.BASE_URL + 'img/yrz.png' },
-
-          ],
-
-        ]
-      },
+      columnsSelect: null,
+      changeColums: null,
+      currentIndex: 0,
       searchData: {
         placeholder: '请输入用户昵称或手机号码',
         model: '',
       }
     }
   },
-  computed: {},
+  computed: {
+    userTeam: {
+      get: function () {
+        return store.state.userTeam
+      },
+      set: function () { },
+    },
+    cloumns: {
+      get: function () {
+        return this.columnsSelect
+      },
+      set: function () {
+
+      },
+    },
+    teamTop: {
+      get: function () {
+        return {
+          top: [{ name: '客户总数', total: this.userTeam.khNum || 0 }],
+          today: [{ name: '团队人数', total: this.userTeam.khNum || 0 }, { name: '今日新增', total: this.userTeam.addNum || 0 }],
+          detail: [{ name: '门店经理', total: this.userTeam.mdNum || 0 }, { name: '团队经理', total: this.userTeam.tdNum || 0 }, { name: '渠道经理', total: this.userTeam.qdNum || 0 }, { name: '普通用户', total: this.userTeam.ptNum || 0 }],
+        }
+      },
+      set: function () { },
+    },
+    teamData: {
+      get: function () {
+        return {
+          top: [
+            { id: 1, name: '门店经理' }, { id: 2, name: '团队经理' }, { id: 3, name: '渠道经理' }, { id: 4, name: '普通用户' },
+          ],
+          bottom: this.userTeam.arrList || [[], [], [], [], []]
+        }
+      },
+      set: function () { },
+    }
+  },
   // 使用其它组件
   components: { MyHeader, SearchItem, MyText },
   // 方法
   watch: {},
   methods: {
+    callPhone (mobile) {
+      window.location.href = "tel:" + mobile;
+    },
     changeTab (item, index) {
       this.lineLeft = this.liw * index + this.lineStart
-      this.cloumns = this.teamData.bottom[index]
+      this.currentIndex = index;
+      if (this.searchData.model) {
+        this.getSearchData(this.searchData.model)
+      } else {
+        this.columnsSelect = this.teamData.bottom[index]
+      }
+
     },
     clickSearch (value) {
       this.searchData.model = value;
-
+      this.getSearchData(value)
       console.log(value)
-    }
+    },
+    getSearchData (value) {
+      var columnsSelect = this.teamData.bottom[this.currentIndex]
+      var cloneList = []
+      columnsSelect.forEach(function (item) {
+        if (item.mobile.indexOf(value) > -1 || item.name.indexOf(value) > -1 || item.nickName.indexOf(value) > -1) {
+          cloneList.push(item)
+        }
+      });
+      this.columnsSelect = cloneList;
+    },
     // this.$emit("clickSearch",text);
   },
   // 生命周期函数
   beforeCreate () { },
   created () { },
   mounted () {
+    console.log('UserMyTeam')
+    var width = this.$refs.elememt.offsetWidth;
+    this.liw = window.screen.width / 4;
+    this.lineLeft = this.lineStart = (this.liw / 2) - (width / 2)
+    var that = this;
 
+    // this.checkLogin('userTeam', 'setUserTeam', that.promoterRank)
+    that.promoterRank(that)
   },
   activated () {
-    var width = this.$refs.elememt.offsetWidth;
-    this.liw = this.$refs.li[0].offsetWidth;
-    this.lineLeft = this.lineStart = (window.outerWidth / 4 / 2) - (width / 2)
-    this.cloumns = this.teamData.bottom[0]
+
   }// 每次进路由会调用这个方法
 
 }
@@ -178,7 +207,6 @@ export default {
 .teamTop {
   text-align: center;
   background: $white;
-
   li {
     display: flex;
     justify-content: space-between;
@@ -267,7 +295,7 @@ export default {
       font-size: $fz28;
     }
     i {
-      margin-right: 0.4rem;
+      margin-right: 0.1rem;
     }
   }
 }

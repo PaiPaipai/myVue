@@ -8,6 +8,7 @@
             v-show=" item.show != false"
             @keyup="keyUpItem(item)"
             :label="item.name"
+             :type="item.types"
             :readonly=item.readonly
             :placeholder="item.placeholder"
             :error-message="item.error && item.model != '' ?item.errorMsg:''"
@@ -57,7 +58,7 @@ export default {
   computed: {
     userId: {
       get: function () {
-        return this.$store.state.userId
+        return store.state.userId
       },
       set: function () {
 
@@ -96,7 +97,7 @@ export default {
     clickSendMsg: function (item) {
 
       if (item.model == '') {
-        Toast('请填写手机号码!')
+        Toast('请填写正确的手机号码!')
         return
       }
       else if (!item.reg.test(item.model)) {//验证正则
@@ -107,6 +108,7 @@ export default {
         item.disabled = true;
         this.countDown(item)
         Toast('发送短信成功!')
+        this.sendSms(item.model);
       }
     },
     keyUpItem: function (item) {
@@ -119,35 +121,78 @@ export default {
       }
       if (item.type == 'yhkh') {
         var v = item.model;
+        var cloneV = item.model;
+
         if (/\S{5}/.test(v)) {
           item.model = v.replace(/\s/g, '').replace(/(.{4})/g, '$1 ');
         }
+        if (item.model.length == 19 || item.model.length == 23) {
+          if (!isNaN(cloneV.replace(/\s+/g, ""))) {
+            item.error = false
+          } else {
+            item.error = true
+          }
+        } else {
+          item.error = true
+        }
       }
     },
-    // this.$emit("clickSearch",text);
+    proviceCallback (proviceList) {
+      this.columns = proviceList
+    },
     goToPath: function (item, index) {
-      this.selectItem = item;
-      this.selectIndex = index;
+      console.log('inputItem')
+      var that = this;
+      that.selectItem = item;
+      that.selectIndex = index;
+      that.columns = []
+      var beforeItem = that.itemListClone[index - 1];
       if (item.path) {
-        this.routerTo(item.path, { userId: this.$store.state.userId })
+        that.routerTo(item.path, { userId: store.state.userId })
       } else if (item.icon) {
+
         if (item.type == "fh") {
-          if (this.searchDataClone.khh) {
-            this.$emit('clickFh')
+          if (that.searchDataClone.khh) {
+            that.$emit('clickFh')
           } else {
             Toast('请先选择银行')
           }
 
+        } else if (item.type == 'previce') {//选择省
+          that.show = true;
+          that.title = item.title;
+          if (!that.getLocalStorage('proviceList')) {
+            that.getAreaCodeByType({ type: 1, name: 'provinceName', code: 'provinceCode' }, that.proviceCallback)
+          } else {
+            that.columns = JSON.parse(that.getLocalStorage('proviceList'))
+          }
+        } else if (item.type == 'city') {//选择市
+          if (!beforeItem.code) {
+            Toast('请先选择' + beforeItem.name)
+          } else {
+            that.show = true;
+            that.title = item.title;
+            that.getAreaCodeByType({ type: 2, name: 'cityName', provinceCode: that.searchDataClone.provinceCode, code: 'cityCode' }, that.proviceCallback)
+
+          }
+        } else if (item.type == 'town') {
+          if (!beforeItem.code) {
+            Toast('请先选择' + beforeItem.name)
+          } else {
+            that.show = true;
+            that.title = item.title;
+            that.getAreaCodeByType({ type: 3, name: 'areaName', cityCode: that.searchDataClone.cityCode, code: 'areaCode' }, that.proviceCallback)
+          }
         } else {
           this.show = true;
           this.title = item.title;
           if (item.type == 'khh') {
-            this.columns = ['中国银行', '中国银行', '中国银行', '中国银行']
+            this.columns = this.bankInfo
           }
         }
 
       } else {
-        this.$emit('clickItem')
+        this.$emit('clickItem', item)
       }
     },
     clickItem: function () {
@@ -155,12 +200,14 @@ export default {
     }
   },
   // 生命周期函数
-  beforeCreate () { },
+  beforeCreate () {
+
+  },
   created () {
 
   },
   mounted () {
-    console.log('input')
+
   },
   activated () {
 
@@ -175,6 +222,9 @@ export default {
   // display: flex;
   // justify-content: space-between;
   background: $white;
+  /deep/ .van-field__body {
+    // margin-top: 0.0667rem;
+  }
 }
 .myGroup::after {
   border: none;

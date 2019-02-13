@@ -29,9 +29,7 @@ export default {
     return {
       params: this.$route.params,
       imgList: [
-        { imgUrl: process.env.BASE_URL + '/img/1.jpg' },
-        { imgUrl: process.env.BASE_URL + 'img/2.jpg' },
-        { imgUrl: process.env.BASE_URL + 'img/3.jpg' }
+        { imgUrl: process.env.BASE_URL + '/img/gd1.png' },
       ],
     }
   },

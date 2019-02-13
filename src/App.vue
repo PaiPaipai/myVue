@@ -5,30 +5,38 @@
     <keep-alive>
       <!--缓存部分页面-->
       <router-view class="child-view"
-                   :style="{'min-height':minHeight+'px'}"
                    v-if="!$route.meta.keepAlive"></router-view>
       <!-- 默认都缓存 -->
+      <!-- :style="{'min-height':minHeight+'px'}" -->
     </keep-alive>
     <!-- 将不缓存的设置为true -->
     <router-view class="child-view"
-                 :style="{'min-height':minHeight+'px'}"
                  v-if="$route.meta.keepAlive"></router-view>
 
     <my-tab v-show="!detail"></my-tab>
+    <my-nav v-show="(detail&&myNav?true:false)"></my-nav>
   </div>
 </template>
 
 <script>
+
+
+import Vue from 'vue'
 import MyTab from '@/layout/MyTab'
+import MyNav from '@/layout/MyNav'
 import store from '@/store/index'
+import IframeItem from '@/components/IframeItem'
+import { Toast } from 'vant'
+Vue.use(Toast)
+import { setTimeout } from 'timers';
 export default {
   name: 'App',
   store,
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
       transitionName: 'slide-left',
       minHeight: '',
+      myNav: true,
     }
   },
   computed: {
@@ -39,40 +47,88 @@ export default {
       set: function () {
 
       }
+    },
+    platform: {
+      get: function () {
+        return store.state.platform
+      },
+      set: function () {
+
+      }
     }
+  },
+  beforeCreate () {
+  },
+  methods: {
+    clickClose () {
+    },
+    wxShareCb () {
+
+    },
   },
   mounted () {
     console.log('app')
+    var that = this;
+    // store.commit('setPath', that.$router.currentRoute)
+    // var url = location.href.split('#')[0];
+    if (that.getUrlParam('admin')) {
+      that.wxLogin(that) //带有admin 就直接 登录
+    } else {
+      if (!that.getLocalStorage('wxData')) {
+        that.start(that) //获取微信相关信息
+      } else {
+        if (!that.getLocalStorage('userInfo')) {
+          that.getMyInfo(that) //获取相关个人信息
+        }
+      }
+    }
+    that.$router.beforeEach((to, from, next) => {
+      // beforeEach是router的钩子函数，在进入路由前执行
+      const toDepth = to.path;
+      if (toDepth.indexOf('Detail') > 0 || toDepth.indexOf('Money') > 0 || toDepth.indexOf('house') > 0 || toDepth.indexOf('Apply') > 0 || toDepth == '/UserReal') {
+        store.commit('setDetail', true)
+        if (toDepth.indexOf('CollectMoneyDetail') > 0) {
+          that.myNav = false
+        } else {
+          that.myNav = true;
+        }
+      } else {
+        store.commit('setDetail', false)
+      }
+      store.commit('setPath', toDepth)
+      that.wxShareCallBack(to, that)
+      window.scrollTo(0, 0);
+      if (to.meta.title) {
+        // 判断是否有标题
+        document.title = to.meta.title
+      }
+      next() // 执行进入路由，如果不写就不会进入目标页
+    })
+    wx.hideMenuItems({ // 要隐藏的菜单项，只能隐藏“传播类”和“保护类”按钮，所有menu项见附录3
+      menuList: ['menuItem:share:qq', 'menuItem:share:QZone', 'menuItem:openWithSafari', 'menuItem:copyUr']
+    });
     this.minHeight = window.outerHeight - 50;
   },
-  components: { MyTab },
+  components: { MyTab, IframeItem, MyNav },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     console.log('路由切换')
-    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
   },
-  watch: {
-    '$route' (to, from) {
-      // const toDepth = to.path;
-
-      // const fromDepth = from.path.split('/').length
-      // this.transitionName = toDepth < fromDepth ? 'slide-right' : 'slide-left'
-    }
-  }
 }
 </script>
 
 <style scope>
 .app {
-  /* height: 100vh;
-  overflow-y: auto; */
-  /* box-sizing: border-box; */
-  padding-bottom: 50px;
+  min-height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+
   overflow-x: hidden;
 }
 
 .child-view {
   box-sizing: border-box;
-  min-height: 100%;
+  padding-bottom: 50px;
+  /* min-height: 100%; */
 }
 
 /* .child-view {

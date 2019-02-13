@@ -29,7 +29,7 @@ export default {
     return {
       imgUrl: process.env.BASE_URL + 'img/password.png',
       realData: [
-        { name: '支付密码', model: '', type: 'zfmm', placeholder: '', icon: 'arrow', path: 'ChangePassword', error: false, readonly: true },
+        { name: '支付密码', model: '', type: 'zfmm', placeholder: '', icon: 'arrow', path: 'UserPassChange', error: false, readonly: true },
       ],
     }
   },

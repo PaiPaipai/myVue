@@ -18,6 +18,25 @@
           <van-button :class="['moneyButton']" @click="clickMx">{{moneyDataClone.name[3]}}</van-button>
           <van-button :class="['moneyButton js']" @click="clickJs">{{moneyDataClone.name[4]}}</van-button>
         </div>
+        <div>
+
+        </div>
+        <my-dialog  :title="title" :show="show" @confirm="confirm" @cancel="cancel" :dialogList="dialogList"></my-dialog>
+        <!-- <van-dialog
+          :title="title"
+          v-model="show"
+          show-cancel-button
+          @confirm="confirm"
+          @cancel="cancel"
+        >
+          <van-field
+            :class="'myInput'"
+            v-model="money"
+            :type="'number'"
+            label="金额"
+            placeholder="请输入大于100的金额"
+          />
+        </van-dialog> -->
     </div>
 </template>
 
@@ -26,9 +45,9 @@
 import Vue from 'vue'
 import store from '@/store/index'
 import MyHeader from '@/layout/MyHeader'
-
-import { Button } from 'vant'
-Vue.use(Button)
+import MyDialog from '@/components/MyDialog'
+import { Button, Dialog, Field, Toast } from 'vant'
+Vue.use(Button).use(Toast)
 export default {
   // 不要忘记了 name 属性
   name: 'MoneyItem',
@@ -36,11 +55,15 @@ export default {
   // 组合其它组件
   extends: {},
   // 组件属性、变量
-  props: ['moneyData'],
+  props: ['moneyData', 'showDilog', 'title'],
   // 变量
   data () {
     return {
-
+      moneyClone: '',
+      money: '',
+      dialogList: [
+        { money: '', type: 'number', label: '金额', placeholder: '请输入大于100的金额', classes: '', icon: '' }
+      ]
     }
   },
   computed: {
@@ -49,13 +72,55 @@ export default {
         return this.moneyData
       },
       set: function () { }
-    }
+    },
+    show: {
+      get: function () {
+        return this.showDilog
+      },
+      set: function () { }
+    },
   },
   // 使用其它组件
-  components: { MyHeader },
+  components: { MyHeader, MyDialog },
   // 方法
   watch: {},
   methods: {
+    confirm () {
+      var that = this;
+      if (this.dialogList[0].money < 100) {
+        Toast('请输入大于100的金额')
+      } else if (this.dialogList[0].money > this.moneyData.money[0]) {
+        Toast('请输入小于' + this.moneyData.money[0] + '的金额')
+      } else {
+        this.$emit("confirm", this.dialogList[0].money)
+        this.dialogList[0].money = ''
+      }
+    },
+    cancel () {
+      this.dialogList[0].money = ''
+      this.$emit("cancel")
+    },
+    // beforeClose (action, done) {
+    //   var that = this;
+    //   if (action === 'confirm') {
+    //     this.$emit("confirm", this.moneyClone)
+    //     if (this.money < 100) {
+    //       Toast('请输入大于100的金额')
+    //       done(false)
+    //     } else if (this.moneyData.moneyClone[0] > 100) {
+    //       Toast('请输入小于' + this.moneyData + '的金额')
+    //       done(false)
+    //     } else {
+    //       this.$emit("done")
+    //       setTimeout(function () {
+    //         done()
+    //       }, 1000);
+    //     }
+    //   } else {
+    //     this.$emit("done")
+    //     done()
+    //   }
+    // },
     clicki () {
       this.$emit("clicki");
     },
@@ -70,7 +135,9 @@ export default {
   // 生命周期函数
   beforeCreate () { },
   created () { },
-  mounted () { },
+  mounted () {
+    console.log('moneyItem')
+  },
   activated () { }// 每次进路由会调用这个方法
 
 }
@@ -153,5 +220,9 @@ export default {
       background: $cffa;
     }
   }
+}
+.myInput {
+  margin: 20px 0;
+  // border: 1px solid $cf0;
 }
 </style>

@@ -14,12 +14,12 @@
            <div class="moneyBox">
              <div class="moneyLeft">
                <span>金额</span>
-               <van-button plain round @click="changeMoney"><em>{{moneyItem.current}}</em>|万</van-button>  
+               <van-button plain round @click="changeMoney"><em>{{moneyItem.current}}</em>万</van-button>  
                <p>额度范围：{{moneyItem.min}}-{{moneyItem.max}}万</p>
              </div>
              <div class="moneyRight">
                 <span>期限</span>
-                <van-button plain round  @click="changeMonth"><i class="iconfont icon-jian"></i><em>{{monthItem.current}}</em><i class="iconfont icon-jia1"></i>|个月</van-button>
+                <van-button plain round  @click="changeMonth"><em>{{monthItem.current}}</em>个月</van-button>
                  <p>期限范围：{{monthItem.min}}-{{monthItem.max}}个月</p>
              </div>
            </div>
@@ -27,7 +27,7 @@
            <div class="jbBox">
              <ul class="tqUl">
                <li><i class="iconfont icon-guibin dj"></i>贷款： {{moneyItem.current}}万元/{{monthItem.current}}个月</li>
-               <li><i class="iconfont icon-guibin rmb"></i>利息：5000元</li>
+               <li><i class="iconfont icon-guibin rmb"></i>利息：{{parseInt(moneyItem.current*creditItem.minrate*monthItem.current*100)}}元</li>
                <li><i class="iconfont icon-guibin qx"></i>费用：0元（0%/月）</li>
                <li><i class="iconfont icon-guibin gz"></i>一次性 0 元（0%）</li>
              </ul>
@@ -37,26 +37,24 @@
              <ul class="llUl">
                <li>
                   <div>贷款期限（月）</div>
-                  <div>12-60</div>
+                  <div>{{monthItem.min}}-{{monthItem.max}}</div>
                </li>
                <li>
-                 <div>年利率</div>
-                  <div class="ccf9">基准利率上浮30%-40%</div>
+                 <div>月利率</div>
+                  <div class="ccf9">基准利率{{creditItem.minrate}}%-{{creditItem.maxrate}}%</div>
                </li>
              </ul>
            </div>
-           <hr-item :hritem="{title:'利率说明',bottom:true}"></hr-item>
+           <hr-item :hritem="{title:'还款说明',bottom:true}"></hr-item>
            <div class="sqBox">
-              <p>等额本息</p>
+              <p>{{creditItem.fs}}</p>
            </div>
            <hr-item :hritem="{title:'申请条件',bottom:true}"></hr-item>
-           <div class="sqBox">
-              <p>客户要求:25-56岁。加购履约险，可以放宽至22岁-60岁单签。</p>
-              <p>抵押物要求：鄂A、鄂E、鄂D、鄂F；车龄8年以内，公里数为15万公里以内;当前无抵押状态，仅限9座及以下蓝牌非营运私家车，不接受公司所有车辆及大巴车、卡车、火车等。</p>
+           <div class="sqBox" v-html="creditItem.tj">
            </div>
            <hr-item :hritem="{title:'所需材料',bottom:true}"></hr-item>
-           <div class="clBox sqBox">
-              <p>资料要求：房产证、土地证、购房合同、租赁合同、水电天燃气费单、还建协议、私房证明，网购截图，任选其一，需有姓名有地址；身份证、结婚照或离婚证或户口本、车辆登记证、行驶证、驾照。</p>
+           <div class="clBox sqBox" v-html="creditItem.cl">
+             
            </div>
             <hr-item  :class="['cardHr']" :hritem="{title:'办理流程',bottom:true}"></hr-item>
            <div class="lcBox">
@@ -108,35 +106,48 @@ export default {
       submititem: { text: '立即申请' },
       title: '金额',
       creditItem: {},
-      moneyItem: {
-        click: false,
-        current: 0,
-        picker: null,
-        min: 5,
-        max: 50,
-      },
-      monthItem: {
-        click: false,
-        current: 0,
-        picker: null,
-        min: 12,
-        max: 36,
-      },
       show: false,
       columnsMoney: [],
       columnsMonth: [],
       navData: [
-        { name: "申请贷款", classes: "iconfont icon-daikuan1" },
-        { classes: "iconfont icon-changjiantou" },
-        { name: "电话初审", classes: "iconfont icon-zuojikong" },
-        { classes: "iconfont icon-changjiantou" },
-        { name: "门店办理", classes: "iconfont icon-gongsi" },
-        { classes: "iconfont icon-changjiantou" },
-        { name: "审批放款", classes: "iconfont icon-shouqian" }
+        { name: "申请贷款", classes: "iconfont icon-daikuan1", paths: '1' },
+        { classes: "iconfont icon-changjiantou", paths: '1' },
+        { name: "电话初审", classes: "iconfont icon-zuojikong", paths: '1' },
+        { classes: "iconfont icon-changjiantou", paths: '1' },
+        { name: "门店办理", classes: "iconfont icon-gongsi", paths: '1' },
+        { classes: "iconfont icon-changjiantou", paths: '1' },
+        { name: "审批放款", classes: "iconfont icon-shouqian", paths: '1' }
       ],
     }
   },
-  computed: {},
+  computed: {
+    moneyItem: {
+      get: function () {
+        return {
+          click: false,
+          current: 0,
+          picker: null,
+          min: this.creditItem.minMoney,
+          max: this.creditItem.maxMoney,
+        }
+      },
+      set: function () {
+
+      }
+    },
+    monthItem: {
+      get: function () {
+        return {
+          click: false,
+          current: 0,
+          picker: null,
+          min: this.creditItem.minmonth,
+          max: this.creditItem.maxmonth,
+        }
+      },
+      set: function () { },
+    }
+  },
   // 使用其它组件
   components: { MyHeader, swipe, HrItem, SubmitItem, IconItem },
   // 方法
@@ -180,7 +191,8 @@ export default {
       this.show = false;
     },
     clickSubmit: function () {
-      this.routerTo('CreditApply', this.$route.params)
+      var that = this;
+      this.routerTo('CreditApply', { id: that.creditItem.id, title: that.creditItem.name })
     },
     restAll (type, index) {
       this[type].picker.setIndexes(index);
@@ -201,6 +213,10 @@ export default {
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     console.log('进入详情')
     this.creditItem = JSON.parse(this.getLocalStorage('CreditItem'));
+    this.moneyItem.current = this.moneyItem.min;
+    this.monthItem.current = this.monthItem.min;
+    this.setMoneySelect(this.moneyItem.min, this.moneyItem.max, 'columnsMoney')
+    this.setMoneySelect(this.monthItem.min, this.monthItem.max, 'columnsMonth')
     console.log(this.creditItem)
   },
   // 生命周期函数
@@ -208,10 +224,7 @@ export default {
   },
   mounted () {
     console.log('CardDetails')
-    this.moneyItem.current = this.moneyItem.min;
-    this.monthItem.current = this.monthItem.min;
-    this.setMoneySelect(this.moneyItem.min, this.moneyItem.max, 'columnsMoney')
-    this.setMoneySelect(this.monthItem.min, this.monthItem.max, 'columnsMonth')
+
   }
 
 }
@@ -262,6 +275,9 @@ export default {
     padding: 0.2933rem 0.4rem;
     span {
       line-height: 1em;
+    }
+    /deep/ .h3border {
+      text-indent: 0.4rem;
     }
     /deep/ button {
       height: 0.5067rem;

@@ -9,9 +9,9 @@
            </dd>
            <dd class="d2">
               <h3>{{item.name}}<van-tag :class="['myTag']" plain :color="item.color" :text-color="item.color">{{item.tips}}</van-tag></h3>
-              <h4 class="creditEd">贷款额度(元) <span> {{item.minMoney}}-{{item.maxMoney}}</span>万 参考月息: <span>0.55%-0.84%</span></h4>
+              <h4 class="creditEd">贷款额度(元) <span> {{item.minMoney}}-{{item.maxMoney}}</span>万 参考月息: <span>{{item.minrate}}%-{{item.maxrate}}%</span></h4>
               <p class="special">{{item.special}}</p>
-              <p>还款期限：3年</p>
+              <p>还款期限：{{item.minmonth}}{{item.monthType}}-{{item.maxmonth}}{{item.monthType}}</p>
            </dd>
          </dl>
       </li>
@@ -47,7 +47,12 @@ export default {
   methods: {
     clickButton: function (item) {
       this.setLocalStorage('CreditItem', JSON.stringify(item))
-      this.routerTo('CreditItemDetail', { id: item.id, title: item.name })
+      if (!item.tj) {
+        this.routerTo('CreditApply', { id: item.id, title: item.name })
+      } else {
+        this.routerTo('CreditItemDetail', { id: item.id, title: item.name })
+
+      }
     }
   },
 

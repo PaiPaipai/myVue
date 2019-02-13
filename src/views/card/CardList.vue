@@ -46,7 +46,7 @@ import IconItem from "@/components/IconItem";
 import JtHr from "@/components/JtHr";
 import BankItem from "@/components/BankItem"
 import MyText from "@/components/MyText"
-
+import { config } from '../../assets/js/config' // 引入配置的公共接口url
 import { Button, PullRefresh } from 'vant'
 import store from '@/store/index'
 Vue.use(Button).use(PullRefresh)
@@ -67,22 +67,22 @@ export default {
         { imgUrl: process.env.BASE_URL + "img/3.jpg" }
       ],
       bankList: [
-        { name: "兴业银行", imgUrl: process.env.BASE_URL + 'icon/xingye-logo.png', tips: ['自动结算', '佣金'], special: '最低6积分兑换哈根达斯', total: 286, classes: "", path: 'BankInfo' },
-        { name: "交通银行", imgUrl: process.env.BASE_URL + 'icon/jiaotong-logo.png', tips: ['自动结算', '佣金'], special: '新用户5积分换购豪礼', total: 589, classes: "", path: 'BankInfo' },
-        { name: "光大银行", imgUrl: process.env.BASE_URL + 'icon/guangda-logo.png', tips: ['自动结算', '佣金'], special: '实体店购物返现', total: 2415, classes: "", path: 'BankInfo' },
-        { name: "广发银行", imgUrl: process.env.BASE_URL + 'icon/guangfa-logo.png', tips: ['自动结算', '佣金'], special: '会员日消费享专属积分', total: 1582, classes: "", path: 'BankInfo' },
-        { name: "民生银行", imgUrl: process.env.BASE_URL + 'icon/minsheng-logo.png', tips: ['自动结算', '佣金'], special: '核卡后5年有效期内免年费', total: 4869, classes: "", path: 'BankInfo' },
-        { name: "浦发银行", imgUrl: process.env.BASE_URL + 'icon/pufa-logo.png', tips: ['自动结算', '佣金'], special: '最高领4888元刷卡金', total: 14639, classes: "", path: 'BankInfo' },
+        { name: "兴业银行", code: 'CIB', href: '', imgUrl: process.env.BASE_URL + 'icon/xingye-logo.png', tips: ['自动结算', '佣金'], special: '最低6积分兑换哈根达斯', total: 286, classes: "", path: 'BankInfo' },
+        { name: "交通银行", code: 'BCM', href: '', imgUrl: process.env.BASE_URL + 'icon/jiaotong-logo.png', tips: ['自动结算', '佣金'], special: '新用户5积分换购豪礼', total: 589, classes: "", path: 'BankInfo' },
+        { name: "光大银行", code: 'CEB', href: '', imgUrl: process.env.BASE_URL + 'icon/guangda-logo.png', tips: ['自动结算', '佣金'], special: '实体店购物返现', total: 2415, classes: "", path: 'BankInfo' },
+        { name: "广发银行", code: 'CMBC', href: '', imgUrl: process.env.BASE_URL + 'icon/guangfa-logo.png', tips: ['自动结算', '佣金'], special: '会员日消费享专属积分', total: 1582, classes: "", path: 'BankInfo' },
+        { name: "民生银行", code: 'CGB', href: '', imgUrl: process.env.BASE_URL + 'icon/minsheng-logo.png', tips: ['自动结算', '佣金'], special: '核卡后5年有效期内免年费', total: 4869, classes: "", path: 'BankInfo' },
+        { name: "浦发银行", code: 'SPDB', href: '', imgUrl: process.env.BASE_URL + 'icon/pufa-logo.png', tips: ['自动结算', '佣金'], special: '最高领4888元刷卡金', total: 14639, classes: "", path: 'BankInfo' },
       ],
       cardList: [
-        { name: "光大阳光白金卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 5, maxMoney: 30, hot: 1, tips: '要下户', special: '最低6积分兑换哈根达斯', total: 113324, classes: "", path: 'CardItemDetail', id: 1, },
-        { name: "兴业白金信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 3, maxMoney: 5, hot: 1, tips: '秒批', special: '可免费尊享8次机场接送服务', total: 23244, classes: "", path: 'CardItemDetail', id: 2, },
+        { name: "光大阳光白金卡", code: 'CEB', imgUrl: process.env.BASE_URL + 'img/gd.png', minMoney: 5, maxMoney: 30, hot: 1, tips: '要下户', special: '最低6积分兑换哈根达斯', total: 113324, classes: "", path: 'CardItemDetail', id: 1, },
+        { name: "兴业白金信用卡", code: 'CIB', imgUrl: process.env.BASE_URL + 'img/xy.png', minMoney: 3, maxMoney: 5, hot: 1, tips: '秒批', special: '可免费尊享8次机场接送服务', total: 23244, classes: "", path: 'UserReal', href: config.bankHref.CIB, tag: 'xy', id: 2, },
         // { name: "光大银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 7, maxMoney: 30, hot: 1, tips: '秒批2', special: '可享8次免费接机1', total: 789, classes: "", path: 'CardItemDetail', id: 3, },
         // { name: "广发银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 8, maxMoney: 30, tips: '秒批3', special: '可享8次免费接机2', total: 111, classes: "", path: 'CardItemDetail', id: 4, },
         // { name: "民生银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 9, maxMoney: 30, tips: '秒批4', special: '可享8次免费接机3', total: 222, classes: "", path: 'CardItemDetail', id: 5, },
         // { name: "浦发银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 0, maxMoney: 30, tips: '秒批5', special: '可享8次免费接机4', total: 333, classes: "", path: 'CardItemDetail', id: 6, },
       ],
-      navData: [{ name: "办卡中心", classes: "iconfont icon-banqiazhongxin", path: 'CardList' },
+      navData: [{ name: "办卡中心", classes: "iconfont icon-banqiazhongxin" },
       { name: "办卡进度", classes: "iconfont icon-banqiajinduguanli" },
       { name: "信用卡攻略", classes: "iconfont icon-xinyongqiagonglve" },
       { name: "信用卡还款", classes: "iconfont icon-xinyongqia" }
@@ -105,6 +105,15 @@ export default {
   components: { MyHeader, CardItem, swipe, IconItem, JtHr, BankItem, MyText },
   // 方法
   methods: {
+    setBankHref () {
+      console.log(config.bankHref)
+      this.bankList.forEach(function (item) {
+        if (config.bankHref[item['code']]) {
+          item.href = config.bankHref[item['code']]
+        }
+      });
+      console.log(this.bankList)
+    },
     parent: function (msg) {
       this.msg = msg
       console.log(msg)
@@ -140,7 +149,9 @@ export default {
   beforeCreate () {
   },
   mounted () {
-    console.log('cardList')
+    var that = this;
+    this.checkLogin('userInfo', 'setUserInfo', that.getMyInfo)
+    this.setBankHref()
   },
   watch: {
   },

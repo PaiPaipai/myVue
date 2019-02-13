@@ -1,6 +1,6 @@
 <template lang="html">
     <div class="MoneyALl">
-        <money-item :moneyData="moneyData" @clicki="clicki" @clickJs="clickJs" @clickMx="clickMx"></money-item>
+        <money-item :showDilog="showDilog" :title="'结算'"  :moneyData="moneyData"  @cancel="cancel" @clicki="clicki" @clickJs="clickJs" @clickMx="clickMx" @confirm="confirm"></money-item>
     </div>
 </template>
 
@@ -11,8 +11,8 @@ import store from '@/store/index'
 
 import MyText from "@/components/MyText"
 import MoneyItem from '@/components/MoneyItem'
-import { Button } from 'vant'
-Vue.use(Button)
+import { Button, Toast } from 'vant'
+Vue.use(Button).use(Toast)
 export default {
   // 不要忘记了 name 属性
   name: 'MoneyALl',
@@ -24,8 +24,9 @@ export default {
   // 变量
   data () {
     return {
+      showDilog: false,
       moneyData: {
-        title: '我要分润',
+        title: '我的分润',
         name: ['当前分润', '历史分润', '当前可提现分润', '收益明细', '结算'],
         icon: true,
         money: ['0.00', '0.00', '0.00']
@@ -62,30 +63,76 @@ export default {
       }
     }
   },
-  computed: {},
+  computed: {
+    userData: {
+      get: function () {
+        return JSON.parse(this.getLocalStorage('userInfo'))
+      },
+      set: function () { }
+    },
+  },
   // 使用其它组件
   components: { MyText, MoneyItem },
   // 方法
   watch: {},
   methods: {
+    confirm (money) {
+      var that = this;
+      this.showDilog = false;
+      var params = {
+        userId: this.userData.id,
+        amount: money,
+        type: 1
+      }
+      that.amount(params, amoutCallBack)
+      function amoutCallBack () {
+        Toast.clear();
+        that.queryJs(that.jsCallBack)
+
+      }
+      console.log(money)
+    },
+    cancel () {
+      this.showDilog = false;
+    },
     clicki () {
       this.routerTo('MoneyBiao')
     },
     clickMx () {
-      this.setLocalStorage('moneyMx', JSON.stringify(this.moneyMx))
-      this.routerTo('MoneyDetails')
+      var that = this;
+      this.queryMyOfflineNum((function () { that.routerTo('MoneyDetails') }), that.moneyMx)
+      // this.setLocalStorage('moneyMx', JSON.stringify(this.moneyMx))
+      // this.routerTo('MoneyDetails')
     },
+
     clickJs () {
-      console.log('js')
-    }
+      if (this.moneyData.money[0] < 100) {
+        Toast('结算金额小于100，无法结算')
+      } else {
+        this.showDilog = true;
+      }
+    },
+    jsCallBack (datas) {
+      var that = this;
+      that.moneyData.money = [datas.yue, datas.yueHistory, datas.yue]
+      that.removeLocalStorage('userInfo')
+      that.getMyInfo(that)
+    },
     // this.$emit("clickSearch",text);
   },
   // 生命周期函数
   beforeCreate () { },
   created () { },
-  mounted () { },
+  mounted () {
+
+  },
   activated () {
-    console.log('123')
+    var that = this;
+    this.checkLogin('userData', 'setUserData')
+    this.queryJs(that.jsCallBack)
+
+    console.log('moneyall')
+    // userTx
   }// 每次进路由会调用这个方法
 
 }

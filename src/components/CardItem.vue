@@ -46,14 +46,19 @@ export default {
   methods: {
     goCardDetails: function (item) {
       // path: `/index/${userId}/${'456'}`
-      if (item) {
+      if (item.tag == 'xy') {
+        this.setLocalStorage('bankItem', JSON.stringify(item))
+        this.routerTo(item.path)
+      } else if (item) {
         this.routerTo(item.path, { id: item.id, title: item.name })
       }
     }
   },
   // 生命周期函数
   beforeCreate () { },
-  mounted () { }
+  mounted () {
+    console.log('cardItem')
+  }
 }
 </script>
 

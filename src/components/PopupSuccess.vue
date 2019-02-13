@@ -34,7 +34,7 @@ export default {
   // 组合其它组件
   extends: {},
   // 组件属性、变量
-  props: ['showPopup', 'menuText', 'successText'],
+  props: ['showPopup', 'successText'],
   // 变量
   data () {
     return {

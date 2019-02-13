@@ -76,6 +76,8 @@ export default {
   input {
     width: 90%;
     vertical-align: unset;
+    height: 0.8rem;
+    line-height: 0.8rem;
   }
   button {
     background: $c26;

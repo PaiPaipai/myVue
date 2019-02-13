@@ -19,6 +19,7 @@ import InputItem from '@/components/InputItem'
 import ButtonItem from '@/components/ButtonItem'
 import PopupFen from '@/components/PopupFen'
 import store from "@/store/index";
+import { config } from '../../assets/js/config' // 引入配置的公共接口url
 import { Toast } from 'vant';
 Vue.use(Toast)
 export default {
@@ -31,20 +32,22 @@ export default {
   // 变量
   data () {
     return {
+      userData: {},
       realData: [
-        { name: '手机号', model: '', type: 'phone', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: true, errorMsg: '请输入正确的手机号码', reg: /^1[0-9]{10}$/ },
-        { name: '姓名', model: '', type: 'name', placeholder: '请输入姓名', length: '10', error: true, errorMsg: '请输入正确的姓名', reg: /[\u4e00-\u9fa5]/ },
-        { name: '身份证', model: '', type: 'ident', placeholder: '请输入身份证', length: '18', error: true, errorMsg: '请输入正确的身份证号', reg: /(^\d{15}$)|(^\d{17}([0-9]|X)$)/ },
-        { name: '开户行', model: '', type: 'khh', placeholder: '', icon: 'arrow', title: '选择开户行', error: false, readonly: true },
-        { name: '分行', model: '', type: 'fh', placeholder: '', icon: 'arrow', title: '选择分行', error: false, readonly: true },
-        { name: '银行账户', model: '', type: 'yhkh', placeholder: '请输入银行卡号', length: '23' },
-        { name: '短信验证码', model: '', type: 'yzm', placeholder: '请输入短信验证码', error: true, length: '6' },
+        { name: '手机号', model: '', tag: 'mobile', type: 'phone', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: false, errorMsg: '请输入正确的手机号码', reg: config.reg.phone },
+        { name: '姓名', model: '', tag: 'name', type: 'name', placeholder: '请输入姓名', length: '10', error: false, errorMsg: '请输入正确的姓名', },
+        { name: '身份证', model: '', tag: 'identityNo', type: 'ident', placeholder: '请输入身份证', length: '18', error: true, errorMsg: '请输入正确的身份证号', reg: config.reg.ident },
+        { name: '开户行', model: '', tag: 'branchCode', type: 'khh', placeholder: '', icon: 'arrow', title: '选择开户行', error: false, readonly: true },
+        { name: '分行', model: '', tag: 'bankSubName', type: 'fh', placeholder: '', icon: 'arrow', title: '选择分行', error: false, readonly: true },
+        { name: '银行账户', model: '', tag: 'account', type: 'yhkh', placeholder: '请输入银行卡号', length: '23', error: true, errorMsg: '请输入正确的银行卡号', length: '23' },
+        { name: '短信验证码', model: '', tag: 'authCode', type: 'yzm', placeholder: '请输入短信验证码', error: false, reg: /[0-9]{6}/, length: '6', },
       ],
-      buttonItem: { txt: '下一步', classes: 'buttonItem' },
+      buttonItem: { txt: '提交', classes: 'buttonItem' },
       searchData: {
-        placeholder: '请输入分行关键字进行搜索',
+        placeholder: '例：江汉分行，输入 江汉',
         model: '',
         khh: '',
+        bankCode: '',
         classes: 'fenUnActive',
       }
     }
@@ -52,69 +55,109 @@ export default {
   computed: {
     userId: {
       get: function () {
-        return store.state.userId
+        return this.getLocalStorage('userId')
       },
       set: function () {
 
       }
-    }
+    },
   },
   // 使用其它组件
   components: { MyHeader, InputItem, ButtonItem, PopupFen },
   // 方法
   methods: {
-    clickFh () {
+    clickFh () {// 点开分行
       this.searchData.classes = 'fenActive'
     },
-    clickFen (item) {
+    clickFen (item) {// 点击具体分行名称
       this.searchData.classes = 'fenUnActive'
-      this.realData[4].model = item.name;
+      if (item) {
+        this.searchData.model = '';
+        this.realData[4].model = item.subBankName;
+      } else {
+        this.searchData.model = ''
+      }
+      this.$store.commit('setSubBankList', []);
     },
-    clickSearch (value) {
+    clickSearch (value) { // 点击搜索
       console.log(value)
-
+      var params = {
+        bankCode: this.searchData.bankCode,
+        serchKey: value
+      }
+      if (value) {
+        this.getSubBankList(params)
+      } else {
+        Toast('请至少输入一个字符!')
+      }
     },
     onConfirm: function (value, index) {
-      this.realData[index].model = value;
       if (index == 3) {
-        this.searchData.khh = value;
+        this.realData[index].model = value.text
+        if (value.text != this.searchData.khh) {
+          this.realData[index + 1].model = ''
+        }
+        this.searchData.khh = value.text;
+        this.searchData.bankCode = value.code;
+      } else {
+        this.realData[index].model = value;
       }
     },
     sendMsg: function (params) {
       console.log(params)
     },
     clickButton: function () {
+      var that = this;
       console.log(this.realData)
       var dataArr = this.realData;
       var params = {
-        userId: this.userId
-      }
+        id: that.userId,
+        bankCode: that.searchData.bankCode,
+        bankName: that.searchData.khh,
+      };
       var flag = true
       for (let index = 0; index < dataArr.length; index++) {
         const element = dataArr[index];
-        if (element.error) {
+        if (element.model == '') {
+          flag = false;
+          Toast('请填写' + element.name + '!')
+          return false
+        } else if (element.error) {
           flag = false;
           Toast('请填写正确的' + element.name + '!')
           return false
         } else {
-          params[element.type] = element.model;
+          if (element.code) {
+            params['bankCode'] = element.code;
+          }
+          params[element.tag] = element.model;
         }
       }
       if (flag) {
+        params = this.clearParams(params);
         Toast('填写正确！')
+        store.commit('setUserRealNameData', params)
+        this.realName(params)
+        // this.saveOrUpdateUserCredit()
+        //
       }
-      console.log(params)
-
 
     }
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     console.log('进入实名认证')
+
     // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
   },
   // 生命周期函数
   beforeCreate () { },
   mounted () {
+    var that = this;
+    this.userData = JSON.parse(this.getLocalStorage('userInfo'));
+    if (this.userData.mobile) {
+      this.realData[0].model = this.userData.mobile
+    }
+    console.log('进入实名认证')
   },
   store
 
@@ -124,6 +167,7 @@ export default {
 <style scoped lang="scss">
 .UserRealName {
   /* ... */
+  height: 100vh;
   /deep/ .buttonItem {
     line-height: 0.8rem;
     padding: 0 1.6rem;

@@ -34,6 +34,7 @@
             <van-datetime-picker v-show="currentItem.dataPicker"
               v-model="currentDate"
               type="year-month"
+              :title="title"
               :min-date="minDate"
               :formatter="formatter"
               @cancel="onCancel"
@@ -65,24 +66,6 @@ export default {
       show: false,
       currentDate: new Date(),
       minDate: new Date(),
-      ApplyData: [
-        {
-          name: '有效期', model: '', type: '5678', placeholder: '选择年月',
-          columns: [], dataPicker: true,
-          icon: 'arrow',
-          error: false, readonly: true, itemShow: false        },
-        { name: '安全码', model: '', type: '5678', placeholder: '信用卡背面独立三位数字', length: '3', error: true, errorMsg: '请输入正确的数字', reg: /[0-9]{3}/ },
-        {
-          name: '选择银行', model: '', type: '5678', placeholder: '选择信用卡所属银行',
-          columns: [
-            { id: 1, text: '先息后本1年' },
-            { id: 2, text: '等额本息5年' },
-            { id: 3, text: '等额本息10年' },
-            { id: 4, text: '等额本息20年' },
-            { id: 5, text: '等额本息30年' }],
-          icon: 'arrow', path: '123', error: false, readonly: true        },
-        { name: '银行账户', model: '', types: 'xykh', type: '5678', placeholder: '信用卡卡号', length: '23' },
-      ],
       columns: [],
       title: '',
       currentIndex: -1,
@@ -98,7 +81,25 @@ export default {
       set: function () {
 
       }
-    }
+    },
+    ApplyData: {
+      get: function () {
+        return [
+          {
+            name: '有效期', model: '', tag: 'expDate', type: '5678', placeholder: '选择年月',
+            columns: [], dataPicker: true,
+            icon: 'arrow',
+            error: false, readonly: true, itemShow: false          },
+          { name: '安全码', model: '', tag: 'cvn2', type: '5678', placeholder: '信用卡背面独立三位数字', length: '3', error: true, errorMsg: '请输入正确的数字', reg: /[0-9]{3}/ },
+          {
+            name: '选择银行', model: '', tag: 'bankName', code: '', type: '5678', placeholder: '选择信用卡所属银行',
+            columns: this.bankInfo,
+            icon: 'arrow', path: '123', error: false, readonly: true          },
+          { name: '银行账户', model: '', tag: 'account', types: 'yhkh', type: '5678', error: true, errorMsg: '请输入正确的信用卡号', placeholder: '信用卡卡号', length: '19' },
+        ]
+      },
+      set: function () { },
+    },
   },
   // 使用其它组件
   components: { MyHeader, InputItem, ButtonItem },
@@ -137,6 +138,7 @@ export default {
         this.ApplyData[this.currentIndex].model = value.getFullYear() + '/' + month;
       } else {
         this.ApplyData[this.currentIndex].model = value.text;
+        this.ApplyData[this.currentIndex].code = value.code;
       }
 
     },
@@ -161,11 +163,21 @@ export default {
         } else {
           item.error = false
         }
-        if (item.types == 'xykh') {
-          var v = item.model;
-          if (/\S{5}/.test(v)) {
-            item.model = v.replace(/\s/g, '').replace(/(.{4})/g, '$1 ');
+      }
+      if (item.types == 'yhkh') {
+        var v = item.model;
+        var cloneV = item.model;
+        if (/\S{5}/.test(v)) {
+          item.model = v.replace(/\s/g, '').replace(/(.{4})/g, '$1 ');
+        }
+        if (item.model.length == 19) {
+          if (!isNaN(cloneV.replace(/\s+/g, ""))) {
+            item.error = false
+          } else {
+            item.error = true
           }
+        } else {
+          item.error = true
         }
       }
     },
@@ -173,22 +185,33 @@ export default {
       var that = this;
       console.log(this.ApplyData)
       var dataArr = this.ApplyData;
+      var params = {
+        userId: that.getLocalStorage('userId')
+      };
       var flag = true
-      // for (let index = 0; index < dataArr.length; index++) {
-      //   const element = dataArr[index];
-      //   if (element.error) {
-      //     flag = false;
-      //     Toast('请填写正确的' + element.name + '!')
-      //     return false
-      //   } else {
-      //     params[element.type] = element.model;
-      //   }
-      // }
+      for (let index = 0; index < dataArr.length; index++) {
+        const element = dataArr[index];
+        if (element.model == '') {
+          flag = false;
+          Toast('请填写' + element.name + '!')
+          return false
+        } else if (element.error) {
+          flag = false;
+          Toast('请填写正确的' + element.name + '!')
+          return false
+        } else {
+          if (element.code) {
+            params['bankCode'] = element.code;
+          }
+          params[element.tag] = element.model;
+        }
+      }
       if (flag) {
+        params = this.clearParams(params);
         Toast('填写正确！')
-        setTimeout(function () {
-          that.routerTo('UserCardList')
-        }, 1000)
+        store.commit('setAddCardList', params)
+        this.saveOrUpdateUserCredit()
+        //
       }
       // console.log(params)
 
@@ -197,12 +220,13 @@ export default {
   },
   activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
     console.log('新增信用卡')
+
     // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
   },
   // 生命周期函数
   beforeCreate () { },
   mounted () {
-
+    this.checkLogin('userData', 'setUserData')
   },
   store
 

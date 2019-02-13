@@ -1,9 +1,11 @@
 <template lang="html">
     <div class="LevelUp">
         <!-- ... -->
-        <img src="/static/img/levelup.jpg" alt="">
+        <img :src="leveupImg" alt="">
         <div class="btnBox">
           <van-button :class="'levelButton'" @click="levelUp">我要升级</van-button>
+          <br/>
+          <span class="clickBiao" @click="goBiao">产品分润表</span>
         </div>
          <div class="text-box">
           <my-text></my-text>
@@ -39,16 +41,27 @@ export default {
   data () {
     return {
       columns: [
-        { id: 1, text: '渠道经理' }, { id: 2, text: '团队经理' }, { id: 3, text: '门店经理' }],
+        { id: 1, text: '渠道经理', money: 298, level: 2 }, { id: 2, text: '团队经理', money: 2980, level: 3 }, { id: 3, text: '门店经理', money: 8800, level: 4 }],
       show: false,
+      leveupImg: process.env.BASE_URL + 'img/levelup.jpg'
     }
   },
-  computed: {},
+  computed: {
+    userId: {
+      get: function () {
+        return this.getLocalStorage('userId')
+      },
+      set: function () { }
+    }
+  },
   // 使用其它组件
   components: { MyText },
   // 方法
   watch: {},
   methods: {
+    goBiao () {
+      this.routerTo('MoneyBiao')
+    },
     onChange (picker, values) {
 
     },
@@ -56,8 +69,26 @@ export default {
       this.show = false;
     },
     onConfirm (value, index) {
-      this.show = false;
-      console.log(value.id)
+      var that = this;
+      that.show = false;
+      var params = {
+        userId: that.userId,
+        type: 'huiyuan',
+        level: value.level
+      }
+      that.wxPay(params, that.levelUpCallBack)
+
+    },
+    levelUpCallBack (datas) {
+      var that = this;
+      var params = datas
+      // params.appId = datas.appid;
+      // params.timeStamp = datas.timestamp + "";
+      // params.nonceStr = datas.noncestr;
+      // params.package = datas.package;
+      // params.signType = 'MD5';
+      // params.paySign = datas.sign;
+      this.wxZf(params)
     },
     levelUp () {
       this.show = true;
@@ -77,12 +108,14 @@ export default {
 <style  scoped lang="scss">
 .LevelUp {
   /* ... */
+  background: $cf0;
   img {
     width: 100%;
   }
   text-align: center;
   .btnBox {
     padding-bottom: 0.4667rem;
+    background: $white;
   }
   .levelButton {
     background: $c09;
@@ -91,6 +124,13 @@ export default {
     line-height: 0.8rem;
     border-radius: 0.4rem;
     width: 4.9333rem;
+  }
+  .clickBiao {
+    display: block;
+    margin-top: 0.2667rem;
+    color: $themeColor;
+    font-size: $fz30;
+    text-decoration: underline;
   }
   .text-box {
     padding: 0.2667rem 0;
