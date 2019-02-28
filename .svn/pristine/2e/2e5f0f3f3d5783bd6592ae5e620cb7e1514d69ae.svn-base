@@ -1,0 +1,95 @@
+<template lang="html">
+  <div class="NewsDetails">
+    <!-- ... -->
+      <my-header :title="'资讯详情'"></my-header>
+    <div class="detailTop">
+      <h3>{{newsDetail.title}}</h3>
+      <p><span>{{newsDetail.createTime}}</span> <em>阅读{{newsDetail.readCount}}</em></p>
+    </div>
+    <div class="detailBottom" v-html="newsDetail.content">
+    </div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+export default {
+  // 不要忘记了 name 属性
+  name: 'NewsDetails',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: ['itemList'],
+  // 变量
+  data () {
+    return {
+      detail: this.getLocalStorage('NewsDetails')
+    }
+  },
+  computed: {
+    newsDetail: {
+      get: function () {
+        return this.detail
+      },
+      set: function () { }
+    }
+  },
+  // 使用其它组件
+  components: { MyHeader },
+  // 方法
+  watch: {},
+  beforeCreate () {
+    console.log('sdf')
+  },
+  methods: {
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+  },
+  activated () {
+    var that = this;
+    if (!this.detail) {
+      this.routerTo('NewsList')
+    } else {
+      this.detail = JSON.parse(this.getLocalStorage('NewsDetails'));
+    }
+  }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style scoped lang="scss" rel="stylesheet/scss">
+.NewsDetails {
+  /* ... */
+  padding-bottom: 0;
+}
+.detailTop {
+  text-align: center;
+  h3 {
+    font-size: $fz32;
+    font-weight: bold;
+    line-height: 0.7333rem;
+  }
+  p {
+    font-size: $fz28;
+    line-height: 0.6rem;
+    color: $c666;
+  }
+  span {
+    margin-right: 0.4rem;
+  }
+}
+.detailBottom {
+  margin-top: 0.4rem;
+  /deep/ p {
+    font-size: $fz28;
+  }
+
+  /deep/ img {
+    max-width: 100%;
+  }
+}
+</style>

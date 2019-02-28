@@ -1,0 +1,200 @@
+<template lang="html">
+  <div class="blacklist">
+    <div class="Doublemark">
+      <span class="Doublemark_one"></span>
+      <div>黑灰名单</div>
+      <span class="Doublemark_two"></span>
+    </div>
+    <div class="bigdatadetails">概述</div>
+    <div class="blacklisttext">
+      用户命中黑灰名单<span>2次，</span>风险等级为<span>较低风险</span>。
+    </div>
+    <div class="blfloor"></div>
+    <div class="bigdatadetails">部分详情</div>
+    <div class="Record">
+        <p>贷款不良记录</p>
+        <div v-for="(item,index) in Recordata" :key="index">
+            {{item.name}}
+        </div>
+    </div>
+    <div class="blacklistall">
+        <p>身份异常记录</p>
+        <span>未检测到身份异常记录记录</span>
+        <div></div>
+    </div>
+       <div class="blacklistall">
+        <p>行为异常记录</p>
+        <span>未检测到身份异常记录记录</span>
+        <div></div>
+    </div>
+    <div class="tobak" @click="tobak()">
+        上一页
+    </div>
+    <div class="bigdatalook"  @click="bigdatalook()">继续查看司法记录</div>
+    <div class="bigdatadeta">灰名单说明</div>
+    <div class="bigdatadetatext">依托先进的大数据和人工智能技术，整合主流权威征信机构各项风控数据，从信贷金融、身份特征、异常行为等多维度，全面刻画用户风险属性，提供高风险用户精准识别服务。</div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from "vue";
+export default {
+  // 不要忘记了 name 属性
+  name: "blacklist",
+  // 变量
+  data() {
+    return {
+      Recordata: [
+        {
+          name:
+            "1.通过身份证号码查询，用户被相关机构合作方信贷风控部门评为低风险用户。",
+          id: "1"
+        },
+        {
+          name:
+            "2.通过身份证号查询，用户被现金分期合作方信贷风控部门评委低风险用户。",
+          id: "2"
+        }
+      ]
+    };
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  beforeCreate() {},
+  methods: {
+      tobak(){
+        this.$router.push("/bigdatalist/bigdatahome");
+      },
+      bigdatalook(){
+        this.$router.push("/bigdatalist/Summary");
+      }
+  },
+  // 生命周期函数
+  beforeCreate() {},
+  mounted() {},
+  // 每次进路由会调用这个方法
+  activated() {}
+};
+</script>
+
+<style scoped lang="scss">
+.blacklist {
+  .Doublemark {
+    width: 5.6rem;
+    margin: 0 auto;
+    height: 0.8533rem;
+    font-size: 0.4rem;
+    color: #666666;
+    text-align: center;
+    // border: 1px red solid;
+    line-height: 0.8533rem;
+    position: relative;
+    span {
+      position: absolute;
+      display: inline-block;
+      height: 0.016rem;
+      width: 1.3333rem;
+      background: #cccccc;
+      top: 0.4267rem;
+    }
+    .Doublemark_one {
+      left: 0;
+    }
+    .Doublemark_two {
+      right: 0;
+    }
+  }
+  .bigdatadetails {
+    color: #333333;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .blacklisttext {
+    height: 0.96rem;
+    text-indent: 0.7733rem;
+    color: #666666;
+    font-size: 0.4rem;
+    line-height: 0.96rem;
+    span {
+      color: #ff0000;
+    }
+  }
+  .blfloor {
+    height: 0.2667rem;
+    background: #f0f0f0;
+  }
+  .Record {
+    font-size: 0.3733rem;
+    color: #333333;
+    padding: 0.4rem 0.7733rem;
+    line-height: 0.7467rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    p {
+      color: #ff0000;
+    }
+  }
+  .blacklistall {
+    padding: 0rem 0.7733rem;
+    // padding-bottom: 0.4rem;
+    p {
+      font-size: 0.4rem;
+      color: #333333;
+      padding: 0.3333rem 0 0.4267rem 0;
+    }
+    span {
+      font-size: 0.3333rem;
+      color: #666666;
+    }
+    div {
+      margin-top: 0.4rem;
+      width: 8.7733rem;
+      height: 0.016rem;
+      background: #cccccc;
+    }
+  }
+  .tobak {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    border: 0.0267rem solid rgba(42, 144, 235, 1);
+    border-radius: 0.5333rem;
+    font-size: 0.48rem;
+    font-weight: 500;
+    color: rgba(42, 144, 235, 1);
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 1.0267rem auto 0 auto;
+  }
+  .bigdatalook {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    background: rgba(9, 109, 221, 1);
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: 0.48rem;
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 0.4rem auto 0 auto;
+  }
+  .bigdatadeta {
+    color: #666666;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .bigdatadetatext {
+    font-size: 0.3467rem;
+    color: #666666;
+    line-height: 0.6667rem;
+    padding: 0.5067rem 0.7733rem;
+  }
+}
+</style>

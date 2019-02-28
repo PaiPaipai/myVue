@@ -1,0 +1,70 @@
+<template lang="html">
+    <div class="MyText">
+        <!-- ... -->
+        <h3>让金融更有温度，让分享创造价值</h3>
+        <p>全国统一客服热线：027-87307688</p>
+        <p>商务合作邮箱：hanrongbang@126.com</p>
+        <p>Copyright @2017-2018 Zonban.kAll Rights Reserved</p>
+        <p>
+            <img src="../../static/img/erweima.png" alt="">
+        </p>
+        <p>长按识别二维码关注 汉融邦 公众号</p>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+
+export default {
+  // 不要忘记了 name 属性
+  name: 'MyText',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+
+    }
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  methods: {
+    // this.$emit("clickSearch",text);
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () { },
+  mounted () { },
+  activated () { }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.MyText {
+  /* ... */
+  text-align: center;
+  margin: 0.4rem 0;
+  h3 {
+    font-size: $fz34;
+    font-weight: bold;
+    margin: 0.2667rem 0;
+  }
+  p {
+    font-size: $fz26;
+    line-height: 0.64rem;
+  }
+  img {
+    width: 3.3333rem;
+    height: 3.3333rem;
+  }
+}
+</style>

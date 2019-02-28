@@ -1,0 +1,298 @@
+<template lang="html">
+  <div class="blacklist">
+    <div class="Doublemark">
+      <span class="Doublemark_one"></span>
+      <div>被查询记录</div>
+      <span class="Doublemark_two"></span>
+    </div>
+    <div class="bigdatadetails">概述</div>
+    <div class="blacklisttext">
+       <p v-html="MoneyBigDataReport.s5.summary"></p>
+    </div>
+    <div class="bigdatadetails">被查询记录</div>
+    <div class="bigdataquery"  v-for="(item, index) in applyLoanRecord" :key="index">
+      <div class="bigdataquery_left">
+        <span>{{applyLoanRecordType[index]}}</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <p>身份证查询：</p>
+        <ul>
+          <li v-for="(items, indexs) in item" :key="indexs" v-show="indexs<13">
+            {{items.name}}<span>{{MoneyBigDataReport.s5.applyLoanRecord[items.type]}}</span>次
+          </li>
+        </ul>
+        <p>手机号查询：</p>
+        <ul>
+          <li v-for="(items, indexs) in item" :key="indexs" v-show="indexs>=13">
+            {{items.name}}<span>{{items.num}}</span>次
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdatadetails">被拒贷次数统计</div>
+    <div class="blacklisttext">
+      <p>1.近一个月被拒贷次数统计：<span>{{MoneyBigDataReport.s5.countApplyLoan['alm_m1_apply_total']}}</span>次。</p>
+      <p>2.近三个月内被拒贷单数：<span>{{MoneyBigDataReport.s5.countApplyLoan['alm_m3_apply_total']}}</span>次。</p>
+      <p>3.用户近一年内被拒贷单数：<span>{{MoneyBigDataReport.s5.countApplyLoan['alm_m12_apply_total']}}</span>次。</p>
+    </div>
+    <div class="tobak" @click="tobak()">
+      上一页
+    </div>
+    <div class="bigdatalook" @click="bigdatalook()">继续查看还款情况</div>
+    <div class="bigdatadeta">被查询记录说明</div>
+    <div class="bigdatadetatext">
+      申请人在各渠道的被查询详情，数据来自P2P网贷、民间借贷、担保公司、小贷公司、消费金融、催收机构等金融机构。
+
+    </div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from "vue";
+export default {
+  // 不要忘记了 name 属性
+  name: "blacklist",
+  // 变量
+  data () {
+    return {
+      MoneyBigDataReport: {
+        s5: {
+          summary: '',
+          riskLevel: '',
+          applyLoanRecord: {},
+          countRefuseLoan: {},
+          countApplyLoan: {},
+          judicialInfoList: []
+        },
+      },
+      applyType: ['alm_m1', 'alm_m3', 'alm_m12'],
+      applyLoanRecordType: ['近一个月', '近三个月', '近十二个月'],
+      applyLoanRecord: [
+        [], [], [],
+      ],
+      applyLoanRecordTemp: [
+        { name: '被银行机构查询次数', type: '_id_bank_allnum', num: 0 },
+        { name: '被P2P网贷查询次数', type: '_id_nbank_p2p_allnum', num: 0 },
+        { name: '被小贷查询次数', type: '_id_nbank_mc_allnum', num: 0 },
+        { name: '被现金类分期查询次数', type: '_id_nbank_ca_allnum', num: 0 },
+        { name: '被消费类分期查询次数', type: '_id_nbank_cf_allnum', num: 0 },
+        { name: '被代偿类分期查询次数', type: '_id_nbank_com_allnum', num: 0 },
+        { name: '被担保贷查询次数', type: '_id_nbank_gt_allnum', num: 0 },
+        { name: '被财务公司查询次数', type: '_id_nbank_fc_allnum', num: 0 },
+        { name: '被典当查询次数', type: '_id_nbank_pa_allnum', num: 0 },
+        { name: '被民间借款查询次数', type: '_id_nbank_pl_allnum', num: 0 },
+        { name: '被保险机构查询次数', type: '_id_nbank_ia_allnum', num: 0 },
+        { name: '被融资租赁查询次数', type: '_id_nbank_fl_allnum', num: 0 },
+        { name: '被其他查询次数', type: '_id_nbank_oth_allnum', num: 0 },
+        { name: '被银行机构查询次数', type: '_cell_bank_allnum', num: 0 },
+        { name: '被P2P网贷查询次数', type: '_cell_nbank_p2p_allnum', num: 0 },
+        { name: '被小贷查询次数', type: '_cell_nbank_mc_allnum', num: 0 },
+        { name: '被现金类分期查询次数', type: '_cell_nbank_cf_allnum', num: 0 },
+        { name: '被消费类分期查询次数', type: '_cell_nbank_cf_allnum', num: 0 },
+        { name: '被代偿类分期查询次数', type: '_cell_nbank_com_allnum', num: 0 },
+        { name: '被其他查询次数', type: '_cell_nbank_oth_allnum', num: 0 },
+      ],
+    };
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  beforeCreate () { },
+  methods: {
+    tobak () {
+      this.$router.push("/bigdatalist/Summary");
+    },
+    bigdatalook () {
+      this.$router.push("/bigdatalist/Repaymentdetails");
+    }
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () { },
+  // 每次进路由会调用这个方法
+  activated () {
+    var MoneyBigDataReport = this.getLocalStorage('MoneyBigDataReport');
+    var array = this.applyType;
+    var arrclone = [[], [], []];
+    for (let index = 0; index < array.length; index++) {
+      const element = array[index];
+      var cloneRecordTemp = JSON.parse(JSON.stringify(this.applyLoanRecordTemp));
+      for (let j = 0; j < cloneRecordTemp.length; j++) {
+        const item = cloneRecordTemp[j];
+        item.type = element + item.type;
+        arrclone[index].push(item);
+      }
+    }
+    this.applyLoanRecord = arrclone;
+    if (MoneyBigDataReport) {
+      MoneyBigDataReport = JSON.parse(MoneyBigDataReport);
+      console.log(MoneyBigDataReport)
+      var datas = MoneyBigDataReport.data
+      var s5 = datas.s5;
+
+      //处理字符串替换 {alm_m1_num}
+      var reg = /{([^\s]*?)}/g, ret2 = [], arr;
+      var cbody = datas.s5.summary
+      while (arr = reg.exec(cbody)) {
+
+        ret2.push(arr[1]);
+        cbody = cbody.replace(arr[0], '<span>' + (s5[arr[1]] || s5.countRefuseLoan[arr[1]] || s5.countApplyLoan[arr[1]] || 0) + '</span>')
+      }
+
+      while (arr = reg.exec(cbody)) {
+
+        ret2.push(arr[1]);
+        cbody = cbody.replace(arr[0], '<span>' + (s5[arr[1]] || s5.countRefuseLoan[arr[1]] || s5.countApplyLoan[arr[1]] || 0) + '</span>')
+      }
+
+      datas.s5.summary = cbody
+      this.MoneyBigDataReport = datas;
+    } else {
+      this.routerTo('index')
+    }
+  }
+};
+</script>
+
+<style scoped lang="scss">
+.blacklist {
+  .Doublemark {
+    width: 5.6rem;
+    margin: 0 auto;
+    height: 0.8533rem;
+    font-size: 0.4rem;
+    color: #666666;
+    text-align: center;
+    // border: 1px red solid;
+    line-height: 0.8533rem;
+    position: relative;
+    span {
+      position: absolute;
+      display: inline-block;
+      height: 0.016rem;
+      width: 1.3333rem;
+      background: #cccccc;
+      top: 0.4267rem;
+    }
+    .Doublemark_one {
+      left: 0;
+    }
+    .Doublemark_two {
+      right: 0;
+    }
+  }
+  .bigdatadetails {
+    color: #333333;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .blacklisttext {
+    // height: 0.96rem;
+    text-indent: 0.7733rem;
+    color: #666666;
+    font-size: 0.4rem;
+    line-height: 0.84rem;
+    div {
+      color: #666666;
+      font-size: 0.3733rem;
+      line-height: 0.74rem;
+    }
+    p {
+      color: #333333;
+    }
+    /deep/ span {
+      color: #ff0000;
+    }
+  }
+
+  .bigdataquery {
+    display: flex;
+    align-items: center;
+    border-bottom: 0.0133rem #cccccc solid;
+    padding-bottom: 0.4rem;
+    padding-top: 0.4rem;
+    //   padding: 0.4rem;
+    .bigdataquery_left {
+      width: 2.1067rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      span {
+        display: inline-block;
+        width: 0.48rem;
+        font-size: 0.4rem;
+        color: #333333;
+        line-height: 0.64rem;
+      }
+    }
+    .bigdataquery_cen {
+      width: 0.016rem;
+      height: 3.6667rem;
+      background: #cccccc;
+    }
+    .bigdataquery_right {
+      padding-left: 0.5333rem;
+      p {
+        font-size: 0.4rem;
+        color: #333333;
+        padding: 0.6933rem 0 0.3733rem 0;
+      }
+      li {
+        line-height: 0.7467rem;
+        color: #666666;
+        font-size: 0.3733rem;
+        span {
+          color: #ff0000;
+        }
+      }
+    }
+  }
+  .bigdataqueryis {
+    border-bottom: 0rem #cccccc solid;
+  }
+  .tobak {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    border: 0.0267rem solid rgba(42, 144, 235, 1);
+    border-radius: 0.5333rem;
+    font-size: 0.48rem;
+    font-weight: 500;
+    color: rgba(42, 144, 235, 1);
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 1.0667rem auto 0 auto;
+  }
+  .bigdatalook {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    background: rgba(9, 109, 221, 1);
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: 0.48rem;
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 0.4rem auto 1.1333rem auto;
+  }
+  .bigdatadeta {
+    color: #666666;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .bigdatadetatext {
+    font-size: 0.3467rem;
+    color: #666666;
+    line-height: 0.6667rem;
+    padding: 0.5067rem 0.7733rem;
+  }
+}
+</style>

@@ -1,0 +1,361 @@
+// 通用样式 和 重写样式
+
+$baseColor:#333;
+$themeColor:#ff0000;
+$c999:#999;
+$c666:#666;
+$cf0:#f0f0f0;
+$c101:#101010;
+$cbbb:#bbbbbb;
+$fafa:#fafafa;
+$white:#fff;
+$e8e9:#e8e8e9;
+$fangchan:#ce31ff;
+$car:#ff9933;
+$ccc:#cccccc;
+$ff3:#FF3333;
+$e75:#e7574f;
+$c12:#1296db;
+$cf7:#f79a09;
+$c8e:#8e30fa;
+$ced:#ed3934;
+$cf5:#f56325;
+$cd8:#d81e06;
+$cf02:#f02a31;
+$c31:#31ae91;
+$c41:#414141;
+$c87:#87fff6;
+$cff:#ffe4bb;
+$cfe:#fe9193;
+$ff6:#ff6905;
+
+//信用卡
+$cee5:#ee594e;
+$c29:#29ab93;
+$cf7:#f7931e;
+$cf6:#f6f6f6;
+$cef:#efc110;
+$c3c:#3c9afb;
+$c77:#77e9b0;
+$c48:#48a5ed;
+$cf1:#f17a71;
+$c50:#50a4ef;
+$c00c:#00c800;
+$cd0:#d0cbcb;
+$cf6:#ff6600;
+$cf8a:#FF8A00;
+$cfa:#FAB53E;
+$cffa6:#FFA64D;
+$c13:#139e01;
+$cfc:#fced04;
+$c2e:#2ea2df;
+$cd08:#d08212;
+$cc6:#cc6600;
+$cffc:#FFCC03;
+$cf8:#f8f8f8;
+$ceee:#eeeeee;
+$cee4:#ee4742;
+$c9a:#9ab2f9;
+$cfec:#feca01;
+$c108:#108ee9;
+$cf7:#f79a09;
+
+.myLine::after {
+  border-color: $c999;
+}
+
+//贷款
+$c4a:#4A4A4A;
+$c00:#0066ff;
+$cff9:#FF9900;
+$cef2:#EF2107;
+//用户中心
+$ce8:#e8d310;
+$cbd:#bd3c2a;
+$ce5:#e51c23;
+$cff9:#ff9800;
+$cc3:#CC3333;
+$cff:#FFCC00;
+$c8e:#8e30fa;
+$c74:#74aff2;
+$c1b:#1B68CC;
+$c09:#096ddd;
+$ce8:#e8a13f;
+$c155:#15538d;
+$c52:#5287e6;
+$c29f:#297fff;
+$cffa:#ffa929;
+$cff6:#FF6666;
+$c39:#3984cd;
+$cf1f:#f1f5ff;
+$c4f:#4f92ed;
+$cff8:#ff8b03;
+$cffd:#ffd32a;
+$c0a:#0a96d2;
+
+.mb20 {
+  margin-bottom: 0.2667rem;
+
+}
+
+// 导航栏变色
+$c26:#2a6de3;
+// 字体大小
+$fz14:14.0025px;
+$fz16:0.2133rem;
+$fz24:0.32rem;
+$fz26:0.3467rem;
+$fz28:0.3733rem;
+$fz30:0.4rem;
+$fz32:0.4267rem;
+$fz34:0.4533rem;
+$fz36:0.48rem;
+$brd:0.1333rem;
+
+
+
+.main {
+  padding: .32rem 0.4rem 0 0.4rem;
+  // background: $fafa;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.fenActive {
+  left: 0;
+}
+
+.fenUnActive {
+  left: 100%;
+}
+
+.lcBox {
+  margin-top: 0.2667rem;
+  padding: 0 .2rem;
+
+  .nav-item {
+    width: auto;
+  }
+
+  span {
+    color: $c39;
+    font-size: 0.32rem;
+  }
+
+  i {
+    color: $c39;
+  }
+}
+
+//分别不同的滑动模块高度
+.topSwiper {
+  height: 5.3333rem;
+}
+
+.centerSwiper {
+  height: 3.7333rem;
+}
+
+//重写按钮样式
+.buttonItem {
+  height: auto;
+}
+
+//弹窗picker
+.myPopup {
+  width: 100%;
+  top: auto;
+  bottom: 0;
+  right: auto;
+  left: 50%;
+  -webkit-transform: translate3d(-50%, 100%, 0);
+  transform: translate3d(-50%, 100%, 0);
+}
+
+.myPopup-up {
+  transform: translate3d(-50%, 0, 0);
+}
+
+//双箭头
+.shuangjiantou {
+  font-size: 0.8533rem;
+  vertical-align: middle;
+  float: right;
+}
+
+.text-underline::after {
+  position: absolute;
+  content: '';
+  width: 100%;
+  height: 1px;
+  bottom: -0.08rem;
+  left: 0;
+}
+
+.bd-radius15 {
+  box-shadow: 0 0 0.2rem rgba(0, 0, 0, .1);
+}
+
+.noData {
+  text-align: center;
+  font-size: $fz30;
+  padding: 0.4rem 0;
+
+}
+
+.swipe .van-swipe-item {
+  background: none !important;
+}
+
+//超过隐藏
+.text-overflow {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-ovh($num) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $num;
+  -webkit-box-orient: vertical;
+}
+
+.clearfix:before,
+.clearfix:after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+.clearfix {
+  zoom: 1;
+}
+
+.panelBox {
+  background: $white;
+  border-radius: 0.2rem;
+  margin-bottom: 0.2667rem;
+
+  .c12 {
+    color: $c12;
+  }
+
+  .c31 {
+    color: $c31;
+  }
+
+  .cee4 {
+    color: $cee4;
+  }
+
+  .cff6 {
+    color: $ff6;
+  }
+
+  .cf7 {
+    color: $cf7;
+  }
+
+  .c108 {
+    color: $c108;
+  }
+
+  .panelTop {
+    border-bottom: 1px solid $c999;
+    padding: 0 0.2133rem;
+    line-height: 1.1733rem;
+    font-size: $fz30;
+    overflow: hidden;
+
+    i {
+      font-size: 0.7333rem;
+      vertical-align: middle;
+    }
+
+    i.iconRight {
+      float: right;
+      font-size: 0.6rem;
+    }
+  }
+
+  .panelContent {
+    padding: 0.2rem 0.4rem;
+    line-height: 0.5867rem;
+    font-size: $fz28;
+  }
+
+  .panelBottom {
+    border-top: 1px solid $c999;
+  }
+
+  .spanC666 {
+    color: $c666;
+    margin-left: 0.6667rem;
+  }
+
+  .ml50 {
+    margin-left: 0.6667rem;
+  }
+
+  .spanCfc {
+    color: $cffc;
+  }
+
+  .panelUl {
+    li {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    li.jihua {
+      position: relative;
+
+      div:first-child {
+        padding-left: 0.64rem;
+      }
+
+      i {
+        position: absolute;
+        left: -0.1333rem;
+        top: 0.1333rem;
+        font-size: 0.6rem;
+      }
+
+      span {
+        display: block;
+        color: $c666;
+      }
+
+      .c13 {
+        color: $c13;
+      }
+
+    }
+
+    .span300 {
+      width: 60%;
+      overflow: hidden;
+
+      em {
+        float: right;
+      }
+    }
+
+    .spanC999 {
+      color: $c999;
+      width: 35%;
+      text-align: left;
+    }
+
+
+  }
+
+  .bdnone {
+    border: none;
+  }
+}

@@ -1,0 +1,178 @@
+<template>
+  <div class="MyIndex">
+    <swipe :imgList="imgList"></swipe>
+    <div class="main">
+      <van-notice-bar :text="text" left-icon :speed="25"/>
+      <div class="centerNav">
+        <icon-item :iconList="navData"></icon-item>
+      </div>
+      <div class="centerHandle">
+        <handle-item :handleList="handleData"></handle-item>
+      </div>
+      <div class="menuList">
+        <hr-item :hritem="hrData[0]"></hr-item>
+        <icon-item class="menuItem" :iconList="menuData[0]"></icon-item>
+        <icon-item class="menuItem" :iconList="menuData[1]"></icon-item>
+        <div class="checkMyhistory"><span class="text-underline">查看我的历史查询</span></div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import Vue from "vue";
+import MyHeader from "@/layout/MyHeader";
+import swipe from "@/components/swipe";
+import IconItem from "@/components/IconItem";
+import HandleItem from "@/components/HandleItem";
+import HrItem from "@/components/HrItem";
+import store from "@/store/index";
+import { NoticeBar } from "vant";
+Vue.use(NoticeBar);
+export default {
+  name: "MyIndex",
+  data() {
+    return {
+      text:
+        "足协杯战线连续第2年上演广州德比战，上赛季半决赛上恒大以两回合5-3的总比分淘汰富力。",
+      imgList: [
+        { imgUrl: "/static/img/1.jpg" },
+        { imgUrl: "/static/img/2.jpg" },
+        { imgUrl: "/static/img/3.jpg" }
+      ],
+      navData: [
+        { name: "线上收款", classes: "onlineMoney" },
+        { name: "提现", classes: "tiXian" },
+        { name: "我的分润", classes: "myMoney" },
+        { name: "我要升级", classes: "myUpdate" }
+      ],
+      handleData: [
+        { name: "信用卡办理>>", tips: "为您精选7家银行", classes: "goCard"},
+        { name: "借款中心>>", tips: "利率低至3厘", classes: "goBorrow" }
+      ],
+      menuData:[
+        [{ name: "房产评估", classes: "iconfont icon-fangchanpinggu" },
+        { name: "大数据信用", classes: "iconfont icon-dashujuxinyong" },
+        { name: "个人司法", classes: "justicePg" },],
+        [{ name: "个人工商", classes:"businessPg" },
+        { name: "企业信用", classes: " creditPg" },
+        { name: "车产评估", classes: " carPg" },
+        ],
+      ],
+      hrData:['大数据查询']
+    };
+  },
+  components: { MyHeader, swipe, IconItem, HandleItem ,HrItem},
+
+  // 生命周期函数
+  created() {},
+  beforeCreate() {},
+  mounted() {
+    // debugger
+    console.log(store.state.test);
+    console.log("index");
+  },
+  store
+};
+</script>
+
+<style lang="scss">
+body {
+  min-height: 80vh;
+}
+#app {
+  height: 100%;
+}
+.main {
+  padding: 0.32rem 0.4rem;
+  background: $fafa;
+}
+.centerNav {
+  margin: 0.32rem 0;
+  height: 2.16rem;
+  padding-top: 0.3rem;
+  border-radius: $brd;
+  background: $white;
+  box-shadow: 0 0 0.0667rem 0.0667rem $e8e9;
+  i.onlineMoney {
+    background: url("/static/icon/icon1.1.png") no-repeat 0 0;
+    background-size: cover;
+  }
+  i.tiXian {
+    background: url("/static/icon/icon1.2.png") no-repeat 0 0;
+    background-size: cover;
+  }
+  i.myMoney {
+    background: url("/static/icon/icon1.3.png") no-repeat 0 0;
+    background-size: cover;
+  }
+  i.myUpdate {
+    background: url("/static/icon/icon1.4.png") no-repeat 0 0;
+    background-size: cover;
+  }
+ 
+}
+ .centerHandle{
+    .goCard{
+        background:$white url("/static/icon/sy_xyk.png") no-repeat 3.0667rem center;
+        background-size: 1.3333rem auto;
+    }
+    .goBorrow{
+        background:$white url("/static/icon/dk.png") no-repeat 3.0667rem center;
+        background-size: 1.3333rem auto;
+    }
+  }
+  //  [{ name: "房产评估", classes: "housePg" },
+  //       { name: "大数据信用", classes: "largeDataPg" },
+  //       { name: "个人司法", classes: "justicePg" },],
+  //       [{ name: "个人工商", classes: "businessPg" },
+  //       { name: "企业信用", classes: "creditPg" },
+  //       { name: "车产评估", classes: "carPg" },
+  .menuList{
+    margin: 0.32rem 0;
+    height: 6.9867rem;
+    padding-top: 22px;
+    padding:0  0.1333rem;
+    border-radius: $brd;
+    background: $white;
+    box-shadow: 0 0 0.0667rem 0.0667rem $e8e9;
+    .icon-fangchanpinggu{
+      color:$fangchan;
+
+    }
+    .icon-dashujuxinyong{
+      color:$car;
+    }
+    .justicePg{
+      background: url("/static/icon/icon2.1.png") no-repeat center center;
+      background-size: auto 100%;
+    }
+     .businessPg{
+      background: url("/static/icon/icon2.2.png") no-repeat center center;
+      background-size: auto 100%;
+    }
+    .creditPg{
+      background: url("/static/icon/icon2.4.png") no-repeat center center;
+      background-size: auto 100%;
+    }
+    .carPg{
+      background: url("/static/icon/icon2.6.png") no-repeat center center;
+      background-size: auto 100%;
+    }
+    .menuItem{
+      margin-bottom:0.2667rem;
+    }
+  }
+  .checkMyhistory{
+    text-align: center;
+    font-size: $fz32;
+    span{
+      position: relative;
+      color: $ff3;
+    }
+    span::after{
+      background: $ff3;;
+    }
+
+}
+</style>

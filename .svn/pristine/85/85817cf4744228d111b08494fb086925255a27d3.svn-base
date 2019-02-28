@@ -1,0 +1,187 @@
+<template lang="html">
+    <div class="UserCardPlanDetails">
+      <div class="planTop">
+        <!-- 0初始 99支付未确认 1代还进行中 2代还完成 3代还取消 4代还失败 5代还异常退款 -->
+<!-- item.status == 0 || item.status == 99 ?'未支付':(item.status == 2?'已完成':(item.status == 5?'代还失败':'进行中')) -->
+        <h3 class="c13">{{( planList.status == 0 || planList.status == 99 )?'未支付':(planList.status == 2?'已完成':(planList.status == 5?'代还失败':'进行中'))}}</h3>
+        <p>订单号：{{planList.orderId}}</p>
+        <van-button class="deleteBtn" v-show="planList.status != 1" @click="deletePlan(planList.orderId)" >删除计划</van-button>
+      </div>
+      <div class="panelBox">
+        <div class="panelTop">
+          <h3><i class="iconfont icon-jihua1 c12"></i>计划详情</h3>
+        </div>
+        <div class="panelContent">
+          <ul>
+            <li><span>计划金额</span> <span class="spanC666">{{planList.notAmount}}元</span></li>
+            <li><span>计划类型</span> <span class="spanC666">普通计划</span></li>
+            <li><span>计划次数</span> <span class="spanC666">{{planList.cishu}}次</span></li>
+            <li><span>计划日期</span> <span class="spanC666">{{planList.planDate}}</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="panelBox">
+        <div class="panelTop">
+          <h3><i class="iconfont icon-jindu1 cff6"></i>计划进度</h3>
+        </div>
+        <div class="panelContent">
+          <ul>
+            <li><span>已完成　　</span> <span class="spanCfc ml50">{{planList.onAmount}}元</span></li>
+            <li><span>未完成　　</span> <span class="spanCfc ml50">{{planList.notAmount}}</span></li>
+            <!-- <li><span>已完成进度</span> <span class="spanCfc ml50">{{notAmount}}%</span></li>
+            <li><span>已完成次数</span> <span class="spanCfc ml50">2/11次</span></li> -->
+          </ul>
+        </div>
+      </div>
+      <div class="panelBox">
+        <div class="panelTop">
+          <h3><i class="iconfont icon-feiyong cee4"></i>计划明细</h3>
+        </div>
+        <div class="panelContent panelContent2">
+          <ul class="panelUl">
+            <li class="jihua" v-for="(item, index) in planList.orderList" :key="index">
+              <div><i :class="['iconfont',item.opType==0?'icon-xiaofei c108':'icon-jihua cf7']"></i>{{item.opType==1?'计划':'消费'}}<span>2019-2-21 09:20:25</span> </div>
+              <div>{{(item.opType == 0?'-':'+')+item.amount}}元<span :class="[item.status == 1?'c13':'cf02']">{{item.status == 0?'未执行':(item.status == 2?'执行完成':'执行失败')}}</span></div>
+            </li>
+             <!-- <li class="jihua">
+              <div><i class="iconfont icon-jihua cf7 "></i>计划<span>2019-2-21 09:20:25</span> </div>
+              <div>-2135.45元<span class="c13">已执行</span></div>
+            </li> -->
+          </ul>
+          <div class="noData" v-show="planList.orderList?!planList.orderList.length:''">
+            暂无明细
+          </div>
+        </div>
+      </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+import { Popup, Toast, Dialog } from "vant";
+Vue.use(Popup).use(Toast).use(Dialog);
+export default {
+  // 不要忘记了 name 属性
+  name: 'UserCardPlanDetails',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      show: false,
+      planList: {},
+      planOrderId: '',
+
+    }
+  },
+  computed: {
+  },
+  //每次进缓存的路由调用
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  //每次进没有缓存的路由调用
+  methods: {
+    deletePlan (orderId) {
+      var that = this;
+      Dialog.confirm({
+        title: '删除',
+        message: '是否删除该计划?'
+      }).then(() => {
+        var params = {
+          orderId: orderId,
+        }
+        that.deleteOrder(params, that.deletePlanCb)
+      }).catch(() => {
+      });
+    },
+    deletePlanCb () {
+      this.$router.go(-1)
+    },
+    closePopup () {
+      this.show = false;
+    },
+    watchDetail () {
+      this.show = true;
+    },
+    changeTab (index) {
+      this.tabIndex = index;
+    },
+    getOrderInfo () {
+      var that = this;
+      var params = {
+        orderId: this.planOrderId
+      }
+      this.getGenerationInfo(params, that.getOrderInfoCb)
+    },
+    getOrderInfoCb (datas) {
+      var that = this;
+      that.planList = datas;
+    }
+    // this.$emit("clickSearch",text);
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () { },
+  mounted () { },
+  activated () {
+    console.log('UserCardPlanDetails')
+    this.planList = {};
+    this.planOrderId = this.getLocalStorage('planOrderId')
+    this.getOrderInfo()
+    store.commit('setDetail', true)
+
+  }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.UserCardPlanDetails {
+  /* ... */
+  min-height: 100vh;
+  background: $ceee;
+  padding: 0 0.4rem;
+  position: relative;
+  padding-top: 0.2667rem;
+  /deep/ .van-overlay {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .planTop {
+    background: $white;
+    border-radius: 0.2rem;
+    margin-bottom: 0.2667rem;
+    position: relative;
+    padding: 0.2667rem 0.24rem;
+    .c13 {
+      color: $c13;
+    }
+
+    h3 {
+      line-height: 0.6667rem;
+      font-size: $fz32;
+      font-weight: bold;
+    }
+    p {
+      line-height: 0.6133rem;
+      font-size: $fz28;
+    }
+    .deleteBtn {
+      line-height: 0.64rem;
+      height: 0.6667rem;
+      border-radius: 0.3333rem;
+      font-size: 0.3467rem;
+      border-color: $c666;
+      position: absolute;
+      right: 0.44rem;
+      top: 0.3067rem;
+    }
+  }
+}
+</style>

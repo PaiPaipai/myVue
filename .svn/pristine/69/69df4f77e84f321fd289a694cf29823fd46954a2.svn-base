@@ -1,0 +1,141 @@
+<template lang="html">
+    <div class="MoneysApply">
+      <my-header class="myHeader" :title="'垫资过桥'"></my-header>
+      <div class="passwordBox">
+          <input-item class="userList" :itemList="realData"></input-item>   
+      </div>
+      <div class="buttonBox">
+       <button-item  :buttonItem="buttonItem" @clickButton="clickButton"></button-item>
+      </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+import InputItem from '@/components/InputItem'
+import ButtonItem from '@/components/ButtonItem'
+import { config } from '../../../assets/js/config' // 引入配置的公共接口url
+
+import store from "@/store/index";
+import { Toast } from 'vant';
+import { setTimeout } from 'timers';
+Vue.use(Toast)
+export default {
+  // 不要忘记了 name 属性
+  name: 'MoneysApply',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      buttonItem: { txt: '提交申请', classes: 'buttonItem' },
+      realData: [
+        { name: '金额需求', model: '', tag: 'money', types: 'number', length: 6, placeholder: '请输入需求金额 单位：万元', icon: '', path: '', error: false, readonly: false },
+        { name: '用款期限', model: '', tag: 'date', types: 'number', placeholder: '请输入预计用款期限 单位：天', icon: '', path: '', error: false, readonly: false },
+        { name: '真实姓名', model: '', tag: 'name', type: '', placeholder: '请输入真实姓名', icon: '', path: '', error: false, readonly: false },
+        { name: '手机号码', model: '', tag: 'phone', type: '', length: 11, placeholder: '请输入手机号码', icon: '', path: '', error: false, reg: config.reg.phone },
+
+      ],
+    }
+  },
+  computed: {
+  },
+  // 使用其它组件
+  components: { MyHeader, InputItem, ButtonItem },
+  // 方法
+  methods: {
+    clickButton () {
+      var realData = this.realData;
+      var that = this;
+      var params = {
+        userId: this.getLocalStorage('userId')
+      }
+      var flag = true;
+      for (let index = 0; index < realData.length; index++) {
+        const element = realData[index];
+        if (!element.model) {
+          Toast(element.placeholder)
+          flag = false
+          break
+        } else {
+          if (element.tag == 'money' && element.model > 2000) {
+            Toast('超过最大需求金额！')
+            flag = false
+            break
+          } else if (element.tag == 'date' && (element.model < 5 || element.model > 90)) {
+            Toast('用款期限不正确')
+            flag = false
+            break
+          }
+        }
+      }
+      if (flag) {
+        console.log(params)
+        this.upPayPass(params, upPayPassCallBack)
+      }
+      function upPayPassCallBack () {
+        setTimeout(function () {
+          that.routerTo('UserCenter')
+        }, 1000)
+
+      }
+      // if (element.tag == 'newPayPass' && element.tag == 'newPayPass1' &&  element.tag) {
+      //         Toast('两次密码输入不一致')
+      //         break
+      //       } else {
+      //         params[element.tag] = element.model
+      //         console.log(params);
+      //       }
+    },
+    goForget () {
+      this.routerTo('UserPassForget')
+    }
+  },
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+    console.log('资金申请')
+    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+  },
+  store
+
+}
+</script>
+
+<style scoped lang="scss">
+.MoneysApply {
+  /* ... */
+  .buttonBox {
+    margin-top: 0.2667rem;
+    text-align: center;
+  }
+  /deep/ .buttonItem {
+    line-height: 0.8rem;
+    padding: 0 1.6rem;
+    background: $c12;
+    color: $white;
+  }
+}
+.passwordBox {
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+.fogetBox {
+  overflow: hidden;
+  span {
+    float: right;
+    margin-right: 0.2667rem;
+    font-size: 0.32rem;
+    margin-top: 0.2667rem;
+    color: #1296db;
+  }
+}
+</style>

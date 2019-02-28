@@ -1,0 +1,103 @@
+<template lang="html">
+  <div class="NewsItem">
+    <!-- ... -->
+    <ul class="cardItemUl">
+      <li v-for="(item, index) in itemList" class="van-hairline--bottom clearfix " :key="index" @click="goNewsDetails(item)">
+        <div class="titleBox">
+          <h3>{{item.title}}</h3>
+          <p><span>{{item.createTime}}</span><em>{{item.readCount}}阅读</em></p>
+        </div>
+        <div class="imgBox">
+          <img :src="item.image"/>
+        </div>
+      </li>
+    </ul>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+export default {
+  // 不要忘记了 name 属性
+  name: 'NewsItem',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: ['itemList'],
+  // 变量
+  data () {
+    return {
+      itemListClone: this.itemList
+    }
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  methods: {
+    goNewsDetails: function (item) {
+      // path: `/index/${userId}/${'456'}`
+      var that = this;
+      item.readCount += 1;
+      this.setLocalStorage('NewsDetails', JSON.stringify(item))
+      this.updateReadCount({ contentId: item.id }, that.updateReadCountCb)
+
+
+    },
+    updateReadCountCb () {
+      this.routerTo('NewsDetails')
+
+    }
+
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () { }
+}
+</script>
+
+<style scoped lang="scss" rel="stylesheet/scss">
+.NewsItem {
+  /* ... */
+}
+
+.cardItemUl {
+  overflow: hidden;
+  padding: 0 0.2rem 15px 0.2rem;
+  li {
+    width: 100%;
+    padding: 0.2rem 0;
+    // overflow: hidden;
+  }
+  .titleBox {
+    display: inline-block;
+    width: 65%;
+    h3 {
+      line-height: 0.76rem;
+      font-size: 0.4267rem;
+      font-weight: bold;
+      height: 1.52rem;
+      display: block;
+      @include text-ovh(2);
+    }
+    p {
+      line-height: 0.4267rem;
+    }
+    em {
+      float: right;
+    }
+  }
+  .imgBox {
+    display: inline-block;
+    width: 30%;
+    height: 1.7333rem;
+    overflow: hidden;
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+}
+</style>

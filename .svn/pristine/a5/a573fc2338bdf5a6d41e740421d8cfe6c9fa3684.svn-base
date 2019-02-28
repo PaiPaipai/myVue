@@ -1,0 +1,80 @@
+<template>
+ <div>
+    <my-header class="myHeader" :title="'司法报告-曝光台'"></my-header>
+         <div class="userJudiciary">
+         <b></b>曝光台<b></b>
+    </div>
+
+    <div class="title">记录1</div>
+    <ul class="usertitle">
+      <li class="judiciaryInfo"><span>立案时间：</span>{{userInfo.sortTimeString}}</li>
+      <li class="judiciaryInfo"><span>曝光时间：</span>{{userInfo.bgDate}}</li>
+      <li class="judiciaryInfo"><span>法院名称：</span>{{userInfo.court}}</li>
+      <li class="judiciaryInfo"><span>申请人：</span>{{userInfo.proposer}}</li>
+      <li class="judiciaryInfo"><span>当事人：</span>{{userInfo.pname}}</li>
+      <li class="judiciaryInfo"><span>案由：</span>{{userInfo.caseCause}}</li>
+       <li class="judiciaryInfo"><span>未执行金额：</span>{{userInfo.unnexeMoney}}</li>
+        <li class="judiciaryInfo"><span>标的金额：</span>{{userInfo.execMoney}}</li>
+      <li class="judiciaryInfo"><span>匹配度：</span><span id="red">{{userInfo.matchRatio}}</span></li>
+    </ul>
+    
+
+      <div class="vanButton">
+   
+       <van-button class="Jbuttons" @click="Notice" round type="info">上一页</van-button>
+      <van-button class="Jbutton" @click="Blacklist" round type="info">继续查看网贷黑名单</van-button>
+       </div>
+       
+        <div class="title">匹配度说明</div>
+       <div class="pp_text">{{userInfo.body}}</div>
+ </div>
+</template>
+
+<script>
+import MyHeader from '@/layout/MyHeader'
+ export default {
+   data () {
+     return {
+         userInfo:{
+           sortTimeString:'1990-01-01',
+           bgDate:'1990-01-01',
+           court:12,
+           proposer:'张三',
+           pname:'1222',
+           caseCause: 212,
+           unnexeMoney:'8000',
+           execMoney:22,
+           matchRatio:'80%',
+           body:'匹配度未被查询人与该案件的关系程度，取值0%到100%之间，值越大表示本人薪资与案件当事人信息重复度越高，被查询人的风险就越高。其中0%到180%为疑似为被查询人的案件，建议结合详情复审；81%到100%则表示很大的概率就是被查询人的案件。'
+         },
+     }
+   },
+    created(){
+      let data = JSON.parse(sessionStorage.getItem('MoneyBigDataReport'));
+      if(data.busiData.code == 0) {
+          this.userInfo = data.busiData.data.list.bgt;
+      }
+   },
+   methods:{
+       Notice(){
+         this.routerTo('Notice');
+       },
+       Blacklist(){
+          this.routerTo('Blacklist');
+       }
+   },
+   components: {
+      MyHeader
+   }
+ }
+</script>
+
+<style scoped>
+   .usertitle {
+     height: 6.74rem;
+   }
+    .judiciaryInfo{
+     height: .7rem;
+   }
+ 
+</style>

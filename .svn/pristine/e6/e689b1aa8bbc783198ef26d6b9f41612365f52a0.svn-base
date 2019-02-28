@@ -1,0 +1,288 @@
+<template lang="html">
+  <div class="blacklist">
+    <div class="Doublemark">
+      <span class="Doublemark_one"></span>
+      <div>还款详情</div>
+      <span class="Doublemark_two"></span>
+    </div>
+    <div class="bigdatadetails">概述</div>
+    <div class="blacklisttext">
+      <p v-html="MoneyBigDataReport.s6.summary"></p>
+      <div>说明:未检测到的还款数据不代表用户未还款和还款异常</div>
+    </div>
+    <div class="bigdatadetails">还款状态</div>
+    <div class="bigdataquery">
+      <div class="bigdataquery_left">
+        <span>当前</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <ul>
+          <li>1.当前逾期未还订单数<span>{{MoneyBigDataReport.s6.statis['notPayNow'] ||0}}次</span></li>
+          <li>2.当前逾期未还金额<span>{{MoneyBigDataReport.s6.statis['notPayNowAmt'] || 0}}万元</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdataquery">
+      <div class="bigdataquery_left">
+        <span>近一个月</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <ul>
+          <li>1.近一个月内正常还款订单数<span>{{MoneyBigDataReport.s6.statis['normalPayM1'] || 0}}次</span></li>
+          <li>2.近一个月内正常还款金额<span>{{MoneyBigDataReport.s6.statis['normalPayM1Amt'] || 0}}万元</span></li>
+          <li>3.近一个月内逾期已还订单<span>{{MoneyBigDataReport.s6.statis['overduePayM1'] || 0}}次</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdataquery">
+      <div class="bigdataquery_left">
+        <span>近一年</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <ul>
+          <li>1.近一个年内正常还款订单数<span>{{MoneyBigDataReport.s6.statis['normalPayY1'] || 0}}次</span></li>
+          <li>2.近一个年内正常还款金额<span>{{MoneyBigDataReport.s6.statis['normalPayY1Amt'] || 0}}万元</span></li>
+          <li>3.近一个年内逾期已还订单<span>{{MoneyBigDataReport.s6.statis['overduePayM1'] || 0}}次</span></li>
+          <li>4.近一个年内逾期已还金额<span>{{MoneyBigDataReport.s6.statis['overduePayY1Amt'] || 0}}万元</span></li>
+        </ul>
+      </div>
+    </div>
+        <div class="bigdataquery bigdataqueryis">
+      <div class="bigdataquery_left">
+        <span>近两年</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <ul>
+          <li>1.近两个年内正常还款订单数<span>{{MoneyBigDataReport.s6.statis['normalPayY2'] || 0}}次</span></li>
+          <li>2.近两个年内正常还款金额<span>{{MoneyBigDataReport.s6.statis['normalPayY2Amt'] || 0}}万元</span></li>
+          <li>3.近两个年内逾期已还订单<span>{{MoneyBigDataReport.s6.statis['overduePayY2'] || 0}}次</span></li>
+          <li>4.近两个年内逾期已还金额<span>{{MoneyBigDataReport.s6.statis['overduePayY2Amt'] || 0}}万元</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdatadetails">部分正常还款记录详情</div>
+    <div class="blacklisttext">
+        <div v-for="(item, index) in MoneyBigDataReport.s6.normalCreditDetails" :key="index">
+            {{index+1}}.借款日期：<p>{{item.creditStartDate}}</p>,借款金额：<span>{{item.loanMoney}}万元</span>,批款期数：<p>{{item.loanPeriods}}期</p>,到期日期：<p>{{item.creditEndDate}}</p>,借款地点：<p>{{item.creditAddress}}</p>;抵保方式：<p>{{item.assureType}}</p>，借款类型：<span>{{item.loanType}}</span>
+        </div>
+        <div class="noData" v-show="!MoneyBigDataReport.s6.normalCreditDetails.length">
+          暂无详情
+        </div>
+    </div>
+    <div class="bigdatadetails">部分异常还款记录详情</div>
+    <div class="blacklisttext">
+        <div v-for="(item, index) in MoneyBigDataReport.s6.abnormalCreditDetails" :key="index">
+             {{index+1}}.借款日期：<p>{{item.creditStartDate}}</p>,借款状态：<span>{{item.repayState}}</span>,借款金额：<span>{{item.loanMoney}}万元</span>,批款期数：<p>{{item.loanPeriods}}期</p>,到期日期：<p>{{item.creditEndDate}}</p>,逾期开始日期：<p>{{item.checkOverdueDate}}</p>,逾期时长：<span>{{item.overdueDays}}个月</span>,逾期金额:<span>{{item.nbMoney}}万元</span>,借款地点：<p>{{item.creditAddress}}</p>;低保方式：<p>{{item.assureType}}</p>，借款类型：<span>{{item.loanType}}</span>
+        </div>
+        <div class="noData" v-show="!MoneyBigDataReport.s6.abnormalCreditDetails.length">
+          暂无详情
+        </div>
+    </div>
+    <div class="tobak" @click="tobak()">
+      上一页
+    </div>
+    <div class="bigdatalook" @click="bigdatalook()">返回报告总述</div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from "vue";
+export default {
+  // 不要忘记了 name 属性
+  name: "blacklist",
+  // 变量
+  data () {
+    return {
+      MoneyBigDataReport: {
+        s6: {
+          data: {},
+          caseNumber: 0,
+          summary: '',
+          statis: {},
+          data: {},
+          normalCreditDetails: [],
+          abnormalCreditDetails: []
+        },
+      },
+    };
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  beforeCreate () { },
+  methods: {
+    tobak () {
+      this.$router.push("/bigdatalist/Summaryis");
+    },
+    bigdatalook () {
+      this.$router.push("/bigdatalist/bigdatahome");
+    }
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () { },
+  // 每次进路由会调用这个方法
+  activated () {
+    var MoneyBigDataReport = this.getLocalStorage('MoneyBigDataReport');
+    if (MoneyBigDataReport) {
+      MoneyBigDataReport = JSON.parse(MoneyBigDataReport);
+      console.log(MoneyBigDataReport)
+      var datas = MoneyBigDataReport.data
+      var s6 = datas.s6;
+      //处理字符串替换
+      var reg = /{([^\s]*?)}/g, ret2 = [], arr;
+      var cbody = datas.s6.summary
+      while (arr = reg.exec(cbody)) {
+        ret2.push(arr[1]);
+        cbody = cbody.replace(arr[0], '<span>' + s6.data[arr[1]] + '</span>')
+      }
+      datas.s6.summary = cbody
+      this.MoneyBigDataReport = datas;
+    } else {
+      this.routerTo('index')
+    }
+  }
+};
+</script>
+
+<style scoped lang="scss">
+.blacklist {
+  .Doublemark {
+    width: 5.6rem;
+    margin: 0 auto;
+    height: 0.8533rem;
+    font-size: 0.4rem;
+    color: #666666;
+    text-align: center;
+    // border: 1px red solid;
+    line-height: 0.8533rem;
+    position: relative;
+    span {
+      position: absolute;
+      display: inline-block;
+      height: 0.016rem;
+      width: 1.3333rem;
+      background: #cccccc;
+      top: 0.4267rem;
+    }
+    .Doublemark_one {
+      left: 0;
+    }
+    .Doublemark_two {
+      right: 0;
+    }
+  }
+  .bigdatadetails {
+    color: #333333;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .blacklisttext {
+    // height: 0.96rem;
+    padding: 0.1333rem 0.7733rem;
+    // text-indent: 0.7733rem;
+    color: #666666;
+    font-size: 0.3733rem;
+    line-height: 0.74rem;
+    div {
+      color: #666666;
+      //   font-size: 0.3733rem;
+      //   line-height: 0.74rem;
+    }
+    p {
+      display: inline;
+      color: #333333;
+    }
+    /deep/ span {
+      color: #ff0000;
+    }
+  }
+
+  .bigdataquery {
+    display: flex;
+    align-items: center;
+    border-bottom: 0.0133rem #cccccc solid;
+    padding-bottom: 0.4rem;
+    padding-top: 0.4rem;
+    //   padding: 0.4rem;
+    .bigdataquery_left {
+      width: 2.1067rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      span {
+        display: inline-block;
+        width: 0.48rem;
+        font-size: 0.4rem;
+        color: #333333;
+        line-height: 0.64rem;
+      }
+    }
+    .bigdataquery_cen {
+      width: 0.016rem;
+      height: 3.6667rem;
+      background: #cccccc;
+    }
+    .bigdataquery_right {
+      padding-left: 0.5333rem;
+      p {
+        font-size: 0.4rem;
+        color: #333333;
+        padding: 0.6933rem 0 0.3733rem 0;
+      }
+      li {
+        line-height: 0.7467rem;
+        color: #333333;
+        font-size: 0.3733rem;
+        span {
+          color: #ff0000;
+        }
+      }
+    }
+  }
+  .bigdataqueryis {
+    border-bottom: 0rem #cccccc solid;
+  }
+  .tobak {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    border: 0.0267rem solid rgba(42, 144, 235, 1);
+    border-radius: 0.5333rem;
+    font-size: 0.48rem;
+    font-weight: 500;
+    color: rgba(42, 144, 235, 1);
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 1.0667rem auto 0 auto;
+  }
+  .bigdatalook {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    background: rgba(9, 109, 221, 1);
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: 0.48rem;
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 0.4rem auto 1.1333rem auto;
+  }
+  .bigdatadeta {
+    color: #666666;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+}
+</style>

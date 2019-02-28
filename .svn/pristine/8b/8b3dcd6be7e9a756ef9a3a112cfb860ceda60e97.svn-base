@@ -1,0 +1,128 @@
+<template lang="html">
+    <div class="houseData">
+        <!-- ... -->
+        <!-- <my-header :title="'房产评估结果'"></my-header> -->
+        <div class="houseTop" :style="{'background':houseTop}">
+            <h3>{{houseData.projectName}}{{houseData.buildingName?houseData.buildingName:'-'}}{{houseData.floor?houseData.floor:'-'}}楼{{houseData.houseName}}</h3>
+            <p>房产估值：¥ {{houseData.totalPrice}}</p>
+        </div>
+        <div class="houseBottom">
+          <ul class="houseUl">
+            <li><span>单价(元/平)：</span><em>¥{{houseData.unitPrice}}</em></li>
+            <li><span>楼栋均价(元/平)：</span><em>¥{{houseData.unitPrice}}</em></li>
+            <li><span>楼盘均价(元/平)：</span><em>¥{{houseData.unitPrice}}</em></li>
+            <li><span>贷款成数(元/平)：</span><em>七成</em></li>
+          </ul>
+          <div class="houseMoney">
+            <p>可贷款金额(仅供参考)</p>
+            <h3>¥ {{(houseData.totalPrice*0.7).toFixed(2)}}</h3>
+          </div>
+        </div>
+        <div class="buttonBox">
+        <button-item  :buttonItem="buttonItem" @clickButton="clickButton"></button-item>
+      </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+import MyHeader from '@/layout/MyHeader'
+import ButtonItem from '@/components/ButtonItem'
+export default {
+  // 不要忘记了 name 属性
+  name: 'houseData',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      buttonItem: { txt: '返回首页', classes: 'buttonItem' },
+      totalMoney: 3234342.00,
+      houseData: '',
+      houseTop: 'url("' + process.env.BASE_URL + 'img/fctop.png") no-repeat 0 0'
+    }
+  },
+  computed: {
+    totalFormat: {
+      get: function () {
+        return this.getMoneyFormat(this.totalMoney)
+      },
+      set: function () { }
+    }
+  },
+  // 使用其它组件
+  components: { MyHeader, ButtonItem },
+  // 方法
+  watch: {},
+  methods: {
+    clickButton: function () {
+      this.routerTo('index')
+    }
+    // this.$emit("clickSearch",text);
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () { },
+  mounted () { },
+  activated () {
+    console.log('houseData')
+    var houseData = this.getLocalStorage('MoneyBigDataParams')
+    if (houseData) {
+      this.houseData = JSON.parse(houseData);
+    } else {
+      this.routerTo('index')
+    }
+  }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.houseData {
+  /* ... */
+  /deep/ .buttonItem {
+    line-height: 0.8rem;
+    padding: 0 1.6rem;
+    background: $c12;
+    color: $white;
+  }
+}
+.houseTop {
+  // height: 3.4667rem;
+  padding: 0.6933rem 0.4rem 0.3467rem 0.4rem;
+  color: $white;
+  width: 100%;
+  h3 {
+    font-size: 0.5333rem;
+    line-height: 1.24rem;
+  }
+  p {
+    font-size: 0.4533rem;
+    line-height: 1.1733rem;
+  }
+}
+.houseBottom {
+  padding: 0.48rem 0.4rem 0.3467rem 0.4rem;
+  font-size: $fz30;
+  line-height: 0.96rem;
+  .houseUl {
+    margin-bottom: 0.7067rem;
+  }
+  h3 {
+    color: $cff8;
+    font-size: 0.64rem;
+  }
+}
+.houseMoney {
+  text-align: center;
+}
+.buttonBox {
+  text-align: center;
+  padding: 0.9333rem;
+}
+</style>

@@ -1,0 +1,188 @@
+<template lang="html">
+  <div class="CardList">
+     <div class="header">
+      <swipe :imgList="imgList" :swipeClass="'topSwiper'"></swipe>
+    </div>
+    <div class="main">
+      <div class="cardNav">
+        <icon-item :iconList="navData"></icon-item>
+      </div>
+      <jt-hr :hritem="'热门银行'"></jt-hr>
+      <div class="cardBox">
+          <bank-item :itemList="bankList"></bank-item>
+      </div>
+      <jt-hr :hritem="'热门信用卡'"></jt-hr>
+      <div class="cardBox">
+          <card-item :itemList="cardList"></card-item>
+      </div>
+       <div class="text-box">
+        <my-text></my-text>
+      </div>
+    </div>
+    
+    <!-- <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+      
+        <div class="card-item-box">
+           <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad">
+                <card-item :itemList="itemList" ></card-item>
+            </van-list>
+        
+        </div>
+    </van-pull-refresh> -->
+
+  </div>
+</template>
+
+<script type="text/javascript">
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+import CardItem from '@/components/CardItem'
+import swipe from "@/components/swipe";
+import IconItem from "@/components/IconItem";
+import JtHr from "@/components/JtHr";
+import BankItem from "@/components/BankItem"
+import MyText from "@/components/MyText"
+import { config } from '../../assets/js/config' // 引入配置的公共接口url
+import { Button, PullRefresh } from 'vant'
+import store from '@/store/index'
+Vue.use(Button).use(PullRefresh)
+export default {
+  // 不要忘记了 name 属性
+  name: 'CardList',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: {
+  },
+  // 变量
+  data () {
+    return {
+      imgList: [
+        { imgUrl: process.env.BASE_URL + "img/1.jpg" },
+        { imgUrl: process.env.BASE_URL + "img/2.jpg" },
+        { imgUrl: process.env.BASE_URL + "img/3.jpg" }
+      ],
+      bankList: [
+        { name: "兴业银行", code: 'CIB', href: '', imgUrl: process.env.BASE_URL + 'icon/xingye-logo.png', tips: ['自动结算', '佣金'], special: '最低6积分兑换哈根达斯', total: 286, classes: "", path: 'BankInfo' },
+        { name: "交通银行", code: 'BCM', href: '', imgUrl: process.env.BASE_URL + 'icon/jiaotong-logo.png', tips: ['自动结算', '佣金'], special: '新用户5积分换购豪礼', total: 589, classes: "", path: 'BankInfo' },
+        { name: "光大银行", code: 'CEB', href: '', imgUrl: process.env.BASE_URL + 'icon/guangda-logo.png', tips: ['自动结算', '佣金'], special: '实体店购物返现', total: 2415, classes: "", path: 'BankInfo' },
+        { name: "广发银行", code: 'CMBC', href: '', imgUrl: process.env.BASE_URL + 'icon/guangfa-logo.png', tips: ['自动结算', '佣金'], special: '会员日消费享专属积分', total: 1582, classes: "", path: 'BankInfo' },
+        { name: "民生银行", code: 'CGB', href: '', imgUrl: process.env.BASE_URL + 'icon/minsheng-logo.png', tips: ['自动结算', '佣金'], special: '核卡后5年有效期内免年费', total: 4869, classes: "", path: 'BankInfo' },
+        { name: "浦发银行", code: 'SPDB', href: '', imgUrl: process.env.BASE_URL + 'icon/pufa-logo.png', tips: ['自动结算', '佣金'], special: '最高领4888元刷卡金', total: 14639, classes: "", path: 'BankInfo' },
+      ],
+      cardList: [
+        { name: "光大阳光白金卡", code: 'CEB', imgUrl: process.env.BASE_URL + 'img/gd.png', minMoney: 5, maxMoney: 30, hot: 1, tips: '要下户', special: '最低6积分兑换哈根达斯', total: 113324, classes: "", path: 'CardItemDetail', id: 1, },
+        { name: "兴业白金信用卡", code: 'CIB', imgUrl: process.env.BASE_URL + 'img/xy.png', minMoney: 3, maxMoney: 5, hot: 1, tips: '秒批', special: '可免费尊享8次机场接送服务', total: 23244, classes: "", path: 'UserReal', href: config.bankHref.CIB, tag: 'xy', id: 2, },
+        // { name: "光大银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 7, maxMoney: 30, hot: 1, tips: '秒批2', special: '可享8次免费接机1', total: 789, classes: "", path: 'CardItemDetail', id: 3, },
+        // { name: "广发银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 8, maxMoney: 30, tips: '秒批3', special: '可享8次免费接机2', total: 111, classes: "", path: 'CardItemDetail', id: 4, },
+        // { name: "民生银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 9, maxMoney: 30, tips: '秒批4', special: '可享8次免费接机3', total: 222, classes: "", path: 'CardItemDetail', id: 5, },
+        // { name: "浦发银行信用卡", imgUrl: process.env.BASE_URL + 'img/1.jpg', minMoney: 0, maxMoney: 30, tips: '秒批5', special: '可享8次免费接机4', total: 333, classes: "", path: 'CardItemDetail', id: 6, },
+      ],
+      navData: [{ name: "办卡中心", classes: "iconfont icon-banqiazhongxin" },
+      { name: "办卡进度", classes: "iconfont icon-banqiajinduguanli" },
+      { name: "信用卡攻略", classes: "iconfont icon-xinyongqiagonglve" },
+      { name: "信用卡还款", classes: "iconfont icon-xinyongqia" }
+      ],
+      msg: '默认1212',
+      count: 0,
+      isLoading: false,
+      itemList: [
+        { imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题', id: 1 },
+        { imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题1', id: 3 }
+      ],
+      active: 0,
+      loading: false,
+      finished: false
+    }
+  },
+
+  computed: {},
+  // 使用其它组件
+  components: { MyHeader, CardItem, swipe, IconItem, JtHr, BankItem, MyText },
+  // 方法
+  methods: {
+    setBankHref () {
+      console.log(config.bankHref)
+      this.bankList.forEach(function (item) {
+        if (config.bankHref[item['code']]) {
+          item.href = config.bankHref[item['code']]
+        }
+      });
+      console.log(this.bankList)
+    },
+    parent: function (msg) {
+      this.msg = msg
+      console.log(msg)
+    },
+    onRefresh () {
+      setTimeout(() => {
+        this.$toast('刷新成功')
+        this.isLoading = false
+        this.count++
+        if (this.itemList.length >= 40) { // 父元素的数组大于40 就停止
+          this.finished = true
+        } else {
+          this.itemList.push({ imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题' + this.count, id: 3 })
+        }
+      }, 500)
+    },
+    onLoad: function () {
+      // 异步更新数据
+      var _this = this
+      setTimeout(() => {
+        // 加载状态结束
+        _this.loading = false
+        // 数据全部加载完成
+        if (_this.itemList.length >= 40) { // 父元素的数组大于40 就停止
+          _this.finished = true
+        } else {
+          _this.itemList.push({ imgUrl: 'https://img.yzcdn.cn/public_files/2017/12/18/fd78cf6bb5d12e2a119d0576bedfd230.png', title: '测试标题' + this.count, id: 3 })
+        }
+      }, 1000)
+    }
+  },
+  // 生命周期函数
+  beforeCreate () {
+  },
+  mounted () {
+    var that = this;
+    this.checkLogin('userInfo', 'setUserInfo', that.getMyInfo)
+    this.setBankHref()
+  },
+  watch: {
+  },
+  store
+}
+</script>
+
+<style lang="scss">
+.CardList {
+  /* ... */
+  background: $white;
+}
+// navData: [{ name: "办卡中心", classes: "iconfont icon-banqiazhongxin", path: 'CardList' },
+// { name: "办卡进度", classes: "iconfont icon-banqiajinduguanli" },
+// { name: "信用卡攻略", classes: "iconfont icon-xinyongqiagonglve" },
+// { name: "信用卡还款", classes: "iconfont icon-xinyongqiahuankuan" }
+.cardNav {
+  .icon-banqiazhongxin {
+    color: $c12;
+  }
+  .icon-banqiajinduguanli {
+    color: $cee5;
+  }
+  .icon-xinyongqiagonglve {
+    color: $c29;
+  }
+  .icon-xinyongqia {
+    color: $cf7;
+  }
+}
+.card-item-box {
+  margin: 0.2667rem 0 0 0;
+}
+</style>

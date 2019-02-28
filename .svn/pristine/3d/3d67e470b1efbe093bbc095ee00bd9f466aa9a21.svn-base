@@ -1,0 +1,125 @@
+<template lang="html">
+    <div class="IconItem">
+        <!-- ... -->
+        <div :class="['nav-item']" v-for="(item, index) in iconList"  @click="goToPath(item,index)" :key="index">
+              <i :class="[item.classes,index == active?'clickHover':'']"></i>
+              <span>{{item.name}}</span>
+        </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+import { Toast } from 'vant'
+Vue.use(Toast)
+export default {
+  // 不要忘记了 name 属性
+  name: 'IconItem',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: ['iconList', 'active'],
+  // 变量
+  data () {
+    return {
+
+    }
+  },
+  computed: {
+    userId: {
+      get: function () {
+        return store.state.userId
+      },
+      set: function () {
+      }
+    },
+    userData: {
+      get: function () {
+
+      },
+      set: function () {
+      }
+    },
+  },
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  methods: {
+    // this.$emit("clickSearch",text);
+    goToPath: function (item, index) {
+      var userData = JSON.parse(this.getLocalStorage('userInfo'))
+      if (item.path) {
+        if (store.state.active == 0 && !userData.mobile) {//有链接的 调用 clicktop
+          this.$emit('clickTop', item)
+          return
+        }
+        if (userData.certification == 2) {
+          if (item.path == 'UserMyCard' || item.path == 'UserMyCard' || item.path == 'CollectMoneyDetail' || item.path == 'UserCardList') {
+            Toast('您暂未实名，请先实名!')
+            return
+          }
+        } else if (userData.certification == 1 && item.path == 'UserRealName') {
+          Toast('您已实名!')
+          return
+        }
+        if (item.path == 'UserPassword' && !userData.payPass) {
+          Toast('您还未创建支付密码，请去收钱界面创建!')
+          return
+        }
+        this.routerTo(item.path, { userId: this.$store.state.userId })
+      } else {
+        if (item.paths) {
+          this.$emit('clickItem', item, index)
+        } else {
+          Toast('敬请期待!')
+        }
+
+        return
+      }
+    },
+    clickItem: function () {
+
+    }
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () {
+    console.log('iconitem')
+  },
+  mounted () {
+
+  },
+  activated () { }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.IconItem {
+  /* ... */
+  display: flex;
+  justify-content: space-between;
+}
+.nav-item {
+  text-align: center;
+  width: 100%;
+  color: $baseColor;
+  font-size: $fz30;
+  span {
+    line-height: 1rem;
+  }
+  i {
+    position: relative;
+    display: block;
+    line-height: 1em;
+    width: 1.0667rem;
+    height: 1.0667rem;
+    margin: 0 auto;
+    font-size: 1.0667rem;
+  }
+}
+</style>

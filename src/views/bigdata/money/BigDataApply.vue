@@ -1,0 +1,258 @@
+<template>
+  <div class="BigDataApply">
+    <my-header class="myHeader"
+               :title="moneyDetails.name"></my-header>
+    <div class="passwordBox">
+      <input-item class="userList"
+                  :itemList="realData"></input-item>
+    </div>
+    <div class="buttonBox">
+      <button-item :buttonItem="buttonItem"
+                   @clickButton="clickButton"></button-item>
+    </div>
+    <van-popup v-model="show"
+               :close-on-click-overlay=false
+               :class="['popup']">
+      <div class="setTime">
+        <img :src="imgSrc"
+             alt="">
+        <p>{{txt}}</p>
+        <van-button :class="['buttons',times==0?'success':'unSuccess']"
+                    @click="goToPath">立即查看</van-button>
+      </div>
+    </van-popup>
+  </div>
+</template>
+
+<script type="text/javascript">
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+import InputItem from '@/components/InputItem'
+import ButtonItem from '@/components/ButtonItem'
+import { config } from '../../../assets/js/config' // 引入配置的公共接口url
+
+import store from "@/store/index";
+import { Toast, Popup } from 'vant';
+import { setTimeout, setInterval, clearTimeout, clearInterval } from 'timers';
+Vue.use(Toast).use(Popup)
+export default {
+  // 不要忘记了 name 属性
+  name: 'BigDataApply',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      successText: '',
+      show: false,
+      times: 10,
+      timer1: null,
+      timer2: null,
+      reportId: null,
+      paramsReport: null,
+      buttonItem: { txt: '查询', classes: 'buttonItem' },
+      imgSrc: process.env.BASE_URL + "img/setTime.png",
+      realData: [
+        { name: '姓名', model: '', tag: 'userName', types: '', placeholder: '请输入姓名', icon: '', path: '', error: false, reg: config.reg.name },
+        { name: '身份证', model: '', tag: 'certNo', types: '', length: 19, placeholder: '请输入身份证号码', length: '19', icon: '', path: '', error: true, reg: config.reg.ident },
+        { name: '手机号码', model: '', tag: 'mobile', type: '', length: 11, placeholder: '请输入手机号码', icon: '', path: '', error: false, reg: config.reg.phone },
+      ],
+      realData2: [
+        { name: '企业名称', model: '', tag: 'companyName ', types: '', placeholder: '请输入被查询企业名称', icon: '', path: '', error: false, },
+      ],
+      moneyDetails: {},
+      orderNo: '',
+      money: 0,
+    }
+  },
+  computed: {
+    userId: {
+      get: function () {
+        return this.getLocalStorage('userId')
+      },
+      set: function () { }
+    },
+    txt: {
+      get: function () {
+        var text = '报告生成中，还有' + this.times + 's'
+        if (this.times == 0) {
+          text = '报告已生成，请点击立即查看'
+        }
+        return text
+      },
+      set: function () {
+
+      }
+    }
+  },
+  // 使用其它组件
+  components: { MyHeader, InputItem, ButtonItem },
+  // 方法
+  deactivated () {
+    clearTimeout(this.timer1);
+    clearInterval(this.timer2);
+    this.times = 10;
+  },
+  methods: {
+    clickButton () {
+      var realData = this.realData;
+      var that = this;
+      var flag = true;
+      this.paramsReport = {
+        userId: that.userId,
+        bigDataType: this.moneyDetails.type
+      }
+      if (this.moneyDetails.type != 'qiyexinyong') {
+        var array = this.realData;
+        for (let index = 0; index < array.length; index++) {
+          const item = array[index];
+          if (!item.model) {
+            Toast('请填写' + item.name + '!')
+            flag = false;
+            break
+          } else if (item.reg && !item.reg.test(item.model)) {
+            Toast('请填写正确的' + item.name + '!')
+            flag = false;
+            break
+          } else {
+            this.paramsReport[item.tag] = item.model
+            flag = true;
+          }
+        }
+      }
+      if (flag) {
+        that.getBigDataInfo(this.paramsReport, this.getBigDataInfoCb)
+      }
+    },
+    getBigDataInfoCb (datas) {
+      var that = this;
+      if (this.moneyDetails.type == 'jichu') {
+        that.reportId = datas.reportId
+        that.show = true;
+        that.timer1 = setInterval(function () {
+          if (that.times == 0) {
+            clearInterval(that.timer1);
+          } else {
+            that.times--
+          }
+
+        }, 1000)
+      } else {
+        that.queryReportCb(datas)
+      }
+    },
+    queryReportCb (datas) {
+      var that = this;
+      datas.identity = this.paramsReport.certNo;
+      datas.phoneNumber = this.paramsReport.mobile;
+      that.setLocalStorage('MoneyBigDataReport', JSON.stringify(datas));
+      that.removeLocalStorage('MoneyBigDataNo');
+      that.$router.push(that.moneyDetails.to)
+    },
+    goToPath () {
+      var that = this;
+      if (this.moneyDetails.type == 'jichu') {
+        var params = {
+          reportId: that.reportId
+        }
+        if (this.times <= 0) {
+          that.queryReport(params, that.queryReportCb)
+        }
+      }
+
+    },
+  },
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+    console.log('大数据申请')
+    var that = this;
+    var orderNo = this.getLocalStorage('MoneyBigDataNo')
+    this.moneyDetails = JSON.parse(that.getLocalStorage('MoneyBigData'))
+    if (this.moneyDetails.type == 'qiyexinyong') {
+      this.realData = this.realData2
+    }
+    if (this.moneyDetails) {
+      this.orderNo = orderNo
+    } else {
+      this.routerTo('index')
+    }
+    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+  },
+  store
+
+}
+</script>
+
+<style scoped lang="scss">
+.BigDataApply {
+  /* ... */
+  .buttonBox {
+    margin-top: 0.2667rem;
+    text-align: center;
+  }
+  /deep/ .buttonItem {
+    line-height: 0.8rem;
+    padding: 0 1.6rem;
+    background: $c12;
+    color: $white;
+  }
+  .popup {
+    background: none;
+  }
+  .setTime {
+    width: 7.8667rem;
+    position: relative;
+    p {
+      position: absolute;
+      bottom: 2rem;
+      width: 100%;
+      text-align: center;
+      font-size: $fz30;
+    }
+
+    .buttons {
+      margin-top: -0.0667rem;
+      border: none;
+      color: $white;
+      font-size: $fz36;
+      width: 100%;
+      height: 1.1733rem;
+      line-height: 1.1467rem;
+      border-radius: 0;
+      border-bottom-left-radius: 0.1333rem;
+      border-bottom-right-radius: 0.1333rem;
+    }
+    .unSuccess {
+      background: $cf0;
+      color: $baseColor;
+    }
+    .success {
+      background: $c2e;
+    }
+    img {
+      width: 100%;
+    }
+  }
+}
+.passwordBox {
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+.fogetBox {
+  overflow: hidden;
+  span {
+    float: right;
+    margin-right: 0.2667rem;
+    font-size: 0.32rem;
+    margin-top: 0.2667rem;
+    color: #1296db;
+  }
+}
+</style>

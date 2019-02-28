@@ -1,0 +1,175 @@
+<template lang="html">
+  <div class="bigdatahome">
+    <div class="bigdatadetails">基本信息</div>
+    <ul class="bigulall">
+        <li v-for="(item,index) in datadetails" ::key="index" :class="item.type">
+            <div>{{item.isdata}}</div>
+            <span>{{item.name}}</span>
+            <p></p>
+        </li>
+    </ul>
+    <div class="bigdatadetails">报告总数</div>
+    <div class="bigdatatext" v-html="MoneyBigDataReport.compre.summary">
+    
+    </div>
+    <div class="bigdatalook" @click="bigdatalook()">查看详情</div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+export default {
+  // 不要忘记了 name 属性
+  name: 'bigdatahome',
+  // 变量
+  data () {
+    return {
+      MoneyBigDataReport: {
+        compre: {},
+      },
+      datadetails: [
+        { name: '姓名', type: 'name', isdata: '' },
+        { name: '手机号', type: 'mobile', isdata: '' },
+        { name: '手机号归属', type: 'mobile_gsd', isdata: '' },
+        { name: '身份证号', type: 'certNo', isdata: '' },
+        { name: '身份证归属地融', type: 'certNo_gsd', isdata: '' },
+        { name: '报告时间', type: 'report_time', isdata: '' }
+      ]
+    }
+  },
+  computed: {
+  },
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  beforeCreate () { },
+  methods: {
+    bigdatalook () {
+      this.$router.push({
+        path: "/bigdatalist/blacklist",
+      });
+    },
+    getBigDataInfois () {
+      let params = {
+        userId: this.getLocalStorage('userId'),
+        // userName:
+      }
+      this.getBigDataInfo(params, productApplyBack)
+      function productApplyBack () { }
+    },
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+  },
+  // 每次进路由会调用这个方法
+  activated () {
+    var MoneyBigDataReport = this.getLocalStorage('MoneyBigDataReport');
+    if (MoneyBigDataReport) {
+      MoneyBigDataReport = JSON.parse(MoneyBigDataReport);
+      console.log(MoneyBigDataReport)
+      var datas = MoneyBigDataReport.data
+      var compre = datas.compre;
+      var customer = datas.customer;
+
+      //处理字符串替换
+      var reg = /{([^\s]*?)}/g, ret2 = [], arr;
+      var cbody = datas.compre.summary
+      while (arr = reg.exec(cbody)) {
+        ret2.push(arr[1]);
+        cbody = cbody.replace(arr[0], '<span>' + compre[arr[1]] + '</span>')
+      }
+
+      datas.compre.summary = cbody
+      //处理基本信息
+      this.datadetails.forEach(function (item) {
+        item.isdata = datas.customer[item.type]
+      })
+
+      this.MoneyBigDataReport = datas;
+
+    } else {
+      this.routerTo('index')
+    }
+  }
+
+}
+</script>
+
+<style scoped lang="scss">
+.bigdatahome {
+  .bigdatadetails {
+    color: #333333;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .bigulall {
+    li {
+      position: relative;
+      display: inline-block;
+      border-bottom: 0.0133rem #cccccc solid;
+      width: 50%;
+      div {
+        padding: 0.3333rem 0 0.4667rem 0;
+        color: #ff3333;
+      }
+      span {
+        color: #666666;
+        display: inline-block;
+        padding-bottom: 0.1067rem;
+      }
+    }
+    li:nth-child(2n + 1) {
+      text-indent: 0.7733rem;
+    }
+    .id1,
+    .id3,
+    .id5 {
+      text-indent: 0.7733rem;
+      // border-right: 0.0133rem #cccccc solid;
+      // border-width: 0.9067rem;
+    }
+    .id2,
+    .id4,
+    .id6 {
+      text-indent: 0.3867rem;
+      p {
+        position: absolute;
+        height: 0.9067rem;
+        width: 0.016rem;
+        background: #cccccc;
+        top: 0.4rem;
+      }
+    }
+    .id5,
+    .id6 {
+      border-bottom: 0rem #cccccc solid;
+    }
+  }
+  .bigdatatext {
+    font-size: 0.3733rem;
+    color: #333333;
+    line-height: 0.8rem;
+    padding: 0.24rem 0.7733rem;
+    /deep/ span {
+      color: #ff3333;
+    }
+  }
+  .bigdatalook {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    background: rgba(9, 109, 221, 1);
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: 0.48rem;
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 0.8667rem auto 0 auto;
+  }
+}
+</style>

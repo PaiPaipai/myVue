@@ -1,0 +1,177 @@
+<template>
+  <div>
+     <my-header class="myHeader" :title="'司法报告'"></my-header>
+     <div class="userJudiciary">
+         <b></b>个人司法报告<b></b>
+    </div>
+    <div class="title">基础信息</div>
+    <ul class="usertitle">
+      <li class="judiciaryInfo"><span>姓名：</span> {{userInfo.name}}</li>
+      <li class="judiciaryInfo"><span>身份证：</span>{{userInfo.identity}}</li>
+      <li class="judiciaryInfo"><span>手机号：</span>{{userInfo.phoneNumber}}</li>
+    </ul>
+    <div class="title">数据解读</div>
+    <p class="content">该用户命中开庭记录<span class="red">{{userdata.ktggCount}}</span>次，案件流程<span class="red">{{userdata.ajlcCount}}</span>次，裁判文书<span class="red">{{userdata.cpwsCount}}</span>次，被执行<span class="red">{{userdata.zxggCount}}</span>次，失信被执行<span class="red">{{userdata.shixinCount}}</span>次，法院公告<span class="red">{{userdata.fyggCount}}</span>次，曝光台<span class="red">{{userdata.bgtCount}}</span>次，网贷黑名单<span class="red">{{userdata.wdhmdCount}}</span>次，司法风险<span class="red">{{userdata.riskLevel}}</span></p>
+    <div class="title">司法记录各项数据</div>
+    <ul class="ul_box">
+      <li>
+        <div>
+          <div class="ul_class">
+            <span><span class="red">{{userdata.ktggCount}}</span>条记录</span><br/>
+            <span>开庭记录</span>
+          </div>
+          <div class="ul_class ul_border">
+            <span><span class="red">{{userdata.ajlcCount}}</span>条记录</span><br/>
+            <span>案件流程</span>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="ul_class">
+            <span><span class="red">{{userdata.cpwsCount}}</span>条记录</span><br/>
+            <span>裁判文书</span>
+          </div>
+          <div class="ul_class ul_border">
+            <span><span class="red">{{userdata.zxggCount}}</span>条记录</span><br/>
+            <span>被执行</span>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="ul_class">
+            <span><span class="red">{{userdata.shixinCount}}</span>条记录</span><br/>
+            <span>失信被执行</span>
+          </div>
+          <div class="ul_class ul_border">
+            <span><span class="red">{{userdata.fyggCount}}</span>条记录</span><br/>
+            <span>法院公告</span>
+          </div>
+        </div>
+      </li>
+      <li>
+        <div>
+          <div class="ul_class">
+            <span><span class="red">{{userdata.bgtCount}}</span>条记录</span><br/>
+            <span>曝光台</span>
+          </div>
+          <div class="ul_class ul_border">
+            <span><span class="red">{{userdata.wdhmdCount}}</span>条记录</span><br/>
+            <span>网贷黑名单</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+   <div class="vanButton">
+  <van-button class="Jbutton" @click="judiciary" round type="info">继续查看开庭记录</van-button>
+  </div>
+ </div>
+</template>
+
+<script>
+import MyHeader from '@/layout/MyHeader'
+ export default {
+    name: 'Judiciary',
+   data () {
+     return {
+         userInfo:{
+           name:'',
+           identity:'',
+           phoneNumber: ''
+         },
+         userdata:{
+           ktggCount:'',
+           ajlcCount:'',
+           cpwsCount:'',
+           zxggCount:'',
+           shixinCount:'',
+           fyggCount:'',
+           bgtCount:'',
+           wdhmdCount:'',
+           riskLevel:''
+         }
+     }
+   },
+   created(){
+     let data = JSON.parse(sessionStorage.getItem('MoneyBigDataReport'));
+     if(data.busiData.code == 0) {
+        this.userdata = data.busiData.data.data;
+        this.userInfo.name = data.busiData.data.name;
+        this.userInfo.identity = data.identity;
+        this.userInfo.phoneNumber = data.phoneNumber;
+     }
+   },
+   methods:{
+       judiciary(){
+         this.routerTo('Opensession')
+       }
+   },
+   components: {
+     MyHeader
+   }
+ }
+</script>
+
+<style scoped>
+.judiciaryInfo {
+   font-size: .4rem;
+  }
+ 
+   .ul_box li{
+     padding: .3rem 0.4rem;
+     border-bottom:1px solid #ddd;
+     font-size: .4rem
+   }
+   .ul_box li:last-of-type{
+      border-bottom: none;
+   }
+
+  .ul_box li>div>.ul_class{
+    width:48%;
+     display: inline-block;
+     height: 1rem;
+     line-height: .5rem;
+      text-align: center;
+  }
+ 
+   .usertitle {
+     height: 2rem;
+     padding-left: .333rem;
+   }
+   .userdata {
+      height: 2.32rem;
+   }
+   .van-panel__header{
+     border-top: none; 
+   }
+   .title{
+     height: .8rem;
+    border-bottom: 1px solid #ddd;
+    line-height: .8rem;
+    padding-left: .3rem;
+    font-size: .4rem;
+   }
+   .content{
+     padding: .4rem .5rem;
+     line-height: 0.695rem;
+     font-size: .4rem;
+   }
+   .judiciaryInfo{
+     line-height: .6rem;
+     height: .6rem;
+   }
+   .judiciaryInfo span{
+     width: 2.5rem;
+     display: inline-block;
+   }
+   .ul_border {
+     border-left: 1px solid #666;
+     text-align: center;   
+   }
+   .red {
+     color: red;
+   }
+   
+ 
+</style>

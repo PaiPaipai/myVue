@@ -1,0 +1,82 @@
+<template lang="html">
+    <div class="HandleItem">
+        <!-- ... -->
+        <div :class="['nav-item']" v-for="(item, index) in handleList" :key="index">
+          <div :class="['flexBox',item.classes]">
+            <h3>{{item.name}}</h3>
+              <p>{{item.tips}}</p>
+          </div>
+              
+        </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from "vue";
+import store from "@/store/index";
+
+export default {
+  // 不要忘记了 name 属性
+  name: "HandleItem",
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: ["handleList"],
+  // 变量
+  data() {
+    return {};
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  methods: {
+    // this.$emit("clickSearch",text);
+  },
+  // 生命周期函数
+  beforeCreate() {},
+  created() {},
+  mounted() {},
+  activated() {} // 每次进路由会调用这个方法
+};
+</script>
+
+<style  scoped lang="scss">
+.HandleItem {
+  /* ... */
+  display: flex;
+  justify-content: space-between;
+  height: 2.16rem;
+}
+.nav-item {
+  width: 100%;
+  .flexBox {
+    margin-right: 0.12rem;
+    border-radius: $brd;
+    padding: 0.7333rem 0 0.4533rem 0.1467rem ;
+    box-shadow: 0 0 0.0667rem 0.0667rem $e8e9;
+  }
+  h3 {
+    font-size:$fz32;
+    line-height: 0.52rem;
+    // font-weight: 600;
+  }
+  p {
+    font-size:$fz24;
+    color: $c666;
+    line-height: 0.44rem;
+  }
+  span {
+    line-height: 1rem;
+  }
+}
+.nav-item:last-child {
+  .flexBox {
+    margin-right: 0;
+    margin-left: 0.1067rem;
+  }
+}
+</style>

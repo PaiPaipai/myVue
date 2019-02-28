@@ -1,0 +1,176 @@
+<template lang="html">
+  <div class="blacklist">
+    <div class="Doublemark">
+      <span class="Doublemark_one"></span>
+      <div>司法记录</div>
+      <span class="Doublemark_two"></span>
+    </div>
+    <div class="bigdatadetails">概述</div>
+    <div class="blacklisttext">
+        <p>用户中司法案件<span>2条</span></p>
+        <div>说明：不包含执行人既原告数据</div>
+    </div>
+    <div class="blfloor"></div>
+    <div class="bigdatadetails">部分详情</div>
+    <div class="blacklistall">
+        <p>1,<span>失信被执行</span></p>
+        <div>数据时间：<span>2018-02-05</span>,案件状态：<span>执行中</span>。</div>
+        <q>张XX, 42900152213420XXXX, 根据咸安区人民法院民二庭，执行案号为(2015) 咸执字第009 59号文件，由张小明赔偿12.5354万元，至今全部未履行，履行情况属于其他有履行能力而拒不履行生效法律文书确定义务，认定失信时间为2016年12月14日。</q>
+    </div>
+      <div class="blacklistall">
+        <p>1,<span>失信被执行</span></p>
+        <div>数据时间：<span>2018-02-05</span>,案件状态：<span>执行中</span>。</div>
+        <q>张XX, 42900152213420XXXX, 根据咸安区人民法院民二庭，执行案号为(2015) 咸执字第009 59号文件，由张小明赔偿12.5354万元，至今全部未履行，履行情况属于其他有履行能力而拒不履行生效法律文书确定义务，认定失信时间为2016年12月14日。</q>
+    </div>
+    <div class="tobak" @click="tobak()">
+        上一页
+    </div>
+    <div class="bigdatalook"  @click="bigdatalook()">继续查看司法记录</div>
+    <div class="bigdatadeta">司法记录说明</div>
+    <div class="bigdatadetatext">通过查询个人在全国司法系统中是否涉及经济类案件，以及对应相关法律公告、判决书及执行情况，识别用户是否为失信被执行人，其失信情况等。
+</div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from "vue";
+export default {
+  // 不要忘记了 name 属性
+  name: "blacklist",
+  // 变量
+  data() {
+    return {
+    };
+  },
+  computed: {},
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  beforeCreate() {},
+  methods: {
+      tobak(){
+        this.$router.push("/bigdatalist/blacklist");
+      },
+      bigdatalook(){
+        this.$router.push("/bigdatalist/Summaryis");
+      }
+  },
+  // 生命周期函数
+  beforeCreate() {},
+  mounted() {},
+  // 每次进路由会调用这个方法
+  activated() {}
+};
+</script>
+
+<style scoped lang="scss">
+.blacklist {
+  .Doublemark {
+    width: 5.6rem;
+    margin: 0 auto;
+    height: 0.8533rem;
+    font-size: 0.4rem;
+    color: #666666;
+    text-align: center;
+    // border: 1px red solid;
+    line-height: 0.8533rem;
+    position: relative;
+    span {
+      position: absolute;
+      display: inline-block;
+      height: 0.016rem;
+      width: 1.3333rem;
+      background: #cccccc;
+      top: 0.4267rem;
+    }
+    .Doublemark_one {
+      left: 0;
+    }
+    .Doublemark_two {
+      right: 0;
+    }
+  }
+  .bigdatadetails {
+    color: #333333;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .blacklisttext {
+    // height: 0.96rem;
+    text-indent: 0.7733rem;
+    color: #666666;
+    font-size: 0.4rem;
+    line-height: 0.86rem;
+    p{
+        color: #333333;
+    }
+    span {
+      color: #ff0000;
+    }
+  }
+  .blfloor {
+    height: 0.2667rem;
+    background: #f0f0f0;
+  }
+  .blacklistall {
+    padding: 0 0.7733rem;
+    color: 0.4rem;
+    p{
+        line-height: 1.1067rem;
+    }
+    div{
+        margin-bottom: 0.3067rem;
+    }
+    q{
+        color:rgba(102,102,102,1);
+        line-height: 0.6rem;
+        display: inline-block;
+    }
+    span {
+      color: #ff0000;
+    }
+  }
+  .tobak {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    border: 0.0267rem solid rgba(42, 144, 235, 1);
+    border-radius: 0.5333rem;
+    font-size: 0.48rem;
+    font-weight: 500;
+    color: rgba(42, 144, 235, 1);
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 1.0267rem auto 0 auto;
+  }
+  .bigdatalook {
+    width: 6.6667rem;
+    height: 1.0667rem;
+    background: rgba(9, 109, 221, 1);
+    border-radius: 40px;
+    color: #ffffff;
+    font-size: 0.48rem;
+    text-align: center;
+    line-height: 1.0667rem;
+    margin: 0.4rem auto 0 auto;
+  }
+  .bigdatadeta {
+    color: #666666;
+    font-size: 0.4267rem;
+    border-bottom: 0.0133rem #cccccc solid;
+    height: 1.0667rem;
+    line-height: 1.0667rem;
+    padding: 0 0.4rem;
+  }
+  .bigdatadetatext {
+    font-size: 0.3467rem;
+    color: #666666;
+    line-height: 0.6667rem;
+    padding: 0.5067rem 0.7733rem;
+  }
+}
+</style>

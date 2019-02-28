@@ -1,0 +1,217 @@
+<template lang="html">
+    <div class="UserRealName">
+      <my-header :title="title"></my-header>
+      <div>
+          <h4 class="huanTitle">银行卡信息 <span>只能绑定实名认证者名下的卡片</span></h4>
+          <input-item :searchData="searchData" @clickFh="clickFh" :itemList="realData" @onConfirm="onConfirm" @clickButton="sendMsg"></input-item> 
+      </div>
+      <div class="buttonBox">
+       <button-item  :buttonItem="buttonItem" @clickButton="clickButton"></button-item>
+      </div>
+      <popup-fen :searchData="searchData" @clickSearch="clickSearch" @clickFen="clickFen"></popup-fen>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+import InputItem from '@/components/InputItem'
+import ButtonItem from '@/components/ButtonItem'
+import PopupFen from '@/components/PopupFen'
+import store from "@/store/index";
+import { config } from '../../assets/js/config' // 引入配置的公共接口url
+import { Toast } from 'vant';
+Vue.use(Toast)
+export default {
+  // 不要忘记了 name 属性
+  name: 'UserRealName',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      userData: {},
+      title: '新增储蓄卡',
+      realData: [],
+      cxkItem: null,
+      buttonItem: { txt: '提交', classes: 'buttonItem' },
+      searchData: {
+        placeholder: '例：江汉分行，输入 江汉',
+        model: '',
+        khh: '',
+        bankCode: '',
+        classes: 'fenUnActive',
+      }
+    }
+  },
+  computed: {
+    userId: {
+      get: function () {
+        return this.getLocalStorage('userId')
+      },
+      set: function () {
+
+      }
+    },
+
+  },
+  // 使用其它组件
+  components: { MyHeader, InputItem, ButtonItem, PopupFen },
+  // 方法
+  methods: {
+    clickFh () {// 点开分行
+      this.searchData.classes = 'fenActive'
+    },
+    clickFen (item) {// 点击具体分行名称
+      this.searchData.classes = 'fenUnActive'
+      if (item) {
+        this.searchData.model = '';
+        this.realData[4].model = item.subBankName;
+      } else {
+        this.searchData.model = ''
+      }
+      this.$store.commit('setSubBankList', []);
+    },
+    clickSearch (value) { // 点击搜索
+      console.log(value)
+      var params = {
+        bankCode: this.searchData.bankCode,
+        serchKey: value
+      }
+      if (value) {
+        this.getSubBankList(params)
+      } else {
+        Toast('请至少输入一个字符!')
+      }
+    },
+    onConfirm: function (value, index) {
+      if (index == 3) {
+        this.realData[index].model = value.text
+        if (value.text != this.searchData.khh) {
+          this.realData[index + 1].model = ''
+        }
+        this.searchData.khh = value.text;
+        this.searchData.bankCode = value.code;
+      } else {
+        this.realData[index].model = value;
+      }
+    },
+    sendMsg: function (params) {
+      console.log(params)
+    },
+    clickButton: function () {
+      var that = this;
+      console.log(this.realData)
+      var dataArr = this.realData;
+      var params = {
+        sysUserId: that.userId,
+        type: 1,
+      };
+      var flag = true
+      for (let index = 0; index < dataArr.length; index++) {
+        const element = dataArr[index];
+        if (element.model == '') {
+          flag = false;
+          Toast('请填写' + element.name + '!')
+          return false
+        } else if (element.error) {
+          flag = false;
+          Toast('请填写正确的' + element.name + '!')
+          return false
+        } else {
+          if (element.code) {
+            params['bankCode'] = element.code;
+          }
+          params[element.tag] = element.model;
+        }
+      }
+      if (flag) {
+        params = this.clearParams(params);
+        Toast('填写正确！')
+        if (that.cxkItem) {
+          params.userId = that.getLocalStorage('txUserId')
+          that.editCashCard(params, that.goCardHuan)
+        } else {
+          that.addCreditCard(params, that.goCardHuan)
+        }
+
+      }
+
+    },
+    goCardHuan () {
+      var that = this;
+      setTimeout(function () {
+        that.routerTo('UserCardHuan')
+      }, 1000)
+
+    },
+  },
+
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+    console.log('新增储蓄卡')
+    var that = this;
+    that.cxkItem = JSON.parse(this.getLocalStorage('cxkItem')) || '';
+    if (that.cxkItem) {
+      that.title = '修改储蓄卡';
+    }
+    console.log(that.cxkItem)
+    this.userData = JSON.parse(this.getLocalStorage('userInfo'));
+    this.realData = [
+      { name: '手机号', model: this.userData.mobile, tag: 'mobile', type: 'phone', placeholder: '请输入手机号码', path: '', length: '11', disabled: false, time: 60, txt: '发送验证码', error: false, errorMsg: '请输入正确的手机号码', reg: config.reg.phone },
+      { name: '姓名', model: this.userData.name, tag: 'name', type: 'name', placeholder: '请输入姓名', length: '10', error: false, errorMsg: '请输入正确的姓名', },
+      { name: '身份证', model: '', tag: 'certId', type: 'ident', placeholder: '请输入身份证', length: '18', error: true, errorMsg: '请输入正确的身份证号', reg: config.reg.ident },
+      { name: '开户行', model: that.cxkItem ? that.cxkItem.bank : '', tag: 'bank', type: 'khh', placeholder: '', icon: 'arrow', title: '选择开户行', error: false, readonly: true },
+      { name: '银行账户', model: that.cxkItem ? that.cxkItem.cardId : '', tag: 'cardId', type: 'yhkh', placeholder: '请输入银行卡号', length: '23', error: that.cxkItem ? false : true, errorMsg: '请输入正确的银行卡号', length: '23' },
+      { name: '短信验证码', model: '', tag: 'authCode', type: 'yzm', placeholder: '请输入短信验证码', error: false, reg: /[0-9]{6}/, length: '6', },
+    ]
+    if (this.userData.mobile) {
+      this.realData[0].model = this.userData.mobile
+    }
+    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+  },
+  deactivated: function () {
+    this.removeLocalStorage('cxkItem')
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+
+  },
+  store
+
+}
+</script>
+
+<style scoped lang="scss">
+.UserRealName {
+  /* ... */
+  height: 100vh;
+  /deep/ .buttonItem {
+    line-height: 0.8rem;
+    padding: 0 1.6rem;
+    background: $c12;
+    color: $white;
+  }
+  .huanTitle {
+    color: $cffa6;
+    line-height: 1.04rem;
+    font-size: $fz32;
+    padding: 0 0.4rem;
+    background: $cf0;
+    font-weight: bold;
+    span {
+      font-size: $fz28;
+      color: $c666;
+      margin-left: 0.2667rem;
+      font-weight: normal;
+    }
+  }
+  .buttonBox {
+    text-align: center;
+    padding: 0.9333rem;
+  }
+}
+</style>

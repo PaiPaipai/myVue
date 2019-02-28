@@ -1,0 +1,154 @@
+<template lang="html">
+    <div class="UserCardPlanDetails">
+      <div class="planTop">
+        <h3 class="c13">已完成</h3>
+        <p>订单号：142343234346</p>
+        <van-button class="deleteBtn" @click="deletePlan" >删除计划</van-button>
+      </div>
+      <div class="panelBox">
+        <div class="panelTop">
+          <h3><i class="iconfont icon-jihua1 c12"></i>计划详情</h3>
+        </div>
+        <div class="panelContent">
+          <ul>
+            <li><span>计划金额</span> <span class="spanC666">2000.00元</span></li>
+            <li><span>计划类型</span> <span class="spanC666">普通计划</span></li>
+            <li><span>计划次数</span> <span class="spanC666">5次 (共3天)</span></li>
+            <li><span>计划日期</span> <span class="spanC666">2/11、2/22</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="panelBox">
+        <div class="panelTop">
+          <h3><i class="iconfont icon-jindu1 cff6"></i>计划进度</h3>
+        </div>
+        <div class="panelContent">
+          <ul>
+            <li><span>已完成　　</span> <span class="spanCfc ml50">10000.00元</span></li>
+            <li><span>未完成　　</span> <span class="spanCfc ml50">0.00</span></li>
+            <li><span>已完成进度</span> <span class="spanCfc ml50">100%</span></li>
+            <li><span>已完成次数</span> <span class="spanCfc ml50">2/11次</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="panelBox">
+        <div class="panelTop">
+          <h3><i class="iconfont icon-feiyong cee4"></i>计划明细</h3>
+        </div>
+        <div class="panelContent">
+          <ul class="panelUl">
+            <li class="jihua">
+              <div><i class="iconfont icon-xiaofei c108"></i>消费<span>2019-2-21 09:20:25</span> </div>
+              <div>-2135.45元<span class="c13">已执行</span></div>
+            </li>
+             <li class="jihua">
+              <div><i class="iconfont icon-jihua cf7 "></i>计划<span>2019-2-21 09:20:25</span> </div>
+              <div>-2135.45元<span class="c13">已执行</span></div>
+            </li>
+          </ul>
+          <div class="noData" v-show="!planList.length">
+            暂无明细
+          </div>
+        </div>
+      </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+import { Popup, Toast } from "vant";
+Vue.use(Popup).use(Toast);
+export default {
+  // 不要忘记了 name 属性
+  name: 'UserCardPlanDetails',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      show: false,
+      planList: [{}],
+
+    }
+  },
+  computed: {},
+  //每次进缓存的路由调用
+  // 使用其它组件
+  components: {},
+  // 方法
+  watch: {},
+  //每次进没有缓存的路由调用
+  methods: {
+    deletePlan () {
+      console.log('deletePlan')
+    },
+    closePopup () {
+      this.show = false;
+    },
+    watchDetail () {
+      this.show = true;
+    },
+    changeTab (index) {
+      this.tabIndex = index;
+    }
+    // this.$emit("clickSearch",text);
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () { },
+  mounted () { },
+  activated () {
+    store.commit('setDetail', true)
+
+  }// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.UserCardPlanDetails {
+  /* ... */
+  height: 100vh;
+  background: $ceee;
+  padding: 0 0.4rem;
+  position: relative;
+  padding-top: 0.2667rem;
+  /deep/ .van-overlay {
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+  .planTop {
+    background: $white;
+    border-radius: 0.2rem;
+    margin-bottom: 0.2667rem;
+    position: relative;
+    padding: 0.2667rem 0.24rem;
+    .c13 {
+      color: $c13;
+    }
+    h3 {
+      line-height: 0.6667rem;
+      font-size: $fz32;
+      font-weight: bold;
+    }
+    p {
+      line-height: 0.6133rem;
+      font-size: $fz28;
+    }
+    .deleteBtn {
+      line-height: 0.64rem;
+      height: 0.6667rem;
+      border-radius: 0.3333rem;
+      font-size: 0.3467rem;
+      border-color: $c666;
+      position: absolute;
+      right: 0.44rem;
+      top: 0.3067rem;
+    }
+  }
+}
+</style>

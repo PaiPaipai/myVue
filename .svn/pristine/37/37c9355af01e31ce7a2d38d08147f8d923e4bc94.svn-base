@@ -1,0 +1,262 @@
+<template lang="html">
+    <div class="UserCardDetails">
+        <!-- ... -->
+          <my-header :title="'修改信用卡'"></my-header>
+         <van-cell-group :class="['myGroup']">
+              <van-field v-for="(item, index) in ApplyData" :key="index"
+                  v-model="item.model"
+                  @keyup="keyUpItem(item)"
+                  :label="item.name"
+                  :readonly=item.readonly
+                  :placeholder="item.placeholder"
+                  :input-align="'right'"
+                  :error-message="item.error && item.model != '' ?item.errorMsg:''"
+                  :icon="item.icon"
+                  :id="item.ref?item.ref:''"
+                  @click="clickSelect(item,index,'top')"
+                  :maxLength="item.length"
+                >
+                 <span @click="clickEdit(item)" slot="button"><i :class="[item.icons]"></i></span>
+                </van-field>
+          </van-cell-group>
+           <div class="buttonBox">
+            <button-item  :buttonItem="buttonItem" @clickButton="clickButton"></button-item>
+          </div>
+           <van-popup v-model="show" :class="['myPopup myPopup-up']">
+              <van-picker show-toolbar
+                :title="title"
+                :columns="columns"
+                @change="onChange"
+                @cancel="onCancel"
+                @confirm="onConfirm" />
+            </van-popup> 
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import store from '@/store/index'
+import MyHeader from '@/layout/MyHeader'
+import ButtonItem from '@/components/ButtonItem'
+import { Field, CellGroup, Popup, Toast, Picker } from 'vant';
+Vue.use(Field).use(CellGroup).use(Popup).use(Picker).use(Toast)
+
+export default {
+  // 不要忘记了 name 属性
+  name: 'UserCardDetails',
+  store,
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      show: false,
+      title: '还款日',
+      columns: [],
+      myDate: [],
+      ApplyData: [],
+      buttonItem: { txt: '保存', classes: 'buttonItem' },
+    }
+  },
+  computed: {
+    huanCard: {
+      get: function () {
+        return JSON.parse(this.getLocalStorage('huanCard')) || {}
+      },
+      set: function () { }
+    },
+  },
+  //每次进缓存的路由调用
+  // 使用其它组件
+  components: { MyHeader, ButtonItem },
+  // 方法
+  watch: {},
+  //每次进没有缓存的路由调用
+  methods: {
+    clickEdit (item) {
+      var that = this;
+      item.readonly = false;
+      item.focus = true;
+      this.$nextTick(function () {
+        //DOM 更新了
+        document.getElementById("ed").focus();
+      })
+    },
+    keyUpItem: function (item) {
+      if (item.reg) {
+        if (!item.reg.test(item.model) && item.model != "") {//验证正则
+          item.error = true
+        } else {
+          item.error = false
+        }
+      }
+      if (item.types == 'yhkh') {
+        var v = item.model;
+        var cloneV = item.model;
+        if (/\S{5}/.test(v)) {
+          item.model = v.replace(/\s/g, '').replace(/(.{4})/g, '$1 ');
+        }
+        if (item.model.length == 19) {
+          if (!isNaN(cloneV.replace(/\s+/g, ""))) {
+            item.error = false
+          } else {
+            item.error = true
+          }
+        } else {
+          item.error = true
+        }
+      }
+      this.$nextTick(function () {
+
+      })
+    },
+    onChange () { },
+    clickSelect (item, index, type) {
+      if (type == 'top') {
+        this.bottom = false
+      } else {
+        this.top = false;
+      }
+      this[type] = true;
+      this.currentItem = item;
+      if (item.icon == 'arrow') {
+        this.show = true;
+        this.title = item.placeholder
+        this.columns = item.columns;
+        this.currentIndex = index;
+        if (this.currentItem.dataPicker) {
+          this.currentDate = item.date ? item.date : new Date()
+        }
+      }
+    },
+    onCancel () {
+      this.show = false;
+    },
+    onConfirm (value, index) {
+      this.show = false;
+      this.ApplyData[this.currentIndex].model = value.text;
+      this.ApplyData[this.currentIndex].date = value.num;
+
+    },
+
+    clickButton: function () {
+      var that = this;
+      console.log(this.ApplyData)
+      var dataArr = this.ApplyData;
+      var params = {
+        sysUserId: that.getLocalStorage('userId'),
+        userId: that.getLocalStorage('txUserId'),
+      };
+      var flag = true
+      for (let index = 0; index < dataArr.length; index++) {
+        const element = dataArr[index];
+        if (element.model == '') {
+          flag = false;
+          Toast('请填写' + element.name + '!')
+          return false
+        } else if (element.error) {
+          flag = false;
+          Toast('请填写正确的' + element.name + '!')
+          return false
+        } else {
+          if (element.tag == 'billDate' || element.tag == 'dueDate') {
+            params[element.tag] = element.date;
+          } else {
+            params[element.tag] = element.model;
+          }
+
+        }
+      }
+      if (flag) {
+        params = this.clearParams(params);
+        Toast('填写正确！')
+        this.editCreditCard(params, that.goCardHuan)
+        //
+      }
+
+      // console.log(params)
+    },
+    goCardHuan () {
+      var that = this;
+      setTimeout(function () {
+        that.$router.go(-1)
+      }, 1000)
+    },
+    setMyDate () {
+      this.myDate = []
+      var arr = [];
+      for (let index = 1; index < 31; index++) {
+        var obj = {}
+        obj.text = '每月' + index + '号';
+        obj.num = index;
+        arr.push(obj)
+      }
+      this.myDate = arr;
+    }
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  created () { },
+  mounted () {
+    console.log('cardDetails')
+    if (!this.getLocalStorage('huanCard')) {
+      this.routerTo('UserCardHuan')
+    }
+    this.setMyDate()
+    this.ApplyData = [
+      {
+        name: '卡号', model: this.huanCard.cardId, tag: 'cardId', types: 'yhkh', type: '',
+        readonly: true,
+        error: false, errorMsg: '请输入正确的信用卡号', placeholder: '请输入信用卡卡号', length: '19'
+      },
+      {
+        name: '额度', model: this.huanCard.quota, tag: 'quota', type: '', placeholder: '请输入您的信用卡额度',
+        readonly: true, ref: 'ed',
+        error: false, icons: 'iconfont icon-xiugai', errorMsg: '请输入正确的数字', reg: /[0-9]{1,6}/, length: '7'
+      },
+      {
+        name: '账单日', model: '每月' + this.huanCard.billDate + '号', tag: 'billDate', type: '', placeholder: '请选择您的账单日',
+        columns: this.myDate, date: this.huanCard.billDate,
+        icon: 'arrow',
+        error: false, readonly: true, itemShow: false      },
+      {
+        name: '还款日', model: '每月' + this.huanCard.dueDate + '号', tag: 'dueDate', type: '', placeholder: '请选择您的还款日',
+        columns: this.myDate, date: this.huanCard.dueDate,
+        icon: 'arrow',
+        error: false, readonly: true, itemShow: false      },
+
+    ]
+    var v = this.ApplyData[0].model;
+    if (/\S{5}/.test(v)) {
+      this.ApplyData[0].model = v.replace(/\s/g, '').replace(/(.{4})/g, '$1 ');
+    }
+  },
+  activated () {
+
+  },// 每次进路由会调用这个方法
+
+}
+</script>
+
+<style  scoped lang="scss">
+.UserCardDetails {
+  /* ... */
+  /deep/ .buttonItem {
+    line-height: 0.8rem;
+    padding: 0 1.6rem;
+    background: $c12;
+    color: $white;
+  }
+  .icon-xiugai {
+    color: $c12;
+    font-size: $fz36;
+  }
+  .buttonBox {
+    text-align: center;
+    padding: 0.9333rem;
+  }
+}
+</style>

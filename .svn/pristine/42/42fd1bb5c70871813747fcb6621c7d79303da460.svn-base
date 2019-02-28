@@ -1,0 +1,23 @@
+<html>
+
+<head>
+  <style>
+    .myFrame {
+      width: 100%;
+      height: 100%;
+
+    }
+
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+  </style>
+</head>
+
+<body id="body">
+  <iframe class="myFrame" src="http://jidi.tmall.com" frameborder="0"></iframe>
+</body>
+
+</html>

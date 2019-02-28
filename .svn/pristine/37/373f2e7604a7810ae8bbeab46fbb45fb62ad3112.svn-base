@@ -1,0 +1,70 @@
+#red {
+    color:red;
+  }
+  .pp_text{
+    width: 8.32rem;
+    height: 2.9rem;
+    margin: 0 auto;
+    padding-top: .4rem;
+    font-size: .35rem;
+    line-height: .55rem;
+ }
+ .title{
+    height: .8rem;
+   border-bottom: 1px solid #ddd;
+   line-height: .8rem;
+   padding-left: .3rem;
+   font-size: .42rem;
+  }
+  .userJudiciary {
+    font-size: .40rem;
+    width: 4.446rem;
+    height: .626rem;
+    color: #333;
+    margin: 0 auto;
+    padding-top: .2rem;
+  
+ }
+ 
+ .vanButton {
+    text-align: center;
+    margin-top: .2rem;
+    margin-bottom: .4rem
+
+  }
+  .usertitle {
+    padding-top: .2rem;
+    padding-left: .633rem;
+  }
+  .judiciaryInfo{ 
+    font-size: .4rem;
+  }
+  .judiciaryInfo span{
+    width: 3rem;
+     display: inline-block;
+     color: #666666;
+   }
+   
+   .userJudiciary b{
+    display: inline-block;
+   vertical-align: middle;
+   width: 1rem;
+   height: 1px;
+   background-color: #e1dcdc;
+   border: none;
+  }
+  
+  .Jbutton {
+    background-color: #096DDD;
+    color: #ffffff;
+    width: 6.666rem;
+    margin: 0 auto;
+  }
+  .Jbuttons {
+      background-color: #fff;
+      color: #096DDD;
+      width: 6.666rem;
+      margin: 0 auto;
+      border: 1px solid #096DDD;
+      margin-bottom: .2rem;
+  }

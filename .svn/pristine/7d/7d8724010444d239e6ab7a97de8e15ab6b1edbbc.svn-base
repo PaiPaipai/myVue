@@ -1,0 +1,135 @@
+<template lang="html">
+  <div class="bigdatahome">
+    <div class="bigdatadetails">基本信息</div>
+    <ul class="bigulall">
+        <li v-for="(item,index) in datadetails" ::key="index" :class="item.type">
+            <div>{{item.isdata}}</div>
+            <span>{{item.name}}</span>
+            <p></p>
+        </li>
+    </ul>
+    <div class="bigdatadetails">报告总数</div>
+    <div class="bigdatatext">
+      用户姓名、手机号、身份证匹配一致。检测到该用户命中黑名单3次，司法案件3次。近一个月内被机构查询24次，被拒贷2笔;累计正常还款8笔，累计正常还款金额0.8-1.5万元，累计逾期7笔，累计逾期金额0.7-1.3万元，目前逾期未还订单1笔，目前逾期未还金额0.1-0.2万元。
+    </div>
+    <div class="bigdatalook" @click="bigdatalook()">查看详情</div>
+  </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+export default {
+  // 不要忘记了 name 属性
+  name: 'bigdatahome',
+  // 变量
+  data () {
+    return {
+        datadetails:[
+            {name:'姓名',type:'id1',isdata:'李XX'},
+            {name:'手机号',type:'id2',isdata:'18575966554'},
+            {name:'手机号归属',type:'id3',isdata:'湖北武汉'},
+            {name:'身份证号',type:'id4',isdata:'420102199303057896'},
+            {name:'身份证归属地融',type:'id5',isdata:'湖北武汉'},
+            {name:'报告时间',type:'id6',isdata:'2018-05-01'}
+        ]
+    }
+  },
+  computed: {
+  },
+  // 使用其它组件
+  components: { },
+  // 方法
+  watch: {},
+  beforeCreate () {},
+  methods: {
+    bigdatalook(){
+         this.$router.push({
+          path: "/bigdatalist/blacklist",
+        });
+    },
+    getBigDataInfois(){
+      let params = {
+        userId: this.getLocalStorage('userId'),
+        // userName:
+      }
+      this.getBigDataInfo(params, productApplyBack)
+      function productApplyBack(){}
+    },
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+  },
+  // 每次进路由会调用这个方法
+  activated () {
+    // this.getBigDataInfois()
+  }
+
+}
+</script>
+
+<style scoped lang="scss">
+.bigdatahome{
+    .bigdatadetails{
+        color:#333333;
+        font-size: 0.4267rem;
+        border-bottom: 0.0133rem #cccccc solid;
+        height: 1.0667rem;
+        line-height: 1.0667rem;
+        padding: 0 0.4rem;
+    }
+    .bigulall{    
+      li{
+        position: relative;
+        display: inline-block;
+        border-bottom: 0.0133rem #cccccc solid;
+        width: 4.96rem;
+        div{
+          padding: 0.3333rem 0 0.4667rem 0;
+          color: #FF3333;
+        }
+        span{
+          color: #666666;
+          display: inline-block;
+          padding-bottom: 0.1067rem;
+        }
+      }
+      .id1,.id3,.id5{
+        text-indent: 0.7733rem;
+        // border-right: 0.0133rem #cccccc solid;
+        // border-width: 0.9067rem;
+      }
+      .id2,.id4,.id6{
+        text-indent: 0.3867rem;
+        p{
+        position: absolute;
+        height: 0.9067rem;
+        width: 0.016rem;
+        background: #cccccc;
+        top: 0.4rem;
+      }
+      }
+      .id5,.id6{
+        border-bottom: 0rem #cccccc solid;
+      }
+    }
+    .bigdatatext{
+      font-size: 0.3733rem;
+      color: #333333;
+      line-height: 0.8rem;
+      padding: 0.24rem 0.7733rem;
+    }
+    .bigdatalook{
+      width:6.6667rem;
+      height:1.0667rem;
+      background:rgba(9,109,221,1);
+      border-radius:40px;
+      color: #ffffff;
+      font-size: 0.48rem;
+      text-align: center;
+      line-height: 1.0667rem;
+      margin: 0.8667rem auto 0 auto;      
+    }
+}
+</style>

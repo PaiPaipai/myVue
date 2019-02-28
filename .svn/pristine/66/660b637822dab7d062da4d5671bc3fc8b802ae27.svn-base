@@ -1,0 +1,299 @@
+<template lang="html">
+  <div class="blacklist">
+    <div class="Doublemark">
+      <span class="Doublemark_one"></span>
+      <div>被查询记录</div>
+      <span class="Doublemark_two"></span>
+    </div>
+    <div class="bigdatadetails">概述</div>
+    <div class="blacklisttext">
+      <p>用户近一一个月内被查询<span>24次</span>,被拒<span>2次</span>。</p>
+      <p>近三个月内被查询<span>21次</span>,被拒<span>2次</span>。</p>
+      <p>用户近一年内被查询<span>18次</span>,被拒<span>2次</span>。</p>
+      <div>说明：被查询不代表申请成功</div>
+    </div>
+    <div class="bigdatadetails">被查询记录</div>
+    <div class="bigdataquery">
+      <div class="bigdataquery_left">
+        <span>近一个月</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <p>身份证查询：</p>
+        <ul>
+          <li>1.被银行机构查询次数<span>2次</span></li>
+          <li>2.被P2P网贷查询次数<span>2次</span></li>
+          <li>3.被小贷查询次数<span>2次</span></li>
+          <li>4.被现金类分期查询次数<span>2次</span></li>
+          <li>5.被消费类分<span>0次</span></li>
+          <li>6.被银行机构查询次数<span>2次</span></li>
+          <li>7.被P2P网贷查询次数<span>2次</span></li>
+          <li>8.被小贷查询次数<span>2次</span></li>
+          <li>9.被现金类分期查询次数<span>2次</span></li>
+        </ul>
+        <p>手机号查询：</p>
+        <ul>
+          <li>1.被银行机构查询次数<span>2次</span></li>
+          <li>2.被P2P网贷查询次数<span>2次</span></li>
+          <li>3.被小贷查询次数<span>2次</span></li>
+          <li>4.被现金类分期查询次数<span>2次</span></li>
+          <li>5.被消费类分<span>0次</span></li>
+          <li>6.被银行机构查询次数<span>2次</span></li>
+          <li>7.被P2P网贷查询次数<span>2次</span></li>
+          <li>8.被小贷查询次数<span>2次</span></li>
+          <li>9.被现金类分期查询次数<span>2次</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdataquery">
+      <div class="bigdataquery_left">
+        <span>近三个月</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <p>身份证查询：</p>
+        <ul>
+          <li>1.被银行机构查询次数<span>2次</span></li>
+          <li>2.被P2P网贷查询次数<span>2次</span></li>
+          <li>3.被小贷查询次数<span>2次</span></li>
+          <li>4.被现金类分期查询次数<span>2次</span></li>
+          <li>5.被消费类分<span>0次</span></li>
+          <li>6.被银行机构查询次数<span>2次</span></li>
+          <li>7.被P2P网贷查询次数<span>2次</span></li>
+          <li>8.被小贷查询次数<span>2次</span></li>
+          <li>9.被现金类分期查询次数<span>2次</span></li>
+        </ul>
+        <p>手机号查询：</p>
+        <ul>
+          <li>1.被银行机构查询次数<span>2次</span></li>
+          <li>2.被P2P网贷查询次数<span>2次</span></li>
+          <li>3.被小贷查询次数<span>2次</span></li>
+          <li>4.被现金类分期查询次数<span>2次</span></li>
+          <li>5.被消费类分<span>0次</span></li>
+          <li>6.被银行机构查询次数<span>2次</span></li>
+          <li>7.被P2P网贷查询次数<span>2次</span></li>
+          <li>8.被小贷查询次数<span>2次</span></li>
+          <li>9.被现金类分期查询次数<span>2次</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdataquery bigdataqueryis">
+      <div class="bigdataquery_left">
+        <span>近一年</span>
+      </div>
+      <div class="bigdataquery_cen"></div>
+      <div class="bigdataquery_right">
+        <p>身份证查询：</p>
+        <ul>
+          <li>1.被银行机构查询次数<span>2次</span></li>
+          <li>2.被P2P网贷查询次数<span>2次</span></li>
+          <li>3.被小贷查询次数<span>2次</span></li>
+          <li>4.被现金类分期查询次数<span>2次</span></li>
+          <li>5.被消费类分<span>0次</span></li>
+          <li>6.被银行机构查询次数<span>2次</span></li>
+          <li>7.被P2P网贷查询次数<span>2次</span></li>
+          <li>8.被小贷查询次数<span>2次</span></li>
+          <li>9.被现金类分期查询次数<span>2次</span></li>
+        </ul>
+        <p>手机号查询：</p>
+        <ul>
+          <li>1.被银行机构查询次数<span>2次</span></li>
+          <li>2.被P2P网贷查询次数<span>2次</span></li>
+          <li>3.被小贷查询次数<span>2次</span></li>
+          <li>4.被现金类分期查询次数<span>2次</span></li>
+          <li>5.被消费类分<span>0次</span></li>
+          <li>6.被银行机构查询次数<span>2次</span></li>
+          <li>7.被P2P网贷查询次数<span>2次</span></li>
+          <li>8.被小贷查询次数<span>2次</span></li>
+          <li>9.被现金类分期查询次数<span>2次</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bigdatadetails">被拒贷次数统计</div>
+    <div class="blacklisttext">
+      <p>1.近一个月被拒贷次数统计：<span>2次</span>。</p>
+      <p>2.近三个月内被拒贷单数：<span>6次</span>。</p>
+      <p>3.用户近一年内被拒贷单数：<span>12次</span>。</p>
+    </div>
+    <div class="tobak" @click="tobak()">
+      上一页
+    </div>
+    <div class="bigdatalook" @click="bigdatalook()">继续查看还款情况</div>
+    <div class="bigdatadeta">被查询记录说明</div>
+    <div class="bigdatadetatext">
+      申请人在各渠道的被查询详情，数据来自P2P网贷、民间借贷、担保公司、小贷公司、消费金融、催收机构等金融机构。
+
+    </div>
+  </div>
+</template>
+
+<script type="text/javascript">
+  // eslint-disable-next-line no-unused-vars
+  import Vue from "vue";
+  export default {
+    // 不要忘记了 name 属性
+    name: "blacklist",
+    // 变量
+    data() {
+      return {};
+    },
+    computed: {},
+    // 使用其它组件
+    components: {},
+    // 方法
+    watch: {},
+    beforeCreate() {},
+    methods: {
+      tobak() {
+        this.$router.push("/bigdatalist/Summary");
+      },
+      bigdatalook() {
+        this.$router.push("/bigdatalist/Repaymentdetails");
+      }
+    },
+    // 生命周期函数
+    beforeCreate() {},
+    mounted() {},
+    // 每次进路由会调用这个方法
+    activated() {}
+  };
+</script>
+
+<style scoped lang="scss">
+  .blacklist {
+    .Doublemark {
+      width: 5.6rem;
+      margin: 0 auto;
+      height: 0.8533rem;
+      font-size: 0.4rem;
+      color: #666666;
+      text-align: center;
+      // border: 1px red solid;
+      line-height: 0.8533rem;
+      position: relative;
+      span {
+        position: absolute;
+        display: inline-block;
+        height: 0.016rem;
+        width: 1.3333rem;
+        background: #cccccc;
+        top: 0.4267rem;
+      }
+      .Doublemark_one {
+        left: 0;
+      }
+      .Doublemark_two {
+        right: 0;
+      }
+    }
+    .bigdatadetails {
+      color: #333333;
+      font-size: 0.4267rem;
+      border-bottom: 0.0133rem #cccccc solid;
+      height: 1.0667rem;
+      line-height: 1.0667rem;
+      padding: 0 0.4rem;
+    }
+    .blacklisttext {
+      // height: 0.96rem;
+      text-indent: 0.7733rem;
+      color: #666666;
+      font-size: 0.4rem;
+      line-height: 0.84rem;
+      div {
+        color: #666666;
+        font-size: 0.3733rem;
+        line-height: 0.74rem;
+      }
+      p {
+        color: #333333;
+      }
+      span {
+        color: #ff0000;
+      }
+    }
+
+    .bigdataquery {
+      display: flex;
+      align-items: center;
+      border-bottom: 0.0133rem #cccccc solid;
+      padding-bottom: 0.4rem;
+      padding-top: 0.4rem;
+      //   padding: 0.4rem;
+      .bigdataquery_left {
+        width: 2.1067rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        span {
+          display: inline-block;
+          width: 0.48rem;
+          font-size: 0.4rem;
+          color: #333333;
+          line-height: 0.64rem;
+        }
+      }
+      .bigdataquery_cen {
+        width: 0.016rem;
+        height: 3.6667rem;
+        background: #cccccc;
+      }
+      .bigdataquery_right {
+        padding-left: 0.5333rem;
+        p {
+          font-size: 0.4rem;
+          color: #333333;
+          padding: 0.6933rem 0 0.3733rem 0;
+        }
+        li {
+          line-height: 0.7467rem;
+          color: #666666;
+          font-size: 0.3733rem;
+          span {
+            color: #ff0000;
+          }
+        }
+      }
+    }
+    .bigdataqueryis {
+      border-bottom: 0rem #cccccc solid;
+    }
+    .tobak {
+      width: 6.6667rem;
+      height: 1.0667rem;
+      border: 0.0267rem solid rgba(42, 144, 235, 1);
+      border-radius: 0.5333rem;
+      font-size: 0.48rem;
+      font-weight: 500;
+      color: rgba(42, 144, 235, 1);
+      text-align: center;
+      line-height: 1.0667rem;
+      margin: 1.0667rem auto 0 auto;
+    }
+    .bigdatalook {
+      width: 6.6667rem;
+      height: 1.0667rem;
+      background: rgba(9, 109, 221, 1);
+      border-radius: 40px;
+      color: #ffffff;
+      font-size: 0.48rem;
+      text-align: center;
+      line-height: 1.0667rem;
+      margin: 0.4rem auto 1.1333rem auto;
+    }
+    .bigdatadeta {
+      color: #666666;
+      font-size: 0.4267rem;
+      border-bottom: 0.0133rem #cccccc solid;
+      height: 1.0667rem;
+      line-height: 1.0667rem;
+      padding: 0 0.4rem;
+    }
+    .bigdatadetatext {
+      font-size: 0.3467rem;
+      color: #666666;
+      line-height: 0.6667rem;
+      padding: 0.5067rem 0.7733rem;
+    }
+  }
+</style>

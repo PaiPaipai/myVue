@@ -1,0 +1,153 @@
+<template lang="html">
+    <div class="MoneysApply">
+      <my-header class="myHeader" :title="moneyDetails.name"></my-header>
+      <div class="passwordBox">
+          <input-item class="userList" :itemList="realData"></input-item>   
+      </div>
+      <div class="buttonBox">
+       <button-item  :buttonItem="buttonItem" @clickButton="clickButton"></button-item>
+      </div>
+    </div>
+</template>
+
+<script type="text/javascript">
+// eslint-disable-next-line no-unused-vars
+import Vue from 'vue'
+import MyHeader from '@/layout/MyHeader'
+import InputItem from '@/components/InputItem'
+import ButtonItem from '@/components/ButtonItem'
+import PopupSuccess from '@/components/PopupSuccess'
+import { config } from '../../../assets/js/config' // 引入配置的公共接口url
+
+import store from "@/store/index";
+import { Toast } from 'vant';
+import { setTimeout } from 'timers';
+Vue.use(Toast)
+export default {
+  // 不要忘记了 name 属性
+  name: 'MoneysApply',
+  // 组合其它组件
+  extends: {},
+  // 组件属性、变量
+  props: [],
+  // 变量
+  data () {
+    return {
+      successText: '',
+      shwoSuccess: false,
+      buttonItem: { txt: '支付', classes: 'buttonItem' },
+      realData: [
+        { name: '商品名称', model: '', tag: '', types: '', placeholder: '', icon: '', path: '', error: false, readonly: true, },
+        { name: '应付金额', model: '', tag: 'total_fee', types: '', placeholder: '', icon: '', path: '', error: false, readonly: true, },
+      ],
+      moneyDetails: {},
+      money: 0,
+    }
+  },
+  computed: {
+    userId: {
+      get: function () {
+        return this.getLocalStorage('userId')
+      },
+      set: function () { }
+    },
+  },
+  // 使用其它组件
+  components: { MyHeader, InputItem, ButtonItem, PopupSuccess },
+  // 方法
+  deactivated () {
+  },
+  methods: {
+    clickButton () {
+      var realData = this.realData;
+      var that = this;
+      var flag = true;
+      var params = {
+        userId: that.userId,
+        type: this.moneyDetails.type,
+        total_fee: this.money
+      }
+      Toast(that.moneyDetails.path)
+      if (flag) {
+        that.wxPay(params, that.levelUpCallBack)
+      }
+    },
+    levelUpCallBack (datas) {
+      var that = this;
+      var params = datas
+      this.wxZf(params, that.goToPath)
+    },
+    goToPath () {
+      var that = this;
+      Toast(that.moneyDetails.path)
+      setTimeout(function () {
+        that.$router.push(that.moneyDetails.path)
+      }, 1000)
+    },
+    queryPayMoneyCb (datas) {
+      this.money = datas.money;
+      this.realData = [
+        { name: '商品名称', model: this.moneyDetails.name, tag: this.moneyDetails.type, types: '', placeholder: '', icon: '', path: '', error: false, readonly: true, },
+        { name: '应付金额', model: datas.money, tag: 'total_fee', types: '', placeholder: '', icon: '', path: '', error: false, readonly: true, },
+      ]
+
+
+    }
+  },
+  activated: function () { // 加载当前路由的时候执行 其余的都是 初始化项目的时候加载
+
+    // Vue.set(this, 'params', this.$route.params) // 设置相关data 并更新dom
+  },
+  // 生命周期函数
+  beforeCreate () { },
+  mounted () {
+    console.log('资金申请')
+    var details = this.getLocalStorage('MoneyBigData');
+    if (details) {
+      this.moneyDetails = JSON.parse(details);
+      document.title = this.moneyDetails.name
+      var params = {
+        userId: this.userId,
+        type: this.moneyDetails.type,
+      }
+      this.queryPayMoney(params, this.queryPayMoneyCb)
+    } else {
+      this.routerTo('index')
+    }
+  },
+  store
+
+}
+</script>
+
+<style scoped lang="scss">
+.MoneysApply {
+  /* ... */
+  .buttonBox {
+    margin-top: 0.2667rem;
+    text-align: center;
+  }
+  /deep/ .buttonItem {
+    line-height: 0.8rem;
+    padding: 0 1.6rem;
+    background: $c12;
+    color: $white;
+  }
+}
+.passwordBox {
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+.fogetBox {
+  overflow: hidden;
+  span {
+    float: right;
+    margin-right: 0.2667rem;
+    font-size: 0.32rem;
+    margin-top: 0.2667rem;
+    color: #1296db;
+  }
+}
+</style>

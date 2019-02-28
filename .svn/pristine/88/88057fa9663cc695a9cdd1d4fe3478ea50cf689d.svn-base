@@ -1,0 +1,77 @@
+<template>
+ <div>
+    <my-header class="myHeader" :title="'司法报告-被执行'"></my-header>
+       <div class="userJudiciary">
+         <b></b>被执行<b></b>
+    </div>
+
+      <div class="title">记录1</div>
+    <ul class="usertitle">
+      <li class="judiciaryInfo"><span>立案时间：</span>{{userInfo.sortTimeString}}</li>
+      <li class="judiciaryInfo"><span>案号：</span>{{userInfo.caseNo}}</li>
+      <li class="judiciaryInfo"><span>法院名称：</span>{{userInfo.court}}</li>
+      <li class="judiciaryInfo"><span>案件状态：</span>{{userInfo.caseType}}</li>
+      <li class="judiciaryInfo"><span>申请人：</span>{{userInfo.proposer}}</li>
+      <li class="judiciaryInfo"><span>被执行人姓名：</span>{{userInfo.pname}}</li>
+       <li class="judiciaryInfo"><span>执行标的：</span>{{userInfo.execMoney}}</li>
+      <li class="judiciaryInfo"><span>匹配度：</span><span id="red">{{userInfo.matchRatio}}</span></li>
+    </ul>
+    
+        
+      <div class="vanButton">
+        <van-button class="Jbuttons" @click="Judgment" round type="info">上一页</van-button>
+        <van-button class="Jbutton" @click="Breakfaith" round type="info">继续查看失信被执行</van-button>
+      </div>
+      
+      <div class="title">匹配度说明</div>
+       <div class="pp_text">{{userInfo.body}}</div>
+
+ </div>
+</template>
+
+<script>
+import MyHeader from '@/layout/MyHeader'
+// import '@/assets/styles/userjudicial.css'
+ export default {
+   data () {
+     return {
+          userInfo:{
+           sortTimeString:'1990-01-01',
+           caseNo:'00',
+           court:12,
+           caseType:'zaa',
+           proposer:'1222',
+           pname: 212,
+           execMoney:'80',
+           matchRatio:'22%',
+            body:'匹配度未被查询人与该案件的关系程度，取值0%到100%之间，值越大表示本人薪资与案件当事人信息重复度越高，被查询人的风险就越高。其中0%到180%为疑似为被查询人的案件，建议结合详情复审；81%到100%则表示很大的概率就是被查询人的案件。'
+         },
+     }
+   },
+   methods:{
+      Judgment(){
+        this.routerTo('Judgment');
+      },
+      Breakfaith(){
+        this.routerTo('Breakfaith');
+      }
+   },
+   components: {
+        MyHeader
+   }
+ }
+</script>
+
+<style scoped>
+
+  .usertitle {
+     height: 5.94rem;  
+   }
+    .judiciaryInfo{
+     line-height: .7rem;
+     height: .7rem;
+     
+   }
+   
+ 
+</style>
